@@ -15,3 +15,8 @@ For contributing members see the
 
 [Submit an issue](https://github.com/solid/authentication-panel/issues/new)
 to propose a project for the panel to undertake.
+
+# Meetings
+
+Meetings of the Authentication panel take place at 10AM eastern on Mondays via https://hangouts.google.com/call/3k5z3gBVKm-58m8Xgm2YAEEE
+
