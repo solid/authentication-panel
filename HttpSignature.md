@@ -34,7 +34,7 @@ The addition to the HTTP signature protocol is the request by the
 resource server for the `keyId document`. 
 
 Note: If the key document is local to the Resource server, the 
-protocol indistinguishable in terms of requests to the current HTTP-Signature specification.
+protocol is indistinguishable in terms of requests to the current HTTP-Signature specification.
 
 ### The KeyId Document
 
@@ -114,7 +114,7 @@ This goes beyond authentication, but can be integrated very simply in a
 number of ways. 
 
 The simplest way is for the WebID document to be the same
-as the KeyId document. For example Alice's `WebID` and 'keyID' documents
+as the KeyId document. For example Alice's `WebID` and `keyID` documents
 could be `https://alice.databox.me/profile/card` and return
 a representation with the following triples:
 
