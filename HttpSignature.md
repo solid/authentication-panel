@@ -56,8 +56,9 @@ an RDF format. If we were to use [the cert ontology](https://www.w3.org/ns/auth/
      cert:exponent 65537 .
 ```
 
-(Manu Sporny's team developed another key ontology, which may be more
-up to date. Find Link.)
+(Other ontologies that could be used:
+  * [The Security Vocabulary](https://web-payments.org/vocabs/security)
+  * Any other?)
 
 ### The Corresponding WebACL
 
