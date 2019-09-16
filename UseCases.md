@@ -28,3 +28,17 @@ When `platform` is seen, it should be substituted for examples of the following 
  - A user has multiple identities (ie work and personal) and wants to swap between them on `platform`.
  - A user has multiple identities (ie work and personal) and wants to access a Pod with whichever identity works
  - A resource requires the consent of multiple identities to gain access (for example accessing information on a joint mortgage)
+ - An operator of a popular resource server wants to revoke currently valid access token(s):
+   - All tokens for one user because her token(s) were compromised;
+   - All tokens for all users because the resource server was compromised;
+   - To force a re-authentication of one or all users.
+ - A resource server wants to control the validity period of its access tokens:
+   - So that the lifetime of a token can be capped by security best practices and local policy;
+   - To contain the resource cost and complexity required for token revocation;
+   - So that the server can set a minimum token lifetime if it is very busy, to reduce the frequency and cost of re-authentication.
+ - A resource server wants to issue its own access tokens:
+   - To balance implementation complexity, performance, and cost:
+     - When authenticating the user;
+     - When validating a token on presentation;
+   - To control the format of the tokens for compatibility with existing or alternative authentication infrastructure;
+   - To allow for alternative methods for obtaining a token.
