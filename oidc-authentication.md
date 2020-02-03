@@ -79,6 +79,35 @@
 
 # 3. Authentication Scheme Discovery
 
+[RFC 7235]() defined the protocol for using the WWW-Authenticate HTTP response
+header as a way for a Resource Server to issue one or more challenges to a
+client, that is, to communicate which Authentication schemes it supports.
+
+Solid uses this mechanism to allow a [Resource Server]() to communicate to a
+[Client/Presenter]() which Authentication methods (and versions) it supports.
+
+### Proposed WebID-OIDC 1.0 response example:
+
+Example:
+
+```
+> GET /example/resource
+
+< HTTP/1.1 401 Unauthorized
+< WWW-Authenticate: DPoP realm=”https://example.com” scope=”openid webid”
+```
+
+* Realm param is optional
+* Scope -- “`openid webid`” params a MUST.
+
+Note: the DPoP authentication scheme is required by [DPoP draft spec](https://tools.ietf.org/html/draft-fett-oauth-dpop)
+
+If RS supports both authentication schemes (Bearer and DPoP), multiple WWW-Authenticate headers may be returned.
+
+```
+WWW-Authenticate: DPoP realm=”https://example.com” scope=”openid webid”, Bearer realm=”https://example.com” scope=”openid webid”
+```
+
 # 4. Identity Provider Selection
 
 # 5. Client Registration / Application Metadata
