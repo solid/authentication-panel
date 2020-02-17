@@ -170,9 +170,9 @@ Example contents of `Authorization` header:
   "sub": "https://janedoe.com/web#id",
   "iss": "https://idp.example.com",
   "aud": "https://rs.example.com",
-  "nbf": 1562262611,
+  "iat":1562262616,
   "exp": 1562266216,
-  "vc_id": "...", // JWT-serialized VC ID Credential 
+  "vc_id": "...", // JWT-serialized VC ID Credential
   "cnf": {
     "jkt": "0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I"
   }
