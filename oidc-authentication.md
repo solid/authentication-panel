@@ -172,12 +172,13 @@ entirety, the contents of the `id_vc` claim from the IDP's ID Token):
   "iss": "https://idp.example.com",
   "aud": "https://client.example.com", // audience constrained to the client / presenter
   "iat": 1541493724,
-  "exp": 1573029723,  <- identity credential expiration 
+  "exp": 1573029723,  <- identity credential expiration
   "cnf":{
       // DPoP public key confirmation, per DPoP spec section 7
       "jkt":"0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I"  
   }
 }
+// ID Credential is signed by the IDP
 ```
 
 Example DPoP Proof JWT (minted by Client app for each resource) (the
