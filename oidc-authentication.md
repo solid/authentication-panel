@@ -163,19 +163,19 @@ GET /protectedresource HTTP/1.1
   NdavjLAeevGy32H3dbF0Jbri69Nm2ukkwb-uyUI4AUg1JSskfWIyo4UCbQ
 ```
 
-Example contents of `Authorization` header (this DPoP token gets minted by the
-RP, for each RS):
+Example contents of `Authorization` header (this is the ID Credential in its
+entirety, the contents of the `id_vc` claim from the IDP's ID Token):
 
 ```
 {
-  "sub": "https://janedoe.com/web#id",
+  "sub": "https://janedoe.com/web#id",    <- Web ID / DID
   "iss": "https://idp.example.com",
-  "aud": "https://rs.example.com", // <- audience-constrained to the RS
-  "iat":1562262616,
-  "exp": 1562266216,
-  "vc_id": "...", // JWT-serialized VC ID Credential, from the IDP's ID Token
-  "cnf": {
-    "jkt": "0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I"
+  "aud": "https://client.example.com", // audience constrained to the client / presenter
+  "iat": 1541493724,
+  "exp": 1573029723,  <- identity credential expiration 
+  "cnf":{
+      // DPoP public key confirmation, per DPoP spec section 7
+      "jkt":"0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I"  
   }
 }
 ```
