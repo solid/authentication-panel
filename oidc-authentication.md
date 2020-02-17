@@ -178,29 +178,30 @@ entirety, the contents of the `id_vc` claim from the IDP's ID Token):
       "jkt":"0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I"  
   }
 }
-// ID Credential is signed by the IDP
+// This ID Credential is signed by the IDP, NOT by the client
 ```
 
 Example DPoP Proof JWT (minted by Client app for each resource) (the
 contents of the `DPoP` header):
 
 ```js
-  {
-     "typ":"dpop+jwt",
-     "alg":"ES256",
-     "jwk": {   // <- gets checked against the cnf claim in the ID Credential (from the Authorization header)
-       "kty":"EC",
-       "x":"l8tFrhx-34tV3hRICRDY9zCkDlpBhF42UQUfWVAWBFs",
-       "y":"9VE4jf_Ok_o64zbTTlcuNJajHmt6v9TDVrU0CdvGRDA",
-       "crv":"P-256"
-     }
-   }.{
-     "jti":"-BwC3ESc6acc2lTc",
-     "iat":1562262616,
-      // the following fields are required only for the authenticated resource request (not for the token endpoint)
-     "htm":"POST",
-     "htu":"https://rs.example.com/protected/resource",   // <- audience-restriction mechanism
+{
+   "typ":"dpop+jwt",
+   "alg":"ES256",
+   "jwk": {   // <- gets checked against the cnf claim in the ID Credential (from the Authorization header)
+     "kty":"EC",
+     "x":"l8tFrhx-34tV3hRICRDY9zCkDlpBhF42UQUfWVAWBFs",
+     "y":"9VE4jf_Ok_o64zbTTlcuNJajHmt6v9TDVrU0CdvGRDA",
+     "crv":"P-256"
    }
+ }.{
+   "jti":"-BwC3ESc6acc2lTc",
+   "iat":1562262616,
+    // the following fields are required only for the authenticated resource request (not for the token endpoint)
+   "htm":"POST",
+   "htu":"https://rs.example.com/protected/resource",   // <- audience-restriction mechanism
+ }
+// This token is signed by the client
 ```
 
 ### For “traditional” / Single RS Use Cases
