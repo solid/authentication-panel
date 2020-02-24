@@ -194,6 +194,8 @@ The client is an [entity] in its own right, possessing an [identifier], and in
 some cases, a corresponding [identifier document] containing client metadata.
 
 ##### requesting party
+As defined by [UMA2]:
+
 An [entity] (natural or legal person) that uses a [client] to seek access to a
 [protected resource]. The requesting party may or may not be the same party as
 the [resource controller].
@@ -225,7 +227,7 @@ example), but also in order to present those credentials to the [resource
 server] when making a [protected resource request]).
 
 ##### OpenID Provider (OP)
-(Also known as an Identity Provider (IdP)).
+Also known as an Identity Provider (IdP) or the Authorization Server (AS).
 
 As defined by [OIDC]:
 
