@@ -219,11 +219,10 @@ As defined by [OIDC]:
 > OAuth 2.0 Client application requiring End-User Authentication and Claims
 > from an OpenID Provider.
 
-The [client] needs [authentication] related [claims]/[credentials] for UI reasons
-(to display a user name and icon to indicate that they’re logged in, for
-example), but also in its capacity as a [requesting party] to present those
-credentials to the [resource server] when making a [protected resource
-request]).
+The [client] needs [authentication] related [claims]/[credentials] for UI
+reasons (to display a user name and icon to indicate that they’re logged in, for
+example), but also in order to present those credentials to the [resource
+server] when making a [protected resource request]).
 
 ##### OpenID Provider (OP)
 (Also known as an Identity Provider (IdP)).
