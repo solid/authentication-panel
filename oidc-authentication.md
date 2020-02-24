@@ -198,15 +198,9 @@ An [entity] (natural or legal person) that uses a [client] to seek access to a
 [protected resource]. The requesting party may or may not be the same party as
 the [resource controller].
 
-##### Solid pod (personal online datastore)
-A server compliant with the [Solid Specification]. For the purposes of
-[authentication], a pod acts as a peer node that acts according to one
-or more roles depending on the situation: as a [resource server] (RS), a
-[client]/[relying party], or an OpenID Identity Provider (OP).
-
-Because Solid uses an identity-based access control system ([WAC]), the access
-control process requires a combination of authenticated user and authenticated
-client. As a result, all Solid [resource servers] are also [relying parties].
+##### Solid storage
+A server compliant with the [Solid Specification] that acts as a [resource
+server] (RS).
 
 ##### resource server (RS)
 As defined by [OAuth2]:
