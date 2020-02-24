@@ -103,7 +103,7 @@ pseudonymous identifier.
 A person ([end-user]), group or organization that is responsible for an
 [entity], and controls that entity's [identifier].
 
-##### controller document
+##### identifier document
 A machine-readable document, obtainable by resolving a Web ID or DID
 [identifier], that contains statements and metadata about the Entity being
 identified. Typically, it contains cryptographic materials such
@@ -111,7 +111,7 @@ as public keys, links to service endpoints and authorized [OpenID Connect
 Providers] (OPs), and other attributes that are helpful for purposes of
 [authentication].
 
-A Web ID Profile, and a DID Document, are both examples of controller documents.
+A Web ID Profile, and a DID Document, are both examples of identifier documents.
 
 ##### end-user
 As defined by [OIDC]:
@@ -124,7 +124,7 @@ As defined by [OIDC]:
 > Set of attributes related to an entity.
 
 Here, identity specifically refers to a combination of an [identifier], and a
-corresponding [controller document] that is obtainable by resolving that
+corresponding [identifier document] that is obtainable by resolving that
 identifier.
 
 ##### authentication
@@ -191,7 +191,7 @@ characteristics (such as whether the application executes on a server, a
 desktop, inside a web browser, or on other devices).
 
 The client is an [entity] in its own right, possessing an [identifier], and in
-some cases, a corresponding [controller document] containing client metadata.
+some cases, a corresponding [identifier document] containing client metadata.
 
 ##### requesting party
 An [entity] (natural or legal person) that uses a [client] to seek access to a
