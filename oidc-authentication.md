@@ -112,6 +112,19 @@ WWW-Authenticate: DPoP realm=”https://example.com” scope=”openid webid”,
 
 # 5. Client Registration / Application Metadata
 
+Client Registration for Solid clients is optional. The [Client]() can proceed
+without registration as if it had registered with the [OP]() and obtained the
+following [OAuth 2.0 Dynamic Client
+Registration](https://tools.ietf.org/html/rfc7591) response:
+
+```
+client_id: <Client ID such as a client Web ID or redirect_uri>
+client_secret_expires_at: 0
+```
+
+Otherwise, Static or Dynamic registration proceeds exactly as outlined in the
+existing OIDC and OAuth 2 specifications.
+
 # 6. Authentication Flows
 
 ## 6.1 OIDC Authorization Code Flow
