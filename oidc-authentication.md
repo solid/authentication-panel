@@ -311,6 +311,76 @@ existing OIDC and OAuth 2 specifications.
 
 # 7. Tokens and Credentials
 
+### ID Tokens
+
+The ID Token, defined in [OIDC Core 1.0](), has two primary purposes:
+
+1. Authenticates the user to the RP / Client application (so that it can
+   display their name / picture, for example)
+2. Serve as a general-purpose container for arbitrary custom claims.
+
+[OIDC Core 1.0 section 5]() defines the Claims mechanism, as a way to request
+arbitrary claims and credentials inside the `id_token`. (Either via `scope`
+param (section
+https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims) or via the
+`claims` request param (section
+https://openid.net/specs/openid-connect-core-1_0.html#ClaimsParameter))
+
+Example of a traditional ID Token:
+
+```
+{
+  "iss": "http://server.example.com",
+  "sub": "248289761001",
+  "aud": "s6BhdRkqt3",
+  "nonce": "n-0S6_WzA2Mj",
+  "exp": 1311281970,
+  "iat": 1311280970,
+  "nickname": "JaneDoe",
+  "picture": "http://example.com/janedoe/me.jpg",
+  <any other custom claims>
+}
+```
+
+Custom claims that we use currently: `webid`.
+Custom claims this spec proposes: `id_vc`.
+
+### Identity Credential
+
+The Identity Credential is requested and received as a custom claim, inside
+the existing OIDC ID Token:
+
+```
+{
+  "iss": "https://idp.example.com",
+  "sub": "https://janedoe.com/web#id",
+  "aud": "https://client.example.com",
+  "nonce": "n-0S6_WzA2Mj",
+  "exp": 1311281970,
+  "iat": 1311280970,
+  “id_vc”: <reusable ID credential, in Verifiable Credentials format, encoded as a JWT>
+}
+```
+
+- Is reused (with DPoP mechanism) for the Multi-RS use case
+- For non-Multi-RS cases (and for compatibility with current IdPs and clients), use of ID Credential is optional; a WebID URL can be derived from plain ID Token or Access Token (see below).
+
+Decoded `id_vc`, a re-usable identity credential, for use with DPoP headers:
+
+```
+{
+  "sub": "https://janedoe.com/web#id",    <- Web ID / DID
+  "iss": "https://idp.example.com",
+  "aud": "https://client.example.com", // audience constrained to the client / presenter
+  "iat": 1541493724,
+  "exp": 1573029723,  <- identity credential expiration (separate from the ID token)
+  "cnf":{
+         // DPoP public key confirmation, per DPoP spec section 7
+       "jkt":"0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I"  
+  }
+}
+```
+
 # 8. Authenticated Requests
 
 When making authenticated requests to [Resource Server]()s, a [Client]() uses
