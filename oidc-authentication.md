@@ -241,9 +241,118 @@ As defined by [OIDC]:
 
 # 2. Concepts
 
-## 2.1 Relationship between Authentication and Authorization
+This section is non-normative.
+
+## 2.1 Purpose of Authentication
+
+The Solid Project (and similar decentralized personal data servers) use
+[authentication]() for the following purposes:
+
+1. **To enable authorization**. First and foremost, authentication is used as a
+  mechanism to enable rule-based access control (WAC) (although see Section
+  2.1.1). Authorization requires knowing _both_ the identity of the user and the
+  identity of the client, and as a result, authentication needs to provide
+  (whenever technically possible) a tuple of: *(controller id, client id)*. To
+  put it another way, for any given action (such as an [authenticated
+  request]() to a data store), the access control mechanism needs to know _who_
+  performed the action, and _what software/client_ they were using to perform
+  it.
+
+2. **To enable discovery**. Resolving a controller's or a client's identifier
+  results in an [identifier document]() which is a useful starting point the
+  discovery of user and client metadata. For example, a client application
+  frequently requires some UI elements with which to address the user (a
+  username or a profile picture), as well as the user's preferences and other
+  data relevant to this app.
+
+3. **For auditing**. Many use cases require the keeping of audit trails and
+  access logs, which requires knowing who and what accessed a given resource or
+  performed an action.
+
+### 2.1.1 Authorization Without Authentication
+
+Authorization systems sometimes require the ability to perform access control
+decisions _without_ authentication, without identifying who is performing an
+action, either because the protected resource is sufficiently low-value (or
+low-threat if stolen), or due to practical requirements such as when sharing an
+online document for dissemination and collaboration with an unknown audience.
+
+As a result, most deployed authorization systems tend to employ a _hybrid_
+paradigm: they allow both identity-based and capability-based access control.
+Systems that prefer strict identity based Access Control Lists nevertheless
+develop capability links (unguessable tokens or URLs that allow access to the
+resource). Similarly, even systems such as [Authorization Capabilities]()
+(originally known as Object Capabilities) that are staunchly _against_
+authentication or using identifiers for access control, are forced to
+accommodate authentication requirements (if only for purposes of auditing) --
+see, for example, the [Horton protocol](http://www.erights.org/download/horton/document.pdf)
+used by the object capabilities community.
+
+Although authorization is largely out of scope for this document, it is worth
+mentioning that this specification aims to support this hybrid approach, and
+provide functionality for authentication as well as token-based capabilities.
 
 ## 2.2 Identity
+
+For a given [entity]() (whether a person, an organization or a software agent),
+the term [identity]() refers to a combination of: an [identifier]() (such as a
+WebID or a DID), and a set of [claims]() (metadata and other attributes) that
+typically reside in an [identifier document]() (such as a WebID Profile or a
+DID Document).
+
+In this specification, we are concerned primarily with two types of identities.
+
+The first one is the identity of users (or [controller]()s), which are entities
+responsible for an action performed on a protected resource.
+
+The second one is the [client]() identity, since the WAC authorization system
+often requires the knowledge of what software client was used to perform an
+action, and restricts access accordingly.
+
+Whenever possible, this specification prefers identifiers that are _resolvable_,
+and result in identifier documents.
+
+### 2.2.1 Controller Identifiers (WebID / DID)
+
+- For people and organizations only. For application or service identity, see
+  sections 2.2.3 and 2.2.4.
+- Link to the WebID section of the spec.
+- Globally unique, non-pairwise-pseudonymous.
+
+### 2.2.2 Classifying Clients
+
+There are many different kinds of software that we’re including in the broad
+term [client]().
+
+**We can classify clients by:**
+
+- By deployment type: Server-side web apps, in-browser JS web apps, mobile
+  apps, desktop apps, constrained apps and IoT devices.
+- Clients that have their own identity (bots/services) vs clients that are
+  always “piloted” by a user (apps)
+- “Attended” vs “Unattended” clients
+- By ability to keep secrets (Public vs Confidential vs Semi-Confidential
+  (native))
+- By connectivity (always-on vs intermittent, Internet-accessible vs firewalled/
+  intranet-only, local/air-gapped, progressive/offline-capable).
+
+It is important to distinguish between **strongly-identifiable** clients
+and **weakly-identifiable** (or user-identifiable) clients.
+
+**Strongly identifiable clients** can be identified by 3rd parties
+independently from their user/controller. Only server-side web apps are
+strongly identifiable -- as  confidential clients, they can keep secrets and
+can present attestations and  third-party credentials via DNS / domain
+certificates.
+
+**Native apps** - strongly-identifiable in theory (since they are able to keep
+secrets on an instance level), but not in practice (the OS manufacturers do not
+make their trust infrastructure available).
+
+**Weakly- or User-identifiable clients** - in-browser JS apps. Public clients,
+not able to keep secrets on an instance level. Strongly authenticatable only to
+their user/controller. Authenticatable to arbitrary third-party Resource
+Servers only _as long as the app's controller cooperates and can be trusted_.
 
 ## 2.3 User Authentication
 
