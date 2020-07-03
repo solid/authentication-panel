@@ -1,529 +1,397 @@
-# WebID-OIDC Authentication Spec v1.0
-
-# Table of Contents
-
-* 1 - Introduction
-    - Audience
-    - Use Cases
-    - Design Goals and Rationale
-    - Compatibility with OpenID Connect
-    - Difference from OpenID Connect
-    - Difference from previous spec version (WebID-OIDC v0.1)
-    - Out of Scope
-    - Terminology
-    - Trust Model
-    - Overview
-* 2 - Concepts
-    - 2.1 Relationship between Authentication and Authorization
-    - 2.2 Identity
-    - 2.3 User Authentication
-    - 2.4 Client (App/Service) Authentication
-* 3 - Authentication Scheme Discovery
-* 4 - Identity Provider Selection
-    - Issuer Discovery from WebID Profile
-* 5 - Client Registration / Application Metadata
-* 6 - Authentication Flows
-    - OIDC Authorization Code Flow
-    - Self-Issued OpenID Connect (SIOP) Flow
-    - Constrained Device Flow
-    - Implicit (Legacy) Flow
-    - Multi Resource Server (Multi-RS) Use Case
-    - Role of Local Authentication in OIDC Flows
-* 7 - Tokens and Credentials
-* 8 - Authenticated Requests
-    - Use of Authorization header
-    - Resource Server Credential Validation
-* 9 - Errors
-* 10 - Security Considerations
-* 11 - Privacy Considerations
-* 12 - Extensibility
-    - Adding Authentication schemes
-    - Adding Proof of Possession Mechanisms
-    - Interoperability with Existing Authentication schemes (SAML, etc)
-    - Interoperability with DID Auth
-    - Interoperability with Verifiable Credentials
-* 13 - Appendix
-    - Relationship to Other Specifications
-
-# 1. Introduction
-
-## 1.1 Audience
-
-## 1.2 Use Cases
-
-## 1.3 Design Goals and Rationale
-
-## 1.4 Compatibility with OpenID Connect
-
-## 1.5 Difference from OpenID Connect
-
-## 1.6 Difference from previous spec version (WebID-OIDC v0.1)
-
-## 1.6 Out of Scope
-
-## 1.7 Terminology
-
-This specification uses the terms "Credential", "Verifiable Credential",
-"Issuer" and "Presentation" defined by Verifiable Credentials Data Model 1.0
-[VC], the terms "Access Token", "Authorization Code", "Authorization Endpoint",
-"Authorization Grant", "Authorization Server", "Client Authentication", "Client
-Identifier", "Client Secret", "Grant Type", "ID Token", "Implicit Flow",
-"Protected Resource", "Redirection URI", "Refresh Token", "Resource Owner",
-"Resource Server", "Response Type", and "Token Endpoint" defined by OAuth 2.0
-[RFC6749], the terms "Claim Name", "Claim Value", "JSON Web Token (JWT)", "JWT
-Claims Set", and "Nested JWT" defined by JSON Web Token (JWT) [JWT], the terms
-"Header Parameter" and "JOSE Header" defined by JSON Web Signature (JWS) [JWS],
-the term "User Agent" defined by RFC 2616 [RFC2616], and the terms
-"Authentication", "Authentication Request", "Authorization Code Flow", "Claim",
-"End-User", "Entity", "Identifier", "Identity", "Implicit Flow", "OpenID
-Provider (OP)", "Relying Party (RP)", "Validation" and "Verification" defined by
-[OpenID Connect Core
-1.0](https://openid.net/specs/openid-connect-core-1_0.html#Terminology) [OIDC].
-
-##### entity
-As defined by [OIDC]:
-
-> Something that has a separate and distinct existence and that can be
-> identified in a context. An End-User is one example of an Entity.
-
-##### claim
-As defined by [OIDC]:
-
-> Piece of information asserted about an Entity.
-
-##### identifier
-As defined by [OIDC]:
-
-> Value that uniquely characterizes an Entity in a specific context.
-
-A [Web ID] or a [DID] is an example of a globally unique, non-pairwise
-pseudonymous identifier.
-
-##### controller
-A person ([end-user]), group or organization that is responsible for an
-[entity], and controls that entity's [identifier].
-
-##### identifier document
-A machine-readable document, obtainable by resolving a Web ID or DID
-[identifier], that contains statements and metadata about the Entity being
-identified. Typically, it contains cryptographic materials such
-as public keys, links to service endpoints and authorized [OpenID Connect
-Providers] (OPs), and other attributes that are helpful for purposes of
-[authentication].
+# Solid-OIDC Authentication Spec - Draft
 
-A Web ID Profile, and a DID Document, are both examples of identifier documents.
-
-##### end-user
-As defined by [OIDC]:
-
-> Human participant.
-
-##### identity
-As defined by [OIDC]:
-
-> Set of attributes related to an entity.
+# Abstract
 
-Here, identity specifically refers to a combination of an [identifier], and a
-corresponding [identifier document] that is obtainable by resolving that
-identifier.
+A key challenge on the path toward re-decentralizing user data on the
+Worldwide Web is the need to access multiple potentially untrusted
+resources servers securely. This document aims to address that challenge
+by building on top of current and future web standards, to allow
+entities to authenticate within a distributed ecosystem.
 
-##### authentication
-As defined by [OIDC]:
+# Status of This Document
 
-> Process used to achieve sufficient confidence in the binding between the
-> entity and the presented identity.
+This section describes the status of this document at the time of its
+publication. Other documents may supersede this document. A list of
+current W3C publications and the latest revision of this technical
+report can be found in the [W3C technical reports
+index](https://www.w3.org/TR/) at https://www.w3.org/TR/.
 
-##### authentication flow
-[OpenID Connect] built on top of OAuth 2's Authorization Grants, and
-introduced the concept of Authentication Flow - a process where a [client] can
-use a valid grant (such as the Implicit Grant, Authorization Code Grant, or
-others) to perform [authentication].
+This document is produced from work by the [Solid Community
+Group](https://www.w3.org/community/solid/). It is a draft document that
+may, or may not, be officially published. It may be updated, replaced,
+or obsoleted by other documents at any time. It is inappropriate to cite
+this document as anything other than work in progress. The source code
+for this document is available at the following
+URI: <https://github.com/solid/authentication-panel>
 
-The end result of any successful authentication flow is that the client
-performing it receives one or more credentials from the [identity provider]. In
-the case of classic OpenID Connect flows, those credentials are typically either
-the [id token], an [access token] specific to a particular resource server, or
-both.
+This document was published by the [Solid Authentication
+Panel](https://github.com/solid/process/blob/master/panels.md#authentication)
+as a First Draft.
 
-In addition, OpenID Connect provides a way for a [relying party] to request
-arbitrary [claims] or [credentials] inside the ID Token. In particular, this
-specification uses that mechanism to allow a  [relying party] to request one or
-more reusable credentials that enable audience-constrained [protected resource
-requests] to multiple unaffiliated [resource servers] (see section [Multi
-Resource Server (Multi-RS) Use Case] for more details).
+[GitHub Issues](https://github.com/solid/authentication-panel/issues)
+are preferred for discussion of this specification. Alternatively, you
+can send comments to our mailing list. Please send them to...
 
-##### Web ID
-A globally unique [identifier] (typically an HTTPS URL) for an [entity], that
-can be resolved to a Web ID Profile document.
+> TODO: Add email address, and archives links (archives).
 
-##### user-agent
-As defined by RFC 2616 [RFC2616]. Often, a formal name for a web browser. Note
-that this is often separate from a [client] application (in many cases, client
-apps written in Javascript run inside the browser).
+# Introduction
 
-##### resource controller
-An [entity] with administrative permissions to a resource (e.g. `acl:Control`
-access mode in the case of [WAC]). Alternatively, the [entity] in control of the
-[resource server] (such as a [Solid pod] or storage space) in which the resource
-resides.
+_This section is non-normative_
 
-Similar to the OAuth 2 and
-[UMA 2](https://docs.kantarainitiative.org/uma/wg/rec-oauth-uma-grant-2.0.html)
-concept of "resource owner", the resource controller MAY be an [end-user]
-(natural person) or MAY be a non-human entity treated as a person for limited
-legal purposes (legal person), such as a corporation.
+The [Solid project](https://solidproject.org/) aims to change the way
+web applications work today to improve privacy and user control of
+personal data by utilizing current standards, protocols, and tools, to
+facilitate building extensible and modular decentralized applications
+based on [Linked Data](https://www.w3.org/standards/semanticweb/data)
+principles.
 
-Note the use of "controller" as opposed to "owner"; this specification (and
-Solid in general), has no notion of owner.
+This specification is written for Authorization and Resource Server
+owners intending to implement Solid-OIDC. It is also useful to Solid
+application developers charged with implementing a Solid-OIDC client.
 
-A given resource can have zero, one, or multiple resource controllers.
+The [OAuth 2.0](https://tools.ietf.org/html/rfc6749) and [OpenID Connect
+Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html) web
+standards were published in October 2012, and November 2014,
+respectively. Since publication, they have increased with a marked pace
+and have claimed wide adoption with extensive _'real-world'_ data and
+experience. The strengths of the protocols are now clear, however, in a
+changing eco-system where privacy and control of digital identities are
+becoming more pressing concerns, it is also clear that additional
+functionality is required.
 
-##### protected resource
-A resource to which access is constrained by an appropriate authorization
-mechanism (such as Web Access Control [WAC] rules or Authorization Capabilities
-[zCAP]).
+The additional functionality is aimed at addressing:
 
-##### client
-An application, service, bot, or other software entity interacting with a
-protected resource hosted by a [resource server] on behalf of a [requesting
-party]. The term "client" does not imply any particular implementation
-characteristics (such as whether the application executes on a server, a
-desktop, inside a web browser, or on other devices).
+1. Ephemeral clients as a common use case.
+2. Resource servers with no existing trust relationship with identity
+   providers.
 
-The client is an [entity] in its own right, possessing an [identifier], and in
-some cases, a corresponding [identifier document] containing client metadata.
+## Out of Scope
 
-##### requesting party
-As defined by [UMA2]:
+> TBD
 
-An [entity] (natural or legal person) that uses a [client] to seek access to a
-[protected resource]. The requesting party may or may not be the same party as
-the [resource controller].
+# Terminology
 
-##### Solid storage
-A server compliant with the [Solid Specification] that acts as a [resource
-server] (RS).
+_This section is non-normative_
 
-##### resource server (RS)
-As defined by [OAuth2]:
+This specification uses the terms "access token", "authorization
+server", "resource server" (RS), "authorization endpoint", "token
+endpoint", "grant type", "access token reques", "access token
+response", and "client" defined by The OAuth 2.0 Authorization
+Framework \[[RFC6749](https://tools.ietf.org/html/rfc6749)\].
 
-> The server hosting the protected resources, capable of accepting and
-> responding to protected resource requests
+Throughout this specification, we will use the term Identity Provider
+(IdP) in line with the terminology used in the [Open ID Connect Core 1.0
+specification](https://openid.net/specs/openid-connect-core-1_0.html)
+(OIDC). It should be noted that [The OAuth 2.0 Authorization
+Framework](https://tools.ietf.org/html/rfc6749) (OAuth) refers to this
+same entity as an Authorization Server.
 
-##### protected resource request
-A request by a [client] to a [protected resource], carrying [authentication] or
-authorization [credentials] such as an OAuth 2 Access Token, a Verifiable
-Credential, or Proof of Possession token.
+This specification also defines the following terms:
 
-##### relying party (RP)
-As defined by [OIDC]:
+**WebID** _as defined in the [WebID 1.0 Editors
+Draft](https://dvcs.w3.org/hg/WebID/raw-file/tip/spec/identity-respec.html)_
 
-> OAuth 2.0 Client application requiring End-User Authentication and Claims
-> from an OpenID Provider.
+A WebID is a URI with an HTTP or HTTPS scheme which denotes an Agent
+(Person, Organization, Group, Device, etc.)
 
-The [client] needs [authentication] related [claims]/[credentials] for UI
-reasons (to display a user name and icon to indicate that they’re logged in, for
-example), but also in order to present those credentials to the [resource
-server] when making a [protected resource request]).
+**Demonstration of Proof-of-Possession at the Application Layer (DPoP)**
+_as defined in the [DPoP
+Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04)_
 
-##### OpenID Provider (OP)
-Also known as an Identity Provider (IdP) or the Authorization Server (AS).
+A mechanism for sender-constraining OAuth tokens via a
+proof-of-possession mechanism on the application level.
 
-As defined by [OIDC]:
+**JSON Web Token (JWT)** _as defined by
+[RFC7519](https://tools.ietf.org/html/rfc7519)_
 
-> OAuth 2.0 Authorization Server that is capable of Authenticating the End-User
-> and providing Claims to a Relying Party about the Authentication event and
-> the End-User.
+A string representing a set of claims as a JSON object that is encoded
+in a JWS or JWE, enabling the claims to be digitally signed or MACed
+and/or encrypted.
 
-## 1.8 Trust Model
+**JSON Web Key (JWK)** _as defined by
+[RFC7517](https://tools.ietf.org/html/rfc7517)_
 
-## 1.9 Overview
+A JSON object that represents a cryptographic key. The members of the
+object represent properties of the key, including its value.
 
-# 2. Concepts
+**Proof Key for Code Exchange (PKCE\*)** _as defined by
+[RFC7636](https://tools.ietf.org/html/rfc7636)_
 
-## 2.1 Relationship between Authentication and Authorization
+An extension to the Authorization Code flow which mitigates the risk of
+an authorization code interception attack.
 
-## 2.2 Identity
+# Conformance
 
-## 2.3 User Authentication
+_This section is non-normative_
 
-## 2.4 Client Authentication
+All authoring guidelines, diagrams, examples, and notes in this document
+are non-normative. Everything else in this specification is normative
+unless explicitly expressed otherwise.
 
-# 3. Authentication Scheme Discovery
+The key words MAY, MUST, MUST NOT, RECOMMENDED, SHOULD, SHOULD NOT, and
+REQUIRED in this document are to be interpreted as described in [BCP
+14](https://tools.ietf.org/html/bcp14)
+\[[RFC2119](https://www.w3.org/TR/2014/REC-cors-20140116/#refsRFC2119)\]
+\[[RFC8174](https://www.w3.org/TR/2019/REC-vc-data-model-20191119/#bib-rfc8174)\]
+when, and only when, they appear in all capitals, as shown here.
 
-[RFC 7235]() defined the protocol for using the WWW-Authenticate HTTP response
-header as a way for a Resource Server to issue one or more challenges to a
-client, that is, to communicate which Authentication schemes it supports.
+# Core Concepts
 
-Solid uses this mechanism to allow a [Resource Server]() to communicate to a
-[Client/Presenter]() which Authentication methods (and versions) it supports.
+## Ephemeral Identity Providers
 
-### Proposed WebID-OIDC 1.0 response example:
+_This section is non-normative_
 
-Example:
+In a decentralized ecosystem, such as Solid, the IdP may be:
 
-```
-> GET /example/resource
+- The user
+- Any client application, or,
+- Preexisting IdPs and vendors
 
-< HTTP/1.1 401 Unauthorized
-< WWW-Authenticate: DPoP realm=”https://example.com” scope=”openid webid”
-```
+Therefore, this specification makes extensive use of OAuth and OIDC best
+practices and assumes the
+[Authorization](https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowSteps)
+Code Flow with PKCE, as per OIDC definition. It is also assumed that
+there is no preexisting trust relationship with the IdP. This means
+dynamic, and static client registration is entirely optional.
 
-* Realm param is optional
-* Scope -- “`openid webid`” params a MUST.
+## WebIDs
 
-Note: the DPoP authentication scheme is required by [DPoP draft spec](https://tools.ietf.org/html/draft-fett-oauth-dpop)
+_This section is non-normative_
 
-If RS supports both authentication schemes (Bearer and DPoP), multiple WWW-Authenticate headers may be returned.
+In line with Linked Data principles, a
+[WebID](https://dvcs.w3.org/hg/WebID/raw-file/tip/spec/identity-respec.html)
+is a HTTP URI that, when dereferenced, resolves to a profile document
+that is structured data in an [RDF
+format](https://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/). This
+profile document allows people to link with others to grant access to
+identity resources as they see fit. WebIDs are an underpinning principle
+of the Solid movement and are used as the primary identifier for users
+and client applications in this specification.
 
-```
-WWW-Authenticate: DPoP realm=”https://example.com” scope=”openid webid”, Bearer realm=”https://example.com” scope=”openid webid”
-```
+# Basic Flow
 
-# 4. Identity Provider Selection
+_This section is non-normative_
 
-# 5. Client Registration / Application Metadata
+> TODO: Add diagram.
 
-Client Registration for Solid clients is optional. The [Client]() can proceed
-without registration as if it had registered with the [OP]() and obtained the
-following [OAuth 2.0 Dynamic Client
-Registration](https://tools.ietf.org/html/rfc7591) response:
+The basic authentication and authorization flow is as follows:
 
-```
-client_id: <Client ID such as a client Web ID or redirect_uri>
-client_secret_expires_at: 0
-```
+1. The client requests a non-public resource from the RS.
+2. The RS returns a 401 with a `WWW-Authenticate` HTTP header
+   containing parameters that inform the client that a DPoP-bound
+   Access Token is required.
+3. The client presents its WebID to the IdP and requests an
+   Authorization Code.
+4. The client presents the Authorization Code and a DPoP proof, to the
+   token endpoint.
+5. The Token Endpoint returns a DPoP-bound Access Token and OIDC ID
+   Token, to the client.
+6. The client presents the DPoP-bound Access Token and DPoP proof, to
+   the RS.
+7. The RS validates the Access Token and DPoP header, then returns the
+   requested resource.
 
-Otherwise, Static or Dynamic registration proceeds exactly as outlined in the
-existing OIDC and OAuth 2 specifications.
+# Proof of Identity
 
-# 6. Authentication Flows
+Client registration (static or dynamic) is not required in Solid-OIDC,
+thus Access Tokens need to be bound to the client, to prevent token
+replay attacks. This is achieved by using a [Distributed
+Proof-of-Possession](https://tools.ietf.org/html/draft-fett-oauth-dpop-04)
+(DPoP) mechanism at the application layer.
 
-## 6.1 OIDC Authorization Code Flow
+# Token Instantiation
 
-## 6.2 Constrained Device Flow
+Assuming the token request and DPoP Proof are valid, the client MUST
+receive two tokens from the IdP:
 
-## 6.3 Implicit (Legacy) Flow
+1. A DPoP-bound Access Token
+2. An OIDC ID Token
 
-## 6.4 Multi Resource Server (Multi-RS) Use Case
+These tokens require additional and/or modified claims for them to be
+compliant with the authorization flow laid out in this document.
 
-## 6.5 Role of Local Authentication in OIDC Flows
+## Access Token
 
-# 7. Tokens and Credentials
+The client MUST send the IdP a DPoP proof that is valid according to the
+[DPoP
+Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04).
+The Access Token MUST be a JWT and the IdP MUST embed the client\'s
+WebID in the Access Token as a custom claim. This claim MUST be named
+`client_webid`.
 
-### ID Tokens
+The audience (`aud`) claim is required in OAuth, however, the
+DPoP token provides the full URL of the request, making the `aud`
+claim redundant, so in Solid-OIDC the `aud` claim MUST be a string
+with the value of `solid`.
 
-The ID Token, defined in [OIDC Core 1.0](), has two primary purposes:
-
-1. Authenticates the user to the RP / Client application (so that it can
-   display their name / picture, for example)
-2. Serve as a general-purpose container for arbitrary custom claims.
-
-[OIDC Core 1.0 section 5]() defines the Claims mechanism, as a way to request
-arbitrary claims and credentials inside the `id_token`. (Either via `scope`
-param (section
-https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims) or via the
-`claims` request param (section
-https://openid.net/specs/openid-connect-core-1_0.html#ClaimsParameter))
-
-Example of a traditional ID Token:
-
-```
-{
-  "iss": "http://server.example.com",
-  "sub": "248289761001",
-  "aud": "s6BhdRkqt3",
-  "nonce": "n-0S6_WzA2Mj",
-  "exp": 1311281970,
-  "iat": 1311280970,
-  "nickname": "JaneDoe",
-  "picture": "http://example.com/janedoe/me.jpg",
-  <any other custom claims>
-}
-```
-
-Custom claims that we use currently: `webid`.
-Custom claims this spec proposes: `id_vc`.
-
-### Identity Credential
-
-The Identity Credential is requested and received as a custom claim, inside
-the existing OIDC ID Token:
-
-```
-{
-  "iss": "https://idp.example.com",
-  "sub": "https://janedoe.com/web#id",
-  "aud": "https://client.example.com",
-  "nonce": "n-0S6_WzA2Mj",
-  "exp": 1311281970,
-  "iat": 1311280970,
-  “id_vc”: <reusable ID credential, in Verifiable Credentials format, encoded as a JWT>
-}
-```
-
-- Is reused (with DPoP mechanism) for the Multi-RS use case
-- For non-Multi-RS cases (and for compatibility with current IdPs and clients), use of ID Credential is optional; a WebID URL can be derived from plain ID Token or Access Token (see below).
-
-Decoded `id_vc`, a re-usable identity credential, for use with DPoP headers:
-
-```
-{
-  "sub": "https://janedoe.com/web#id",    <- Web ID / DID
-  "iss": "https://idp.example.com",
-  "aud": "https://client.example.com", // audience constrained to the client / presenter
-  "iat": 1541493724,
-  "exp": 1573029723,  <- identity credential expiration (separate from the ID token)
-  "cnf":{
-         // DPoP public key confirmation, per DPoP spec section 7
-       "jkt":"0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I"  
-  }
-}
-```
-
-# 8. Authenticated Requests
-
-When making authenticated requests to [Resource Server]()s, a [Client]() uses
-a combination of the `Authorization` header and an appropriate Proof of
-Possession header (such as DPoP).
-
-## 8.1 Use of Authorization header
-
-### For Multi-RS / “Social App” Use Cases
-
-For Multi-RS use cases, a client MUST use an `Authorization` header as well
-as the `DPoP` proof-of-possession header.
-
-**Authorization:** `DPoP <include JWT-encoded ID Credential here>`<br/>
-**DPoP:** `<include a sender-constrained DPoP Proof JWT (see example below)>`
-
-Example authenticated request:
-
-```
-GET /protectedresource HTTP/1.1
- Host: resource.example.org
- Authorization: DPoP eyJhbGciOiJFUzI1NiIsImtpZCI6IkJlQUxrYiJ9.eyJzdWI
-  iOiJzb21lb25lQGV4YW1wbGUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zZXJ2ZXIuZXhhbX
-  BsZS5jb20iLCJhdWQiOiJodHRwczovL3Jlc291cmNlLmV4YW1wbGUub3JnIiwibmJmI
-  joxNTYyMjYyNjExLCJleHAiOjE1NjIyNjYyMTYsImNuZiI6eyJqa3QiOiIwWmNPQ09S
-  Wk5ZeS1EV3BxcTMwalp5SkdIVE4wZDJIZ2xCVjN1aWd1QTRJIn19.vsFiVqHCyIkBYu
-  50c69bmPJsj8qYlsXfuC6nZcLl8YYRNOhqMuRXu6oSZHe2dGZY0ODNaGg1cg-kVigzY
-  hF1MQ
- DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6Ik
-  VDIiwieCI6Imw4dEZyaHgtMzR0VjNoUklDUkRZOXpDa0RscEJoRjQyVVFVZldWQVdCR
-  nMiLCJ5IjoiOVZFNGpmX09rX282NHpiVFRsY3VOSmFqSG10NnY5VERWclUwQ2R2R1JE
-  QSIsImNydiI6IlAtMjU2In19.eyJqdGkiOiJlMWozVl9iS2ljOC1MQUVCIiwiaHRtIj
-  oiR0VUIiwiaHR1IjoiaHR0cHM6Ly9yZXNvdXJjZS5leGFtcGxlLm9yZy9wcm90ZWN0Z
-  WRyZXNvdXJjZSIsImlhdCI6MTU2MjI2MjYxOH0.lNhmpAX1WwmpBvwhok4E74kWCiGB
-  NdavjLAeevGy32H3dbF0Jbri69Nm2ukkwb-uyUI4AUg1JSskfWIyo4UCbQ
-```
-
-Example contents of `Authorization` header (this is the ID Credential in its
-entirety, the contents of the `id_vc` claim from the IDP's ID Token):
-
-```
-{
-  "sub": "https://janedoe.com/web#id",    <- Web ID / DID
-  "iss": "https://idp.example.com",
-  "aud": "https://client.example.com", // audience constrained to the client / presenter
-  "iat": 1541493724,
-  "exp": 1573029723,  <- identity credential expiration
-  "cnf":{
-      // DPoP public key confirmation, per DPoP spec section 7
-      "jkt":"0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I"  
-  }
-}
-// This ID Credential is signed by the IDP, NOT by the client
-```
-
-Example DPoP Proof JWT (minted by Client app for each resource) (the
-contents of the `DPoP` header):
+An example Access Token:
 
 ```js
 {
-   "typ":"dpop+jwt",
-   "alg":"ES256",
-   "jwk": {   // <- gets checked against the cnf claim in the ID Credential (from the Authorization header)
-     "kty":"EC",
-     "x":"l8tFrhx-34tV3hRICRDY9zCkDlpBhF42UQUfWVAWBFs",
-     "y":"9VE4jf_Ok_o64zbTTlcuNJajHmt6v9TDVrU0CdvGRDA",
-     "crv":"P-256"
-   }
- }.{
-   "jti":"-BwC3ESc6acc2lTc",
-   "iat":1562262616,
-    // the following fields are required only for the authenticated resource request (not for the token endpoint)
-   "htm":"POST",
-   "htu":"https://rs.example.com/protected/resource",   // <- audience-restriction mechanism
- }
-// This token is signed by the client
-```
-
-### For “traditional” / Single RS Use Cases
-
-For authenticated requests clients MUST do one of:
-
-a) Either use DPoP-authenticated requests as per Multi-RS section above, or<br/>
-b) Use “traditional” style access token (and derive WebID url from it as per
-   this spec)
-
-```
-  GET /protectedresource HTTP/1.1
-   Host: resource.example.org
-   Authorization: Bearer eyJhbGciOi...kVigzY
-```
-
-Note the use of `Bearer` authentication scheme, as opposed to the `DPoP` scheme
-from previous section.
-
-```
-{
-  "iss": "http://idp.example.com",
-  "sub": "https://janedoe.com/web#id",
-  "aud": "https://rs.example.com",
-  "exp": 1311281970,
-  "iat": 1311280970,
-   ...
+    "sub": "https://janedoe.com/web#id", // Web ID of User
+    "iss": "https://idp.example.com",
+    "aud": "solid",
+    "iat": 1541493724,
+    "exp": 1573029723, // Identity credential expiration (separate from the ID token expiration)
+    "cnf":{
+    "jkt":"0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I" // DPoP public key confirmation claim
+    "client_webid": "<https://client.example.com/web#id>" // WebID of client
 }
 ```
 
-## 8.2 Resource Server Credential Validation
+## ID Token
 
-A [Resource Server]() must validate all authenticated requests using the
-required validation steps for each method, plus the (Solid-specific)
-[Authorized WebID Provider
-Confirmation](https://github.com/solid/webid-oidc-spec#webid-provider-confirmation)
-step.
+The subject (`sub`) claim in the returning ID Token MUST be set to the
+user's WebID.
 
-### Bearer Tokens (Authorization: Bearer), Single RS use case
+Example:
 
-1. Validate JWS token as per the JOSE rules (expiration, 'not-before’
-   timestamp, signature validation by the issuer, audience claim matches the RS)
-2. (Solid-Specific) Validate that the issuer is an authorized OIDC issuer by
-   fetching the WebID Profile, and performing the Authorized WebID Provider
-   Confirmation step.
+```js
+{
+    "iss": "https://idp.example.com",
+    "sub": "https://janedoe.com/web#id",
+    "aud": "https://client.example.com",
+    "nonce": "n-0S6_WzA2Mj",
+    "exp": 1311281970,
+    "iat": 1311280970,
+}
+```
 
-### DPoP Tokens (Authorization: DPoP), Multi RS use case
+# Resource Access
 
-1. Validate the Proof token from the DPoP: header as per
-   https://tools.ietf.org/html/draft-fett-oauth-dpop-03#section-4.2
-   (Checking DPoP Proofs)
-2. Validate the ID Credential from the `Authorization: DPoP` header, as per
-   JOSE rules, plus
-   https://tools.ietf.org/html/draft-fett-oauth-dpop-03#section-7
-   (Public Key Confirmation) section.
-3. (Solid-Specific) Validate that the issuer is an authorized OIDC issuer by
-   fetching the WebID Profile, and performing the Authorized WebID Provider
-   Confirmation step.
+Ephemeral clients MUST use DPoP-bound Access Tokens, however, the RS MAY
+allow registered clients to access resources using a traditional
+`Bearer` tokens.
 
-# 9. Errors
+## DPoP Validation
 
-# 10. Security Considerations
+As mentioned in Section XX, a valid DPoP token is REQUIRED to have an
+`iat` claim as stated in the [DPoP
+Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-4.1).
+The RS MUST check the `iat` claim's timestamp to ensure it is
+received within the agreed-upon limits.
 
-# 11. Privacy Considerations
+The encoded HTTP response and resource URL of the DPoP token MUST be
+dereferenced and matched against the original request in the Access
+Token.
 
-# 12. Extensibility
+If either the DPoP token has expired, or either the URL and the HTTP
+method does not match that of the resource request then the RS MUST deny
+the resource request.
 
-# 13. Appendix
+## Validating the Access Token
 
-## 13.1 Relationship to Other Specifications
+### WebID
+
+The `sub` claim of the Access Token MUST be a WebID. This needs to be
+dereferenced and checked against the `iss` claim in the Access Token.
+If the `iss` claim is different from the domain of the WebID, then the
+RS MUST check the WebID document for a `solid:oidcIssuer` property to
+check the token issuer is listed. This prevents a malicious identity
+provider from issuing valid Access Tokens for arbitrary WebIDs.
+
+### Public/private key pair
+
+The public key in the fingerprint of the Access Token MUST be checked
+against the DPoP fingerprint to ensure a match, as outlined in the [DPoP
+Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-6).
+To achieve this the RS must fetch the required pubic key from the IdP to
+match the Access Tokens `cnf` claim against the DPoP tokens
+fingerprint to verify they are a bound pair.
+
+An RS MUST deny any resource request that does not include a verifiable
+confirmation claim that is dereferenceable from the Access Token.
+
+### JSON Web Key Store
+
+It is RECOMMENDED that the RS keep a list of trusted IdPs, to facilitate
+the expedient lookup of JWKS through local trust stores or cached public
+keys.
+
+If the IdP does not appear on the RS's list of trusted providers, then
+the RS MUST perform OIDC discovery to fetch the JWKS location by
+obtaining the `jwks_uri` from the IdPs
+`/.well-known/openid-configuration` page. The JWKS will contain an
+undetermined number of public keys. The `kid` claim in the Access
+Token header will provide the necessary location of the required public
+key from the JWKS keyset.
+
+The JWK MUST be in a standard format as defined in the JSON Web Key
+specification\[[RFC7517](https://tools.ietf.org/html/rfc7517)\].
+
+An example of a JWKS:
+
+```js
+{
+// All values shorten for brevity
+"keys": [{
+    "p": "0Euvv-n31c26PoY...J5Zntp1uDcQ8",
+    "kty": "RSA",
+    "q": "sZOchpZUjWhdR...xnUwGJVwjbq2k",
+    "d": "H-UIIpXTlULSBUz...3MxPlJTmX1ilW4vEQ",
+    "e": "AQAB",
+    "use": "sig",
+    "kid": "rsa1",
+    "qi": "H-Q748vgZD1sQfv...YP0cUYntrzToAFhZrCUftA",
+    "dp": "FD1Gdn9ldYDn9-tTjHN...hwjgT2Rrg2055qSlbPEE",
+    "alg": "RS256",
+    "dq": "j7641y271hgkYncjFF5hJ...hDIk15-aW_1-BFAmPk",
+    "n": "kHxvVTz_ygk5bII-7N9pZ...2WR9V8JZGJBvYhUNkJw"
+    }]
+}
+```
+
+# Security Considerations
+
+> This section is incomplete
+
+_This section is non-normative_
+
+As this specification builds upon existing web standards, all security
+considerations from OAuth, OIDC, and DPoP specifications may also apply
+unless otherwise indicated. The following considerations should be
+reviewed by implementors and system/s architects of this specification.
+
+## TLS Requirements
+
+All implementors of this specification MUST support TLS. The version(s)
+that ought to be implemented will vary over time, depending on
+availability and known security vulnerabilities. Current security
+considerations can be found in "Recommendations for Secure Use of
+Transport Layer Security (TLS) and Datagram Transport Layer Security
+(DTLS)" \[[BCP195](https://tools.ietf.org/html/bcp195)\].
+
+Whenever TLS is used, a TLS server certificate check MUST be performed
+\[[RFC6125](https://tools.ietf.org/html/rfc6125)\].
+
+All tokens, client, and user credentials MUST only be transmitted by
+TLS.
+
+## Cryptography
+
+All randomly generated cryptographic values SHOULD have sufficient
+entropy to make brute-force attacks impractical.
+
+## Client IDs
+
+Implementors SHOULD expire client IDs that are kept in server storage
+mitigate the potential for a bad actor to fill server storage with
+unexpired or otherwise useless client IDs.
+
+## Client Secrets
+
+Client secrets SHOULD NOT be stored in browser local storage. Doing so
+will increase the risk of data leaks should an attacker gain access to
+client credentials.
+
+# Privacy considerations
+
+> TODO:
+
+# Acknowledgments
+
+> TODO:
+
+# References
+
+> TODO:
