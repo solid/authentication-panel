@@ -234,8 +234,9 @@ An example Access Token:
     "iat": 1541493724,
     "exp": 1573029723, // Identity credential expiration (separate from the ID token expiration)
     "cnf":{
-    "jkt":"0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I" // DPoP public key confirmation claim
-    "client_webid": "<https://client.example.com/web#id>" // WebID of client
+      "jkt":"0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I" // DPoP public key confirmation claim
+    },
+    "client_webid": "https://client.example.com/web#id" // WebID of client
 }
 ```
 
