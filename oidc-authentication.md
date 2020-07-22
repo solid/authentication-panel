@@ -266,18 +266,11 @@ allow registered clients to access resources using a traditional
 
 ## DPoP Validation
 
-As mentioned in Section XX, a valid DPoP token is REQUIRED to have an
-`iat` claim as stated in the [DPoP
-Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-4.1).
-The RS MUST check the `iat` claim's timestamp to ensure it is
-received within the agreed-upon limits.
-
-The encoded HTTP response and resource URL of the DPoP token MUST be
-dereferenced and matched against the original request in the Access
-Token.
+The DPoP token must be validated using the methods outlined in the [DPoP
+Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-4.2).
 
 If either the DPoP token has expired, or either the URL and the HTTP
-method does not match that of the resource request then the RS MUST deny
+method does not match that of the resource requested in the Access Token, then the RS MUST deny
 the resource request.
 
 ## Validating the Access Token
@@ -302,45 +295,6 @@ fingerprint to verify they are a bound pair.
 
 An RS MUST deny any resource request that does not include a verifiable
 confirmation claim that is dereferenceable from the Access Token.
-
-### JSON Web Key Store
-
-It is RECOMMENDED that the RS keep a list of trusted IdPs, to facilitate
-the expedient lookup of JWKS through local trust stores or cached public
-keys.
-
-If the IdP does not appear on the RS's list of trusted providers, then
-the RS MUST perform OIDC discovery to fetch the JWKS location by
-obtaining the `jwks_uri` from the IdPs
-`/.well-known/openid-configuration` page. The JWKS will contain an
-undetermined number of public keys. The `kid` claim in the Access
-Token header will provide the necessary location of the required public
-key from the JWKS keyset.
-
-The JWK MUST be in a standard format as defined in the JSON Web Key
-specification\[[RFC7517](https://tools.ietf.org/html/rfc7517)\].
-
-An example of a JWKS:
-
-```js
-{
-// All values shorten for brevity
-"keys": [{
-    "p": "0Euvv-n31c26PoY...J5Zntp1uDcQ8",
-    "kty": "RSA",
-    "q": "sZOchpZUjWhdR...xnUwGJVwjbq2k",
-    "d": "H-UIIpXTlULSBUz...3MxPlJTmX1ilW4vEQ",
-    "e": "AQAB",
-    "use": "sig",
-    "kid": "rsa1",
-    "qi": "H-Q748vgZD1sQfv...YP0cUYntrzToAFhZrCUftA",
-    "dp": "FD1Gdn9ldYDn9-tTjHN...hwjgT2Rrg2055qSlbPEE",
-    "alg": "RS256",
-    "dq": "j7641y271hgkYncjFF5hJ...hDIk15-aW_1-BFAmPk",
-    "n": "kHxvVTz_ygk5bII-7N9pZ...2WR9V8JZGJBvYhUNkJw"
-    }]
-}
-```
 
 # Security Considerations
 
