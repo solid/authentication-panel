@@ -341,7 +341,11 @@ client credentials.
 
 # Privacy considerations
 
-> TODO:
+_This section is non-normative_
+
+## Access Token Reuse
+
+With JWTs being extendable by design, there is potential for a privacy breach if Access Tokens get reused across multiple resource servers. It is not unimaginable that a custom claim is added to the Access Token on instantiation. This addition may unintentionally give other resource servers consuming the Access Token information about the user that they may not wish to share outside of the intended RS.
 
 # Acknowledgments
 
