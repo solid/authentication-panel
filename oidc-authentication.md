@@ -59,7 +59,12 @@ The additional functionality is aimed at addressing:
 
 ## Out of Scope
 
-> TBD
+_This section is non-normative_
+
+At the time of writing, there is currently no authorization use case for a public application to
+strongly assert identity within an ecosystem of ephemeral clients. However, we do feel that this
+will not always be the case, and future drafts of this document may have a mechanism in place to
+accomplish this with client WebIDs or similar.
 
 # Terminology
 
@@ -187,9 +192,7 @@ authorization flow laid out in this document.
 ## Access Token
 
 The client MUST send the IdP a DPoP proof that is valid according to the
-[DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04). The Access Token MUST
-be a JWT and the IdP MUST embed the client\'s WebID in the Access Token as a custom claim. This
-claim MUST be named `client_webid`.
+[DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04).
 
 The audience (`aud`) claim is required in OAuth, however, the DPoP token provides the full URL of
 the request, making the `aud` claim redundant, so in Solid-OIDC the `aud` claim MUST be a string
@@ -207,7 +210,6 @@ An example Access Token:
     "cnf":{
       "jkt":"0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I" // DPoP public key confirmation claim
     },
-    "client_webid": "https://client.example.com/web#id" // WebID of client
 }
 ```
 
@@ -298,6 +300,13 @@ bad actor to fill server storage with unexpired or otherwise useless client IDs.
 
 Client secrets SHOULD NOT be stored in browser local storage. Doing so will increase the risk of
 data leaks should an attacker gain access to client credentials.
+
+## Client Trustworthiness
+
+_This section is non-normative_
+
+Given that this flow identifies that clients are ephemeral, and are unable to keep secrets, the
+trustworthiness of the request to the IdP is difficult to assess.
 
 # Privacy considerations
 
