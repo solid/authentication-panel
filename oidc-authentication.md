@@ -61,10 +61,8 @@ The additional functionality is aimed at addressing:
 
 _This section is non-normative_
 
-At the time of writing, there is currently no authorization use case for a public application to
-strongly assert identity within an ecosystem of ephemeral clients. However, we do feel that this
-will not always be the case, and future drafts of this document may have a mechanism in place to
-accomplish this with client WebIDs or similar.
+At the time of writing, there is no demonstrated use case for a strongly asserted identity, however,
+it is likely that authorization requirements will necessitate it.
 
 # Terminology
 
@@ -270,7 +268,7 @@ dereferenceable from the Access Token.
 
 _This section is non-normative_
 
-As this specification builds upon existing web standards, all security considerations from OAuth,
+As this specification builds upon existing web standards, security considerations from OAuth,
 OIDC, and DPoP specifications may also apply unless otherwise indicated. The following
 considerations should be reviewed by implementors and system/s architects of this specification.
 
@@ -284,7 +282,7 @@ Datagram Transport Layer Security (DTLS)" \[[BCP195](https://tools.ietf.org/html
 Whenever TLS is used, a TLS server certificate check MUST be performed
 \[[RFC6125](https://tools.ietf.org/html/rfc6125)\].
 
-All tokens, client, and user credentials MUST only be transmitted by TLS.
+All tokens, client, and user credentials MUST only be transmitted over TLS.
 
 ## Cryptography
 
@@ -293,7 +291,7 @@ attacks impractical.
 
 ## Client IDs
 
-Implementors SHOULD expire client IDs that are kept in server storage mitigate the potential for a
+Implementors SHOULD expire client IDs that are kept in server storage to mitigate the potential for a
 bad actor to fill server storage with unexpired or otherwise useless client IDs.
 
 ## Client Secrets
@@ -301,12 +299,12 @@ bad actor to fill server storage with unexpired or otherwise useless client IDs.
 Client secrets SHOULD NOT be stored in browser local storage. Doing so will increase the risk of
 data leaks should an attacker gain access to client credentials.
 
-## Client Trustworthiness
+## Client Trust
 
 _This section is non-normative_
 
-Given that this flow identifies that clients are ephemeral, and are unable to keep secrets, the
-trustworthiness of the request to the IdP is difficult to assess.
+Clients are ephemeral, client registration is optional, and most clients cannot keep secrets. These,
+among other factors, are what makes client trust challenging.
 
 # Privacy considerations
 
