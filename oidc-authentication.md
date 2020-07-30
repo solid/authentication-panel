@@ -26,10 +26,9 @@ This document was published by the
 as a First Draft.
 
 [GitHub Issues](https://github.com/solid/authentication-panel/issues) are preferred for discussion
-of this specification. Alternatively, you can send comments to our mailing list. Please send them
-to...
-
-> TODO: Add email address, and archives links (archives).
+of this specification. Alternatively, you can send comments to our mailing list. Please send them to
+[public-solid@w3.org](mailto:public-solid@w3.org)
+([archives](https://lists.w3.org/Archives/Public/public-solid/))
 
 # Introduction
 
@@ -268,9 +267,9 @@ dereferenceable from the Access Token.
 
 _This section is non-normative_
 
-As this specification builds upon existing web standards, security considerations from OAuth,
-OIDC, and DPoP specifications may also apply unless otherwise indicated. The following
-considerations should be reviewed by implementors and system/s architects of this specification.
+As this specification builds upon existing web standards, security considerations from OAuth, OIDC,
+and DPoP specifications may also apply unless otherwise indicated. The following considerations
+should be reviewed by implementors and system/s architects of this specification.
 
 ## TLS Requirements
 
@@ -291,8 +290,8 @@ attacks impractical.
 
 ## Client IDs
 
-Implementors SHOULD expire client IDs that are kept in server storage to mitigate the potential for a
-bad actor to fill server storage with unexpired or otherwise useless client IDs.
+Implementors SHOULD expire client IDs that are kept in server storage to mitigate the potential for
+a bad actor to fill server storage with unexpired or otherwise useless client IDs.
 
 ## Client Secrets
 
