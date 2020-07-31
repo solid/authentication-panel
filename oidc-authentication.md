@@ -263,30 +263,17 @@ dereferenceable from the Access Token.
 
 # Security Considerations
 
-> This section is incomplete
-
 _This section is non-normative_
 
-As this specification builds upon existing web standards, security considerations from OAuth, OIDC,
-and DPoP specifications may also apply unless otherwise indicated. The following considerations
+As this specification builds upon existing web standards, security considerations from OAuth, OIDC, PKCE,
+and the DPoP specifications may also apply unless otherwise indicated. The following considerations
 should be reviewed by implementors and system/s architects of this specification.
 
 ## TLS Requirements
 
-All implementors of this specification MUST support TLS. The version(s) that ought to be implemented
-will vary over time, depending on availability and known security vulnerabilities. Current security
-considerations can be found in "Recommendations for Secure Use of Transport Layer Security (TLS) and
-Datagram Transport Layer Security (DTLS)" \[[BCP195](https://tools.ietf.org/html/bcp195)\].
-
-Whenever TLS is used, a TLS server certificate check MUST be performed
-\[[RFC6125](https://tools.ietf.org/html/rfc6125)\].
+All TLS requirements oulined in [OIDC Section 16.17](https://openid.net/specs/openid-connect-core-1_0.html#Security) apply to this specification. 
 
 All tokens, client, and user credentials MUST only be transmitted over TLS.
-
-## Cryptography
-
-All randomly generated cryptographic values SHOULD have sufficient entropy to make brute-force
-attacks impractical.
 
 ## Client IDs
 
