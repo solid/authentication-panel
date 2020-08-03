@@ -87,12 +87,6 @@ This specification also defines the following terms:
 A WebID is a URI with an HTTP or HTTPS scheme which denotes an Agent (Person, Organization, Group,
 Device, etc.)
 
-**Demonstration of Proof-of-Possession at the Application Layer (DPoP)** _as defined in the
-[DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04)_
-
-A mechanism for sender-constraining OAuth tokens via a proof-of-possession mechanism on the
-application level.
-
 **JSON Web Token (JWT)** _as defined by [RFC7519](https://tools.ietf.org/html/rfc7519)_
 
 A string representing a set of claims as a JSON object that is encoded in a JWS or JWE, enabling the
@@ -103,7 +97,18 @@ claims to be digitally signed or MACed and/or encrypted.
 A JSON object that represents a cryptographic key. The members of the object represent properties of
 the key, including its value.
 
-**Proof Key for Code Exchange (PKCE\*)** _as defined by
+**Demonstration of Proof-of-Possession at the Application Layer (DPoP)** _as defined in the
+[DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04)_
+
+A mechanism for sender-constraining OAuth tokens via a proof-of-possession mechanism on the
+application level.
+
+**DPoP Proof** _as defined by
+[DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04)_
+
+A DPoP proof is a JWT that is signed (using JWS) using a private key chosen by the client.
+
+**Proof Key for Code Exchange (PKCE)** _as defined by
 [RFC7636](https://tools.ietf.org/html/rfc7636)_
 
 An extension to the Authorization Code flow which mitigates the risk of an authorization code
@@ -234,10 +239,10 @@ access resources using a traditional `Bearer` tokens.
 
 ## DPoP Validation
 
-The DPoP token must be validated using the methods outlined in the
+The DPoP Proof must be validated using the methods outlined in the
 [DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-4.2).
 
-If either the DPoP token has expired, or either the URL and the HTTP method does not match that of
+If either the DPoP Proof has expired, or either the URL and the HTTP method does not match that of
 the resource requested in the Access Token, then the RS MUST deny the resource request.
 
 ## Validating the Access Token
@@ -265,13 +270,15 @@ dereferenceable from the Access Token.
 
 _This section is non-normative_
 
-As this specification builds upon existing web standards, security considerations from OAuth, OIDC, PKCE,
-and the DPoP specifications may also apply unless otherwise indicated. The following considerations
-should be reviewed by implementors and system/s architects of this specification.
+As this specification builds upon existing web standards, security considerations from OAuth, OIDC,
+PKCE, and the DPoP specifications may also apply unless otherwise indicated. The following
+considerations should be reviewed by implementors and system/s architects of this specification.
 
 ## TLS Requirements
 
-All TLS requirements oulined in [OIDC Section 16.17](https://openid.net/specs/openid-connect-core-1_0.html#Security) apply to this specification. 
+All TLS requirements oulined in
+[OIDC Section 16.17](https://openid.net/specs/openid-connect-core-1_0.html#Security) apply to this
+specification.
 
 All tokens, client, and user credentials MUST only be transmitted over TLS.
 
