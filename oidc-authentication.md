@@ -129,15 +129,10 @@ when, they appear in all capitals, as shown here.
 
 # Core Concepts
 
-## Ephemeral Identity Providers
-
 _This section is non-normative_
 
-In a decentralized ecosystem, such as Solid, the IdP may be:
-
-- The user
-- Any client application, or,
-- Preexisting IdPs and vendors
+In a decentralized ecosystem, such as Solid, an IdP may be a preexisting IdP or vendor, or at the
+other end of the spectrum, a user-controlled IdP.
 
 Therefore, this specification makes extensive use of OAuth and OIDC best practices and assumes the
 [Authorization](https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowSteps) Code Flow with
