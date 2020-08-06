@@ -234,13 +234,19 @@ access resources using a traditional `Bearer` tokens.
 
 ## DPoP Validation
 
-The DPoP Proof must be validated using the methods outlined in the
+If a `cnf` claim is present in the Access Token, then it must a DPoP Proof must be present and
+validated using the methods outlined in the
 [DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-4.2).
 
-If either the DPoP Proof has expired, or either the URL and the HTTP method does not match that of
-the resource requested in the Access Token, then the RS MUST deny the resource request.
+As defined, this includes ensuring that the DPoP Proof has not expired, and both the URL and the
+HTTP method match that of the requested resource. If any of these checks fail, the RS MUST deny the
+resource request.
 
 ## Validating the Access Token
+
+The public key in the fingerprint of the Access Token MUST be checked against the DPoP fingerprint
+to ensure a match, as outlined in the
+[DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-6).
 
 ### WebID
 
@@ -249,17 +255,6 @@ against the `iss` claim in the Access Token. If the `iss` claim is different fro
 WebID, then the RS MUST check the WebID document for a `solid:oidcIssuer` property to check the
 token issuer is listed. This prevents a malicious identity provider from issuing valid Access Tokens
 for arbitrary WebIDs.
-
-### Public/private key pair
-
-The public key in the fingerprint of the Access Token MUST be checked against the DPoP fingerprint
-to ensure a match, as outlined in the
-[DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-6). To achieve
-this the RS must fetch the required pubic key from the IdP to match the Access Tokens `cnf` claim
-against the DPoP tokens fingerprint to verify they are a bound pair.
-
-An RS MUST deny any resource request that does not include a verifiable confirmation claim that is
-dereferenceable from the Access Token.
 
 # Security Considerations
 
