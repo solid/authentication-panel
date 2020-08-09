@@ -194,7 +194,7 @@ IdP:
 These tokens require additional and/or modified claims for them to be compliant with the
 authorization flow laid out in this document.
 
-## Access Token
+## DPoP-bound Access Token
 
 The client MUST send the IdP a DPoP proof that is valid according to the
 [DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04).
@@ -207,18 +207,18 @@ An example Access Token:
 
 ```js
 {
-    "sub": "https://janedoe.com/web#id", // Web ID of User
+    "sub": "https://janedoe.com/web#id", // WebID of User
     "iss": "https://idp.example.com",
     "aud": "solid",
     "iat": 1541493724,
     "exp": 1573029723, // Identity credential expiration (separate from the ID token expiration)
     "cnf":{
       "jkt":"0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I" // DPoP public key confirmation claim
-    },
+    }
 }
 ```
 
-## ID Token
+## OICD ID Token
 
 The subject (`sub`) claim in the returning ID Token MUST be set to the user's WebID.
 
@@ -231,7 +231,7 @@ Example:
     "aud": "https://client.example.com",
     "nonce": "n-0S6_WzA2Mj",
     "exp": 1311281970,
-    "iat": 1311280970,
+    "iat": 1311280970
 }
 ```
 
@@ -242,39 +242,41 @@ access resources using a traditional `Bearer` tokens.
 
 ## DPoP Validation
 
-If a `cnf` claim is present in the Access Token, then it must a DPoP Proof must be present and
-validated using the methods outlined in the
-[DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-4.2).
+If a `cnf` claim is present in the DPoP-bound Access Token, then it must a DPoP
+Proof must be present and validated using the methods outlined in the [DPoP
+Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-4.2).
 
 As defined, this includes ensuring that the DPoP Proof has not expired, and both the URL and the
 HTTP method match that of the requested resource. If any of these checks fail, the RS MUST deny the
 resource request.
 
-## Validating the Access Token
+## Validating the DPoP-bound Access Token
 
-The public key in the fingerprint of the Access Token MUST be checked against the DPoP fingerprint
-to ensure a match, as outlined in the
-[DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-6).
+The public key in the fingerprint of the DPoP-bound Access Token MUST be
+checked against the DPoP fingerprint to ensure a match, as outlined in the
+[DPoP
+Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-6).
 
-### WebID
+### WebID Claim and Check
 
-The `sub` claim of the Access Token MUST be a WebID. This needs to be dereferenced and checked
-against the `iss` claim in the Access Token. If the `iss` claim is different from the domain of the
-WebID, then the RS MUST check the WebID document for a `solid:oidcIssuer` property to check the
-token issuer is listed. This prevents a malicious identity provider from issuing valid Access Tokens
-for arbitrary WebIDs.
+The `sub` claim of the DPoP-bound Access Token MUST be a WebID. This needs to
+be dereferenced and checked against the `iss` claim in the DPoP-bound Access
+Token. If the `iss` claim is different from the domain of the WebID, then the
+RS MUST check the WebID document for a `solid:oidcIssuer` property to check
+the token issuer is listed. This prevents a malicious identity provider from
+issuing valid DPoP-bound Access Tokens for arbitrary WebIDs.
 
 # Security Considerations
 
 _This section is non-normative_
 
-As this specification builds upon existing web standards, security considerations from OAuth, OIDC,
+As this specification builds upon existing Web standards, security considerations from OAuth, OIDC,
 PKCE, and the DPoP specifications may also apply unless otherwise indicated. The following
 considerations should be reviewed by implementors and system/s architects of this specification.
 
 ## TLS Requirements
 
-All TLS requirements oulined in
+All TLS requirements outlined in
 [OIDC Section 16.17](https://openid.net/specs/openid-connect-core-1_0.html#Security) apply to this
 specification.
 
@@ -297,19 +299,20 @@ _This section is non-normative_
 Clients are ephemeral, client registration is optional, and most clients cannot keep secrets. These,
 among other factors, are what makes client trust challenging.
 
-# Privacy considerations
+# Privacy Considerations
 
 _This section is non-normative_
 
-## Access Token Reuse
+## DPoP-bound Access Token Reuse
 
-With JWTs being extendable by design, there is potential for a privacy breach if Access Tokens get
-reused across multiple resource servers. It is not unimaginable that a custom claim is added to the
-Access Token on instantiation. This addition may unintentionally give other resource servers
-consuming the Access Token information about the user that they may not wish to share outside of the
-intended RS.
+With JWTs being extendable by design, there is potential for a privacy breach
+if DPoP-bound Access Tokens get reused across multiple resource servers. It is
+not unimaginable that a custom claim is added to the DPoP-bound Access Token
+on instantiation. This addition may unintentionally give other resource
+servers consuming the DPoP-bound Access Token information about the user that
+they may not wish to share outside of the intended RS.
 
-# Acknowledgments
+# Acknowledgements
 
 > TODO:
 
