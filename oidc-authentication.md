@@ -2,10 +2,10 @@
 
 # Abstract
 
-A key challenge on the path toward re-decentralizing user data on the Worldwide Web is the need to
-access multiple potentially untrusted resources servers securely. This document aims to address that
-challenge by building on top of current and future web standards, to allow entities to authenticate
-within a distributed ecosystem.
+A key challenge on the path toward re-decentralizing user data on the Web is
+the need to access multiple potentially untrusted resource servers securely.
+This document aims to address that challenge by building on top of current Web
+standards, to allow entities to authenticate in the Solid ecosystem.
 
 # Status of This Document
 
