@@ -131,13 +131,14 @@ when, they appear in all capitals, as shown here.
 
 _This section is non-normative_
 
-In a decentralized ecosystem, such as Solid, an IdP may be a preexisting IdP or vendor, or at the
-other end of the spectrum, a user-controlled IdP.
+In the Solid ecosystem, an IdP may be controlled, supplied and used by any
+entity, and may exist for any length of time.
 
-Therefore, this specification makes extensive use of OAuth and OIDC best practices and assumes the
-[Authorization](https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowSteps) Code Flow with
-PKCE, as per OIDC definition. It is also assumed that there is no preexisting trust relationship
-with the IdP. This means dynamic, and static client registration is entirely optional.
+This specification makes use of OAuth and OIDC best practices and assumes the
+[Authorization](https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowSteps)
+Code Flow with PKCE, as per OIDC definition. It is also assumed that there is
+no preexisting trust relationship with the IdP. This means dynamic, and static
+client registration is entirely optional.
 
 ## WebIDs
 
