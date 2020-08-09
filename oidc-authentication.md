@@ -139,7 +139,7 @@ _This section is non-normative_
 In the Solid ecosystem, an IdP may be controlled, supplied and used by any
 entity, and may exist for any length of time.
 
-This specification makes use of OAuth and OIDC best practices and assumes the
+This specification makes use of OAuth and OIDC best practices and adopts the
 [Authorization](https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowSteps)
 Code Flow with PKCE, as per OIDC definition. It is also assumed that there is
 no preexisting trust relationship with the IdP. This means dynamic, and static
@@ -191,8 +191,8 @@ IdP:
 1. A DPoP-bound Access Token
 2. An OIDC ID Token
 
-These tokens require additional and/or modified claims for them to be compliant with the
-authorization flow laid out in this document.
+These tokens require new or modified claims for them to be compliant with the
+authorization flow as outlined in [Basic Flow](#basic-flow).
 
 ## DPoP-bound Access Token
 
