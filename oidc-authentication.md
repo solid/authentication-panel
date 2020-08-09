@@ -242,8 +242,8 @@ access resources using a traditional `Bearer` tokens.
 
 ## DPoP Validation
 
-If a `cnf` claim is present in the DPoP-bound Access Token, then it must a DPoP
-Proof must be present and validated using the methods outlined in the [DPoP
+If a `cnf` claim is present in the DPoP-bound Access Token, then the DPoP
+Proof MUST be present and validated using the methods outlined in the [DPoP
 Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-4.2).
 
 As defined, this includes ensuring that the DPoP Proof has not expired, and both the URL and the
