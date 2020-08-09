@@ -259,12 +259,15 @@ Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-6).
 
 ### WebID Claim and Check
 
+In order to prevent a malicious identity provider from issuing valid
+DPoP-bound Access Tokens for arbitrary WebIDs, the following check is
+required:
+
 The `sub` claim of the DPoP-bound Access Token MUST be a WebID. This needs to
 be dereferenced and checked against the `iss` claim in the DPoP-bound Access
 Token. If the `iss` claim is different from the domain of the WebID, then the
 RS MUST check the WebID document for a `solid:oidcIssuer` property to check
-the token issuer is listed. This prevents a malicious identity provider from
-issuing valid DPoP-bound Access Tokens for arbitrary WebIDs.
+the token issuer is listed.
 
 # Security Considerations
 
