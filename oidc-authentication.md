@@ -72,19 +72,20 @@ it is likely that authorization requirements will necessitate it.
 
 _This section is non-normative_
 
-This specification uses the terms "access token", "authorization server", "resource server" (RS),
-"authorization endpoint", "token endpoint", "grant type", "access token reques", "access token
-response", and "client" defined by The OAuth 2.0 Authorization Framework
+This specification uses the terms "access token", "authorization server",
+"resource server" (RS), "authorization endpoint", "token endpoint", "grant
+type", "access token request", "access token response", and "client" defined
+by The OAuth 2.0 Authorization Framework
 \[[RFC6749](https://tools.ietf.org/html/rfc6749)\].
 
-Throughout this specification, we will use the term Identity Provider (IdP) in line with the
-terminology used in the
-[Open ID Connect Core 1.0 specification](https://openid.net/specs/openid-connect-core-1_0.html)
-(OIDC). It should be noted that
-[The OAuth 2.0 Authorization Framework](https://tools.ietf.org/html/rfc6749) (OAuth) refers to this
-same entity as an Authorization Server.
+This specification uses the notion of Identity Provider (IdP) from the [Open
+ID Connect Core 1.0
+specification](https://openid.net/specs/openid-connect-core-1_0.html) (OIDC).
+It should be noted that [The OAuth 2.0 Authorization
+Framework](https://tools.ietf.org/html/rfc6749) (OAuth) refers to this same
+entity as an Authorization Server.
 
-This specification also defines the following terms:
+This specification also uses the following terms:
 
 **WebID** _as defined in the
 [WebID 1.0 Editors Draft](https://dvcs.w3.org/hg/WebID/raw-file/tip/spec/identity-respec.html)_
