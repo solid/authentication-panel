@@ -273,9 +273,19 @@ the token issuer is listed.
 
 _This section is non-normative_
 
-As this specification builds upon existing Web standards, security considerations from OAuth, OIDC,
-PKCE, and the DPoP specifications may also apply unless otherwise indicated. The following
-considerations should be reviewed by implementors and system/s architects of this specification.
+As this specification builds upon existing Web standards, security
+considerations from OAuth, OIDC, PKCE, and the DPoP specifications may also
+apply unless otherwise indicated. The following considerations should be
+reviewed by implementors and system architects of this specification.
+
+Some of the normative references with this specification point to documents
+with a Living Standard or Draft status, meaning their contents can still
+change over time. It is advised to monitor these documents, as such changes
+might have security implications.
+
+In addition to above considerations, implementors should consider the Security
+Considerations in context of the [Solid
+Ecosystem](https://solid.github.io/specification/).
 
 ## TLS Requirements
 
