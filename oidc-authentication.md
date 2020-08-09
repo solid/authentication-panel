@@ -87,8 +87,7 @@ entity as an Authorization Server.
 
 This specification also uses the following terms:
 
-**WebID** _as defined in the
-[WebID 1.0 Editors Draft](https://dvcs.w3.org/hg/WebID/raw-file/tip/spec/identity-respec.html)_
+**WebID** _as defined in [WebID 1.0](https://www.w3.org/2005/Incubator/webid/spec/identity/)_
 
 A WebID is a URI with an HTTP or HTTPS scheme which denotes an Agent (Person, Organization, Group,
 Device, etc.)
@@ -146,17 +145,19 @@ Code Flow with PKCE, as per OIDC definition. It is also assumed that there is
 no preexisting trust relationship with the IdP. This means dynamic, and static
 client registration is entirely optional.
 
-## WebIDs
+## WebID
 
 _This section is non-normative_
 
-In line with Linked Data principles, a
-[WebID](https://dvcs.w3.org/hg/WebID/raw-file/tip/spec/identity-respec.html) is a HTTP URI that,
-when dereferenced, resolves to a profile document that is structured data in an
-[RDF format](https://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/). This profile document allows
-people to link with others to grant access to identity resources as they see fit. WebIDs are an
-underpinning principle of the Solid movement and are used as the primary identifier for users and
-client applications in this specification.
+A [WebID](https://www.w3.org/2005/Incubator/webid/spec/identity/) is a HTTP
+URI denoting an agent, for example a person, organisation, or software. When a
+WebID is dereferenced, server provides a representation of the WebID Profile
+in an [RDF document](https://www.w3.org/TR/rdf11-concepts/#dfn-rdf-document)
+which uniquely describes an agent denoted by a WebID. The WebID Profile can be
+used by controlling agents to link with others to grant access to identity
+resources as they see fit. WebIDs are an underpinning component in the Solid
+ecosystem and are used as the primary identifier for users and client
+applications in this specification.
 
 # Basic Flow
 
