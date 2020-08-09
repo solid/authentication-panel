@@ -34,27 +34,32 @@ of this specification. Alternatively, you can send comments to our mailing list.
 
 _This section is non-normative_
 
-The [Solid project](https://solidproject.org/) aims to change the way web applications work today to
-improve privacy and user control of personal data by utilizing current standards, protocols, and
-tools, to facilitate building extensible and modular decentralized applications based on
-[Linked Data](https://www.w3.org/standards/semanticweb/data) principles.
+The [Solid project](https://solidproject.org/) aims to change the way Web
+applications work today to improve privacy and user control of personal data
+by using current standards, protocols, and tools, to facilitate building
+extensible and modular decentralized applications based on [Linked
+Data](https://www.w3.org/DesignIssues/LinkedData) design principles.
 
-This specification is written for Authorization and Resource Server owners intending to implement
-Solid-OIDC. It is also useful to Solid application developers charged with implementing a Solid-OIDC
-client.
+In order to allow entities to authenticate in the [Solid
+ecosystem](https://solid.github.io/specification/), this specification
+interoperably combines functionality based on widely implemented standards
+such as [OAuth 2.0](https://tools.ietf.org/html/rfc6749) and [OpenID Connect
+Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html).
 
-The [OAuth 2.0](https://tools.ietf.org/html/rfc6749) and
-[OpenID Connect Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html) web standards were
-published in October 2012, and November 2014, respectively. Since publication, they have increased
-with a marked pace and have claimed wide adoption with extensive _'real-world'_ data and experience.
-The strengths of the protocols are now clear, however, in a changing eco-system where privacy and
-control of digital identities are becoming more pressing concerns, it is also clear that additional
-functionality is required.
-
-The additional functionality is aimed at addressing:
+In a changing world where privacy and control of digital identities are
+becoming more pressing concerns, this specification addresses additional
+functionality:
 
 1. Ephemeral clients as a common use case.
 2. Resource servers with no existing trust relationship with identity providers.
+
+This specification is for:
+
+* Authorization and Resource Server owners who want to enable applications to
+obtain access to an HTTP service;
+
+* Application developers who want to implement a client to obtain access to an
+HTTP service.
 
 ## Out of Scope
 
