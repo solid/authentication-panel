@@ -325,7 +325,7 @@ on instantiation. This addition may unintentionally give other resource
 servers consuming the DPoP-bound Access Token information about the user that
 they may not wish to share outside of the intended RS.
 
-# Acknowledgements
+# Acknowledgments
 
 > TODO:
 
