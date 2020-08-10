@@ -218,7 +218,7 @@ An example Access Token:
 }
 ```
 
-## OICD ID Token
+## OIDC ID Token
 
 The subject (`sub`) claim in the returning ID Token MUST be set to the user's WebID.
 
