@@ -41,10 +41,9 @@ extensible and modular decentralized applications based on [Linked
 Data](https://www.w3.org/DesignIssues/LinkedData) design principles.
 
 In order to allow entities to authenticate in the [Solid
-ecosystem](https://solid.github.io/specification/), this specification is
-interoperably combined with [OAuth 2.0](https://tools.ietf.org/html/rfc6749)
-and [OpenID Connect Core
-1.0](https://openid.net/specs/openid-connect-core-1_0.html).
+ecosystem](https://solid.github.io/specification/), this specification
+combines with [OAuth 2.0](https://tools.ietf.org/html/rfc6749) and [OpenID
+Connect Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html).
 
 In a changing world where privacy and control of digital identities are
 becoming more pressing concerns, this specification addresses additional
