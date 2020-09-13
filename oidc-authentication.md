@@ -114,7 +114,7 @@ A DPoP proof is a JWT that is signed (using JWS) using a private key chosen by t
 An extension to the Authorization Code flow which mitigates the risk of an authorization code
 interception attack.
 
-**International Resource Identifier (IRI)** as defined by TODO:
+**International Resource Identifier (IRI)** as defined by [RFC3987](https://tools.ietf.org/html/rfc3987)
 
 # Conformance
 
