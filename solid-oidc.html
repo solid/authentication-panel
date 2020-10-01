@@ -1223,7 +1223,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 5f7b0e20, updated Tue Aug 18 15:46:28 2020 -0700" name="generator">
   <link href="https://solid.github.io/specification/solid-oidc/" rel="canonical">
-  <meta content="dff5747102a8a0aebb311767c9037a940ee0d8eb" name="document-revision">
+  <meta content="2b21ef76ed7a6c7c35962229e044bbeb65266467" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -1375,24 +1375,24 @@ dfn > a.self-link::before      { content: "#"; }</style>
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref allcaps" id="title">SOLID-OIDC</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">W3C First Public Working Draft, <time class="dt-updated" datetime="2020-09-28">28 September 2020</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">W3C First Public Working Draft, <time class="dt-updated" datetime="2020-10-06">6 October 2020</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
-     <dd><a class="u-url" href="https://www.w3.org/TR/2020/WD-solid-oidc-1-20200928/">https://www.w3.org/TR/2020/WD-solid-oidc-1-20200928/</a>
+     <dd><a class="u-url" href="https://www.w3.org/TR/2020/WD-solid-oidc-1-20201006/">https://www.w3.org/TR/2020/WD-solid-oidc-1-20201006/</a>
      <dt>Editor's Draft:
      <dd><a href="https://solid.github.io/specification/solid-oidc/">https://solid.github.io/specification/solid-oidc/</a>
      <dt>Issue Tracking:
      <dd><a href="https://github.com/solid/specification/issues/">GitHub</a>
      <dt class="editor">Editors:
-     <dd class="editor p-author h-card vcard"><span class="p-name fn">Adam Migus</span>
-     <dd class="editor p-author h-card vcard"><span class="p-name fn">Ricky White</span>
+     <dd class="editor p-author h-card vcard"><span class="p-name fn"><a href="https://migusgroup.com/about/">Adam Migus</a> (<a href="https://migusgroup.com/">The Migus Group</a>)</span>
+     <dd class="editor p-author h-card vcard"><span class="p-name fn"><a href="https://endlesstrax.com">Ricky White</a> (<a href="https://migusgroup.com/">The Migus Group</a>)</span>
     </dl>
    </div>
    <div data-fill-with="warning"></div>
    <p class="copyright" data-fill-with="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="https://licensebuttons.net/p/zero/1.0/80x15.png"></a> To the extent possible under law, the editors have waived all copyright
 and related or neighboring rights to this work.
-In addition, as of 28 September 2020,
+In addition, as of 6 October 2020,
 the editors have made this specification available under the <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
 Parts of this work may be from another specification document.  If so, those parts are instead covered by the license of that specification document. </p>
@@ -1487,9 +1487,9 @@ tools, to facilitate building extensible and modular decentralized applications 
 Solid-OIDC. It is also useful to Solid application developers charged with implementing a Solid-OIDC
 client.</p>
    <p>The <a href="https://tools.ietf.org/html/rfc6749">OAuth 2.0</a> and <a href="https://openid.net/specs/openid-connect-core-1_0.html">OpenID Connect Core 1.0</a> web standards were
-published in October 2012, and November 2014, respectively. Since publication, they have increased
-with a marked pace and have claimed wide adoption with extensive _’real-world’_ data and experience.
-The strengths of the protocols are now clear, however, in a changing eco-system where privacy and
+published in October 2012 and November 2014, respectively. Since publication, they have increased
+with a marked pace and have claimed wide adoption with extensive <em>"real-world"</em> data and experience.
+The strengths of the protocols are now clear; however, in a changing eco-system where privacy and
 control of digital identities are becoming more pressing concerns, it is also clear that additional
 functionality is required.</p>
    <p>The additional functionality is aimed at addressing:</p>
@@ -1501,12 +1501,12 @@ functionality is required.</p>
    </ol>
    <h3 class="heading settled" data-level="1.1" id="intro-out-of-scope"><span class="secno">1.1. </span><span class="content">Out of Scope</span><a class="self-link" href="#intro-out-of-scope"></a></h3>
    <p><em>This section is non-normative</em></p>
-   <p>At the time of writing, there is no demonstrated use case for a strongly asserted identity, however,
+   <p>At the time of writing, there is no demonstrated use case for a strongly asserted identity; however,
 it is likely that authorization requirements will necessitate it.</p>
    <h2 class="heading settled" data-level="2" id="terms"><span class="secno">2. </span><span class="content">Terminology</span><a class="self-link" href="#terms"></a></h2>
    <p><em>This section is non-normative</em></p>
    <p>This specification uses the terms "access token", "authorization server", "resource server" (RS),
-"authorization endpoint", "token endpoint", "grant type", "access token reques", "access token
+"authorization endpoint", "token endpoint", "grant type", "access token request", "access token
 response", and "client" defined by The OAuth 2.0 Authorization Framework <a data-link-type="biblio" href="#biblio-rfc6749">[RFC6749]</a>.</p>
    <p>Throughout this specification, we will use the term Identity Provider (IdP) in line with the
 terminology used in the <a href="https://openid.net/specs/openid-connect-core-1_0.html">Open ID Connect Core 1.0 specification</a> (OIDC). It should be noted that <a href="https://tools.ietf.org/html/rfc6749">The OAuth 2.0 Authorization Framework</a> (OAuth) refers to this
@@ -1541,7 +1541,7 @@ with the IdP. This means dynamic, and static client registration is entirely opt
    <h3 class="heading settled" data-level="3.1" id="concepts-webids"><span class="secno">3.1. </span><span class="content">WebIDs</span><a class="self-link" href="#concepts-webids"></a></h3>
    <p><em>This section is non-normative</em></p>
    <p>In line with Linked Data principles, a <a href="https://dvcs.w3.org/hg/WebID/raw-file/tip/spec/identity-respec.html">WebID</a> is a HTTP URI that,
-when dereferenced, resolves to a profile document that is structured data in an <a href="https://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/">RDF format</a>. This profile document allows
+when dereferenced, resolves to a profile document that is structured data in an <a href="https://www.w3.org/TR/rdf11-concepts/">RDF 1.1 format</a>. This profile document allows
 people to link with others to grant access to identity resources as they see fit. WebIDs underpin
 Solid and are used as a primary identifier for Users and Client applications in this specification.</p>
    <h2 class="heading settled" data-level="4" id="basic-flow"><span class="secno">4. </span><span class="content">Basic Flow</span><a class="self-link" href="#basic-flow"></a></h2>
@@ -1552,10 +1552,10 @@ Solid and are used as a primary identifier for Users and Client applications in 
      <p>The Client requests a non-public resource from the RS.</p>
     <li data-md>
      <p>The RS returns a 401 with a <code>WWW-Authenticate</code> HTTP header containing parameters that inform the
-    Client that a DPoP-bound Access Token is required.</p>
+Client that a DPoP-bound Access Token is required.</p>
     <li data-md>
      <p>The Client presents its Client Identifier and the associated Secret to the IdP and requests an
-    Authorization Code.</p>
+Authorization Code.</p>
     <li data-md>
      <p>If granted, the Client presents the Authorization Code and a DPoP proof, to the Token Endpoint.</p>
     <li data-md>
@@ -1667,7 +1667,7 @@ according to the <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04">
 MUST be present when a DPoP-bound Access Token is used.</p>
    <h3 class="heading settled" data-level="7.2" id="resource-access-validation"><span class="secno">7.2. </span><span class="content">Access Token Validation</span><a class="self-link" href="#resource-access-validation"></a></h3>
    <p>The DPoP-bound Access Token MUST be validated according to <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-7">DPoP Internet-Draft, Section 7</a> but the RS MAY perform additional verification in order to determine whether to grant access to the
-resource.</p>
+requested resource.</p>
    <p>The user’s WebID in the <code>webid</code> claim MUST be dereferenced and checked against the <code>iss</code> claim in the
 Access Token. If the <code>iss</code> claim is different from the domain of the WebID, then the RS MUST check
 the WebID document for a <code>solid:oidcIssuer</code> property to check the token issuer is listed. This
