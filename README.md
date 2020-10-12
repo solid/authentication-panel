@@ -21,9 +21,6 @@ to propose a project for the panel to undertake.
 * Current Draft - [Source](https://github.com/solid/authentication-panel/tree/master/proposals/solid-oidc/index.bs) - [Rendered](https://solid.github.io/authentication-panel/solid-oidc/)
 * [Open Issues](https://github.com/solid/authentication-panel/issues?q=is%3Aissue+is%3Aopen+label%3ASolid-OIDC)
 
-**Please don't submit pull requests on the current draft. Instead please create an issue to provide your feedback.
-We will open this draft to pull requests as soon as current editors fully hand it over to the CG**.
-
 ## Meetings
 
 Meetings of the Authentication panel take place at 10AM eastern on Mondays. Meeting details listed below:
