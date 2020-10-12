@@ -184,6 +184,9 @@ The WebID itself MUST resolve to an RDF document that MUST include a single `sol
 property. That property MUST be a JSON serialization of an OIDC client registration, per the definition
 of client registration metadata from [[!RFC7591]] section 2.
 
+Issue: [Related Issue](https://github.com/solid/authentication-panel/issues/75) 
+Solid-OIDC client description in WebID document 
+
 Also, the IdP MUST dereference the Client's WebID document and match any Client-supplied parameters,
 with the values in the Client's WebID document.
 

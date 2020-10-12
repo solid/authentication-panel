@@ -1323,7 +1323,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 89ebb6ab, updated Fri Oct 9 15:32:07 2020 -0700" name="generator">
   <link href="https://solid.github.io/specification/solid-oidc/" rel="canonical">
-  <meta content="555c57009f7670129456d0651f042dd3b1955251" name="document-revision">
+  <meta content="1573e99bbf94f25224dd36b83dc0e6ca88788356" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -1905,6 +1905,7 @@ SHOULD use a WebID as their Client ID.</p>
    <h3 class="heading settled" data-level="5.1" id="clientids-webid"><span class="secno">5.1. </span><span class="content">WebID</span><a class="self-link" href="#clientids-webid"></a></h3>
    <p>The WebID itself MUST resolve to an RDF document that MUST include a single <code>solid:oidcRegistration</code> property. That property MUST be a JSON serialization of an OIDC client registration, per the definition
 of client registration metadata from <a data-link-type="biblio" href="#biblio-rfc7591">[RFC7591]</a> section 2.</p>
+   <p class="issue" id="issue-0446db61"><a class="self-link" href="#issue-0446db61"></a> <a href="https://github.com/solid/authentication-panel/issues/75">Related Issue</a> Solid-OIDC client description in WebID document</p>
    <p>Also, the IdP MUST dereference the Client’s WebID document and match any Client-supplied parameters,
 with the values in the Client’s WebID document.</p>
    <p>Further, the <code>redirect_uri</code> provided by the Client MUST be included in the registration <code>redirect_uris</code> list.</p>
