@@ -164,7 +164,7 @@ The basic authentication and authorization flow is as follows:
 4. If granted, the Client presents the Authorization Code and a DPoP proof, to the Token Endpoint.
 5. The Token Endpoint returns a DPoP-bound Access Token and OIDC ID Token, to the Client.
 6. The Client presents the DPoP-bound Access Token and DPoP proof, to the RS.
-7. The RS gets the public key from the IdP and uses it to validate the DPoP proof and Access Token.
+7. The RS gets the public key from the IdP and uses it to validate the signature on DPoP-bound Access Token (JWS).
 8. If the DPoP proof and Access Token are valid then The RS returns the requested resource.
 
 <figure id="fig-signature">
@@ -317,8 +317,12 @@ requested resource.
 
 The user's WebID in the `webid` claim MUST be dereferenced and checked against the `iss` claim in the
 Access Token. If the `iss` claim is different from the domain of the WebID, then the RS MUST check
-the WebID document for a `solid:oidcIssuer` property to check the token issuer is listed. This
-prevents a malicious identity provider from issuing valid Access Tokens for arbitrary WebIDs.
+the WebID document for an existance of a statement matching `?webid <http://www.w3.org/ns/solid/terms#oidcIssuer> ?iss.`
+Where `?webid` and `?iss` are values of `webid` and `iss` claims accordingly.
+This prevents a malicious identity provider from issuing valid Access Tokens for arbitrary WebIDs.
+
+Unless RS knows IdP keys through some other means, or IdP chooses to reject tokens issued by this IdP,
+the IdP MUST follow OpenID Connect Discovery 1.0 [[!OpenID.Discovery]] to find an IdP's signing keys (JWK).
 
 # Security Considerations # {#security}
 
@@ -392,6 +396,17 @@ Verborgh, Ricky White, Paul Worrall, Dmitri Zagidulin.
         "href": "https://tools.ietf.org/html/draft-fett-oauth-dpop-04",
         "title": "OAuth 2.0 Demonstration of Proof-of-Possession at the Application Layer (DPoP)",
         "publisher": "IETF"
+    },
+    "OpenID.Discovery": {
+        "authors": [
+            "N. Sakimura",
+            "J. Bradley",
+            "M. Jones",
+            "E. Jay"
+        ],
+        "href": "https://openid.net/specs/openid-connect-discovery-1_0.html",
+        "title": "OpenID Connect Discovery 1.0",
+        "publisher": "The OpenID Foundation"
     }
 }
 </pre>

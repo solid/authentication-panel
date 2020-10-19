@@ -1323,7 +1323,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 89ebb6ab, updated Fri Oct 9 15:32:07 2020 -0700" name="generator">
   <link href="https://solid.github.io/specification/solid-oidc/" rel="canonical">
-  <meta content="d40ecaf407c32ed18c3a20091f06faafdfc0ad50" name="document-revision">
+  <meta content="d3dca22c64f743d11d0054c4ade1213183fd7478" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -1703,7 +1703,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref allcaps" id="title">SOLID-OIDC</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2020-10-12">12 October 2020</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2020-10-19">19 October 2020</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1718,7 +1718,7 @@ dfn > a.self-link::before      { content: "#"; }
    <div data-fill-with="warning"></div>
    <p class="copyright" data-fill-with="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="https://licensebuttons.net/p/zero/1.0/80x15.png"></a> To the extent possible under law, the editors have waived all copyright
 and related or neighboring rights to this work.
-In addition, as of 12 October 2020,
+In addition, as of 19 October 2020,
 the editors have made this specification available under the <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
 Parts of this work may be from another specification document.  If so, those parts are instead covered by the license of that specification document. </p>
@@ -1891,7 +1891,7 @@ Authorization Code.</p>
     <li data-md>
      <p>The Client presents the DPoP-bound Access Token and DPoP proof, to the RS.</p>
     <li data-md>
-     <p>The RS gets the public key from the IdP and uses it to validate the DPoP proof and Access Token.</p>
+     <p>The RS gets the public key from the IdP and uses it to validate the signature on DPoP-bound Access Token (JWS).</p>
     <li data-md>
      <p>If the DPoP proof and Access Token are valid then The RS returns the requested resource.</p>
    </ol>
@@ -1999,8 +1999,10 @@ MUST be present when a DPoP-bound Access Token is used.</p>
 requested resource.</p>
    <p>The user’s WebID in the <code>webid</code> claim MUST be dereferenced and checked against the <code>iss</code> claim in the
 Access Token. If the <code>iss</code> claim is different from the domain of the WebID, then the RS MUST check
-the WebID document for a <code>solid:oidcIssuer</code> property to check the token issuer is listed. This
-prevents a malicious identity provider from issuing valid Access Tokens for arbitrary WebIDs.</p>
+the WebID document for an existance of a statement matching <code>?webid &lt;http://www.w3.org/ns/solid/terms#oidcIssuer> ?iss.</code> Where <code>?webid</code> and <code>?iss</code> are values of <code>webid</code> and <code>iss</code> claims accordingly.
+This prevents a malicious identity provider from issuing valid Access Tokens for arbitrary WebIDs.</p>
+   <p>Unless RS knows IdP keys through some other means, or IdP chooses to reject tokens issued by this IdP,
+the IdP MUST follow OpenID Connect Discovery 1.0 <a data-link-type="biblio" href="#biblio-openiddiscovery">[OpenID.Discovery]</a> to find an IdP’s signing keys (JWK).</p>
    <h2 class="heading settled" data-level="8" id="security"><span class="secno">8. </span><span class="content">Security Considerations</span><a class="self-link" href="#security"></a></h2>
    <p><em>This section is non-normative</em></p>
    <p>As this specification builds upon existing web standards, security considerations from OAuth, OIDC,
@@ -2189,6 +2191,8 @@ Verborgh, Ricky White, Paul Worrall, Dmitri Zagidulin.</p>
   <dl>
    <dt id="biblio-dpop">[DPoP]
    <dd>D. Fett; et al. <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04">OAuth 2.0 Demonstration of Proof-of-Possession at the Application Layer (DPoP)</a>. URL: <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04">https://tools.ietf.org/html/draft-fett-oauth-dpop-04</a>
+   <dt id="biblio-openiddiscovery">[OpenID.Discovery]
+   <dd>N. Sakimura; et al. <a href="https://openid.net/specs/openid-connect-discovery-1_0.html">OpenID Connect Discovery 1.0</a>. URL: <a href="https://openid.net/specs/openid-connect-discovery-1_0.html">https://openid.net/specs/openid-connect-discovery-1_0.html</a>
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
    <dt id="biblio-rfc6749">[RFC6749]
