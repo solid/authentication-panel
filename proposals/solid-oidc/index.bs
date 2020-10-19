@@ -322,7 +322,7 @@ Where `?webid` and `?iss` are values of `webid` and `iss` claims accordingly.
 This prevents a malicious identity provider from issuing valid Access Tokens for arbitrary WebIDs.
 
 Unless RS knows IdP keys through some other means, or IdP chooses to reject tokens issued by this IdP,
-the IdP MUST follow OpenID Connect Discovery 1.0 [[!OpenID.Discovery]] to find IdP's signing keys (JWK).
+the IdP MUST follow OpenID Connect Discovery 1.0 [[!OpenID.Discovery]] to find an IdP's signing keys (JWK).
 
 # Security Considerations # {#security}
 
