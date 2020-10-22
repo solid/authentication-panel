@@ -1,0 +1,745 @@
+<pre class='metadata'>
+Title: SOLID-OIDC Primer
+Boilerplate: issues-index no
+Shortname: solid-oidc primer
+Level: 1
+Status: w3c/ED
+Group: Solid Community Group
+ED: https://solid.github.io/authentication-panel/solid-oidc/
+URL: https://solid.github.io/specification/solid-oidc/
+Repository: https://github.com/solid/specification
+Markup Shorthands: markdown yes
+Max ToC Depth: 2
+Editor: [Adam Migus](https://migusgroup.com/about/) ([The Migus Group](https://migusgroup.com/))
+Editor: [Ricky White](https://endlesstrax.com) ([The Migus Group](https://migusgroup.com/))
+</pre>
+
+# Detailed Web Application Authentication
+
+This document outlines, in detail, the login and request process for a web application using Solid-OIDC. In general, our user, Alice will be using a third-party web application at https://decentphotos.example to access data on both her pod at https://alice.coolpod.example and her friend, Bob's pod at https://bob.otherpod.example. While other flows are available, this document outlines the primary flow for Solid-OIDC: Authroization Code with PKCE tokens.
+
+## Actors
+
+In this example a multitude of actors are at play:
+
+**Alice** - Alice will be providing consent for decentphotos to use her pod. Let's assume that Alice is using a standard web browser.
+
+**Bob's Pod (RS)** - We will be trying to access photos stored in Bob's Pod, known in the OIDC world as a Resource Server (RS). Bob is a friend of Alice. For this use case, let's assume that Bob has previously indicated via access control that Alice may access his photo using any web app. For this example, bob's pod is at `bob.otherpod.example`.
+
+**Alice's OP** - Alice's OpenID Provider (OP), also known as an IDP (Identity Provider), is the service responsible for authorizing our third-party web app by providing it with the tokens necessary to gain access to any pod. In this demo, Alice's OP is at `https://secureauth.example`.
+
+**Alice's WebID** - Alice's WebID is `https://alice.coolpod.example/profile/card#me`. It serves as her unique identifier.
+
+**Decent Photos (RP)** - decentphotos is a third party photo viewing web application hosted at `https://decentphotos.example`. This web app allows you to view your photos as well as your friend's photos. It will also perform cron jobs on the photos to detect faces. In the OIDC world, this is known as the Relying Party (RP).
+
+**RS WebID** - The RS (https://decentphotos.example`) has a WebID of its own to list information about the app. Decentphoto's is at `https://decentphotos.example/webid#this`
+
+## Application Flow
+
+### Logging in with authorization code flow with PKCE
+
+<img src="primer-login.png" />
+
+#### 1. Alice uses the decentphotos app
+
+Alice has heard of a great new site that allows her to view her friend's photos and tag faces. She navigates to `https://decentphotos.example` via her web browser which returns an HTML page. This page contains JavaScript that will help with the authentication process.
+
+#### 2. Alice selects her OP or WebID
+
+Before decentphotos can start displaying images, Alice needs to start the process of providing consent. To do so, she must either provide her WebID (`https://alice.coolpod.example/profile/card#me`) or the URL of her OP (`https://secureauth.example`) 
+
+While it is not the case with Alice, a user's Pod and OP can be hosted at the same domain. For example, Bob's pod could be `bob.solid.example` with a WebID of `https://bob.solid.example/profile/card#me`, but his OP is at `https://solid.example`.
+
+#### 2.1 Retrieve Profile (Only needed if a WebID is provided)
+
+If Alice entered her WebID's URL rather than her OP's URL, a request should be made to determine her OP. To do so, a request should be made to Alice's WebId:
+
+```bash
+GET https://alice.coolpod.example/profile/card#me
+```
+
+It will return a body similar to this:
+
+```
+@prefix : <#>.
+@prefix solid: <http://www.w3.org/ns/solid/terms#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix schema: <http://schema.org/>.
+
+<>
+    a foaf:PersonalProfileDocument ;
+    foaf:maker <https://localhost:8443/profile/card#me> ;
+    foaf:primaryTopic <https://localhost:8443/profile/card#me> .
+
+:me a foaf:Person ;
+    a schema:Person ;
+    foaf:name "Alice" ;
+    solid:oidcIssuer <https://secureauth.example> ;
+```
+
+The OP URL is located at `:me -> solid:oidcIssuer`
+
+#### 3. Retrieves OP Configuration
+
+Now that we have Alice's OP's URL, the RP must make a request to retrieve the OP's configuration. This is always located at the OP's host followed by `/.well-known/openid-configuration`
+
+```
+GET https://secureauth.example/.well-known/openid-configuration
+```
+
+The [openid-configuration](https://auth0.com/docs/protocols/oidc/openid-connect-discovery) describes everything the client will need to know to authorize with Alice's specific OP.
+
+Response Body:
+```json
+{  
+   "issuer":"https://secureauth.example",
+   "authorization_endpoint":"https://secureauth.example/authorize",
+   "token_endpoint":"https://secureauth.example/token",
+   "userinfo_endpoint":"https://secureauth.example/userinfo",
+   "jwks_uri":"https://secureauth.example/jwks",
+   "registration_endpoint":"https://secureauth.example/register",
+   "response_types_supported":[  
+      "code",
+      "code token",
+      "code id_token",
+      "id_token",
+      "id_token token",
+      "code id_token token",
+      "none"
+   ],
+   "response_modes_supported":[  
+      "query",
+      "fragment"
+   ],
+   "grant_types_supported":[  
+      "authorization_code",
+      "implicit",
+      "refresh_token",
+      "client_credentials"
+   ],
+   "subject_types_supported":[  
+      "public"
+   ],
+   "id_token_signing_alg_values_supported":[  
+      "RS256",
+      "RS384",
+      "RS512",
+      "none"
+   ],
+   "token_endpoint_auth_methods_supported":[  
+      "client_secret_basic"
+   ],
+   "token_endpoint_auth_signing_alg_values_supported":[  
+      "RS256"
+   ],
+   "display_values_supported":[  
+
+   ],
+   "claim_types_supported":[  
+      "normal"
+   ],
+   "claims_supported":[  
+
+   ],
+   "claims_parameter_supported":false,
+   "request_parameter_supported":true,
+   "request_uri_parameter_supported":false,
+   "require_request_uri_registration":false,
+   "check_session_iframe":"https://secureauth.example/session",
+   "end_session_endpoint":"https://secureauth.example/logout"
+}
+```
+
+The thing we care about here is the `authorization_endpoint` field. This will be the url we use when we're ready to send an authorization request to the OP.
+
+#### 4. Generates PKCE code challenge and code verifier
+
+To follow the [PKCE code flow](https://oauth.net/2/pkce/) we need to generate a code challenge and code verifier as instructed in the [Proof Key for Code Exchange spec](https://tools.ietf.org/html/rfc7636#section-4.1)
+
+We start by generating a code verifier. The can be done by creating a cryptographically random string. Let's say ours looks like this: `"JXPOuToEB7"`.
+
+Now using the code verifier, we construct a code challenge. This can be made by transforming the code verifier with Sha 256: `BASE64URL-ENCODE(SHA256(ASCII(code_verifier)))`. Here's our code challenge: `"HSi9dwlvRpNHCDm-L8GOdM16qcb0tLHPZqQSvaWXTI0"`
+
+#### 5. Saved code verifier to localstorage
+
+Now, we save the code verifier (`"JXPOuToEB7"`) to localstorage. We'll need it later to confirm to the OP that this is the app that initiated the request. Do not save the code challenge anywhere.
+
+#### 6. Authorization request
+
+Now that the web app is registered, we can finally make an auth request to authorize the web application.
+
+```
+GET https://secureauth.example/authorize?response_type=code%20id_token&redirect_uri=https%3A%2F%2Fdecentphotos.example%2Fcallback&scope=openid%20profile%20offline_access&client_id=https%3A%2F%2Fdecentphotos.example%2Fwebid%23this&code_challenge_method=S256&code_challenge=HSi9dwlvRpNHCDm-L8GOdM16qcb0tLHPZqQSvaWXTI0
+```
+
+That URL might look a little complex, but it's essentially a request to `https://secureauth.example/authorize` with the following URL parameters:
+
+ - `response_type=code%20id_token` indicates the desired response data.
+ - `redirect_uri=https%3A%2F%2Fdecentphotos.example%2Fcallback`: The url that the OP will redirect to once the user has logged in (`https://decentphotos.example/callback`).
+ - `scope=openid%20profile%20offline_access`: a list of [OIDC scopes](https://auth0.com/docs/scopes/current/oidc-scopes) (attributes of the RS to which this token should have access) seaparated by spaces (%20). 
+    - `open_id` is a scope that is needed to verify Alice's identity.
+    - `profile` is required by the Solid OIDC specification to denote a WebID login.
+    - `offline_access`: Is required to get a refresh token.
+ - `client_id=https%3A%2F%2Fdecentphotos.example%2Fwebid%23this`: Usually the client id of a Solid application is the app's WebID (in our case https://decentphotos.example/webid#this) as seen here.
+ - `code_challenge_method=S256`: Tells the OP that our code challenge was transformed using Sha 256.
+ - `code_challenge=HSi9dwlvRpNHCDm-L8GOdM16qcb0tLHPZqQSvaWXTI0`: The code challenge we generated before.
+
+NOTE: If the app doesn't have a WebID, you can either register an app using static registration via some UI on the OP or [dynamic registration](https://openid.net/specs/openid-connect-registration-1_0.html). You may also use `http://www.w3.org/ns/solid/terms#PublicOidcClient` as your client id. This will designate the client as as a public client. Doing this will cause the RS to provide less access to your app.
+
+#### 7. Fetch RS WebID
+
+If an app WebID is provided as the client id (see note above to see other options), we must fetch that app WebID to confirm its validity.
+
+Request:
+```
+GET https://decentphotos.example/webid#this
+```
+
+Response:
+```
+@prefix solid:  .
+
+<#this> solid:oidcRegistration """{
+    "client_id" : "https://decentphtos.example/webid#this",
+    "redirect_uris" : ["https://decentphotos.example/callback"],
+    "client_name" : "DecentPhotos",
+    "client_uri" : "https://decentphotos.example/",
+    "logo_uri" : "https://decentphotos.example/logo.png",
+    "tos_uri" : "https://decentphotos.example/tos.html",
+    "scope" : "openid profile offline_access",
+    "grant_types" : ["refresh_token","authorization_code"],
+    "response_types" : ["code"],
+    "default_max_age" : 60000,
+    "require_auth_time" : true
+    }""" .
+```
+
+Notice that the application WebID contains one required triple `?webid solid:oidcRegistration ?jsonRegistration`. This is a JSON representation of an [OIDC Client Registration](https://tools.ietf.org/html/rfc7591#section-2).
+
+#### 8. Validate redirect url with WebID
+
+Check to be sure that the `redierct_uri` value provided in the auth request (`https://decentphotos.example/callback`) is listed in the `redirect_uris` array in the oidcRegistration. If it is not, the OP MUST reject the request with a `403`. In our case, it is, so we may continue.
+
+#### 9. Alice Logs In
+
+The OP should redirect to its login screen. The actual implementation of this is completely up to the OP. A user can log in with her password, a TLS certificate, or any other proven method of authentication. The important thing is that, thanks to the redirect, the control is now out of the hands of the RP and is in complete control of the OP.
+
+#### 10. Generates the id_token
+
+If `id_token` was listed as a response type during the authorization request, the OP generates an id token. The id token is not used to access anything. It is simply to communicate information to the client. This token is a (JSON Web Token)[https://jwt.io/introduction/]. It would look like the following (you can decrypt the token with https://jwt.io):
+
+```
+eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJodHRwczovL2FsaWNlLmNvb2xwb2QuZXhhbXBsZS9wcm9maWxlL2NhcmQjbWUiLCJhdWQiOiJodHRwczovL2RlY2VudHBob3Rvcy5leGFtcGxlL3dlYmlkI3RoaXMiLCJ3ZWJpZCI6Imh0dHBzOi8vYWxpY2UuY29vbHBvZC5leGFtcGxlL3Byb2ZpbGUvY2FyZCNtZSIsImlzcyI6Imh0dHBzOi8vc2VjdXJlYXV0aC5leGFtcGxlIiwianRpIjoiODQ0YTA5NWMtOWNkYi00N2U1LTk1MTAtMWRiYTk4N2MwYTVmIiwiaWF0IjoxNjAzMzg2NDQ4LCJleHAiOjE2MDMzODcwNDh9.T306vT8dmn9gQIMEdG92AM4WRnrhqWZTfDpovwqZ6Zn0mK9yxj0iOVGqXD4CW8-tzDTitNwEGorAo85atL0Oeg
+```
+
+Token Header:
+```
+{
+  "alg": "ES256",
+  "typ": "JWT"
+}
+```
+ - `"alg": "ES256"`: indicates the token was signed using eliptic curve
+ - `"typ": "JWT"`: indicates that this is a JSON web token
+
+Token Body:
+```
+{
+  "sub": "https://alice.coolpod.example/profile/card#me",
+  "aud": "https://decentphotos.example/webid#this",
+  "webid": "https://alice.coolpod.example/profile/card#me",
+  "iss": "https://secureauth.example",
+  "jti": "844a095c-9cdb-47e5-9510-1dba987c0a5f",
+  "iat": 1603370641,
+  "exp": 1603371241
+}
+```
+
+ - `"sub": "https://alice.coolpod.example/profile/card#me"`: The user this token corresponds to. (their WebId)
+ - `"aud": "https://decentphotos.example/webid#this",`: The token's audience. Because an id_token is intended for the client, its audience is the client id.
+ - `"webid": "https://alice.coolpod.example/profile/card#me"`: The WebId of the user that logged in
+ - `"iss": "https://secureauth.example"`: The OP that was used to generate this token
+ - `"client_id": "https://decentphotos.example/webid#this"`: The client id of the application
+ - `"jti": "844a095c-9cdb-47e5-9510-1dba987c0a5f"`: The jti is an optional unique identifier for this token that can be used to prevent replay attacks.
+ - `"iat": 1603370641`: The date the token was issued, in this case October 22, 2020 8:44:01
+ - `"exp": 1603371241`: The token's expiration date, in this case October 22, 2020 8:54:01
+
+#### 11. Generate a code
+
+Generate a cryptographically random string that will be used as a code (Let's say ours is `m-OrTPHdRsm8W_e9P0J2Bt`). Store that string in a persistant keystore as the key for the client id, the code challenge, the user's webid, their desired response types, and their scopes:
+
+```json
+{
+  "m-OrTPHdRsm8W_e9P0J2Bt": {
+    "client_id": "https://decentphotos.example/webid#this",
+    "code_challenge": "HSi9dwlvRpNHCDm-L8GOdM16qcb0tLHPZqQSvaWXTI0",
+    "webid": "https://alice.coolpod.example/profile/card#me",
+    "response_types": [ "code", "id_token" ],
+    "scope": [ "openid", "profile", "offline_access" ]
+  }
+}
+```
+
+#### 12. Send code to redirect url
+
+Once Alice successfully logs in, the OP redirects back to the application via the provided redirect uri, including useful information with it:
+
+```
+302 redirect to: https://decentphotos.example/callback?code=m-OrTPHdRsm8W_e9P0J2Bt
+```
+
+This redirect gives decentphotos the code that it will exchange for an access token.
+
+#### 13. Generates a DPoP Client Key Pair
+
+WebID-OIDC depends on [Decentralized Proof of Possession (DPoP) tokens](https://tools.ietf.org/html/draft-fett-oauth-dpop-04). DPoP tokens ensure that third-party web applications can send requests to any number of Pods while ensuring that evil pods can't steal a user's token.
+
+The first step to generating a DPoP token is generating a public and private key pair on the third-party RP. In our example, the private key is generated using elliptic curves and looks like:
+
+```json
+{
+  "kty":"EC",
+  "kid":"2i00gHnREsMhD5WqsABPSaqEjLC5MS-E98ykd-qtF1I",
+  "use":"sig",
+  "alg":"EC",
+  "crv":"P-256",
+  "x":"N6VsICiPA1ciAA82Jhv7ykkPL9B0ippUjmla8Snr4HY",
+  "y":"ay9qDOrFGdGe_3hAivW5HnqHYdnYUkXJJevHOBU4z5s",
+  "d":"RrM4Ou_7PzjP24B4k06B9ZML16HbfzNPKFN11Z8c9_s"
+}
+```
+
+From now on we will refer to this as `RP_PRIVATE_KEY`.
+
+The public key looks like:
+```json
+{
+  "kty": "EC",
+  "kid": "2i00gHnREsMhD5WqsABPSaqEjLC5MS-E98ykd-qtF1I",
+  "use": "sig",
+  "alg": "EC",
+  "crv": "P-256",
+  "x":"N6VsICiPA1ciAA82Jhv7ykkPL9B0ippUjmla8Snr4HY",
+  "y":"ay9qDOrFGdGe_3hAivW5HnqHYdnYUkXJJevHOBU4z5s",
+}
+```
+
+#### 14. Generates a DPoP Header
+
+Now that we generated a private key for the client, we need to generate the DPoP header. To do so, we create a (JSON Web Token)[https://jwt.io/introduction/] and sign it using the key we generated.
+
+Our token could look like the following (you can decode the token using https://jwt.io):
+```
+eyJhbGciOiJFUzI1NiIsInR5cCI6ImRwb3Arand0IiwiandrIjp7Imt0eSI6IkVDIiwia2lkIjoiZkJ1STExTkdGbTQ4Vlp6RzNGMjVDOVJmMXYtaGdEakVnV2pEQ1BrdV9pVSIsInVzZSI6InNpZyIsImFsZyI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiOWxlT2gxeF9IWkhzVkNScDcyQzVpR01jek1nUnpDUFBjNjBoWldfSFlLMCIsInkiOiJqOVVYcnRjUzRLVzBIYmVteW1vRWlMXzZ1cko0TFFHZXJQZXVNaFNEaV80In19.eyJodHUiOiJodHRwczovL3NlY3VyZWF1dGguZXhhbXBsZS90b2tlbiIsImh0bSI6InBvc3QiLCJqdGkiOiI0YmEzZTllZi1lOThkLTQ2NDQtOTg3OC03MTYwZmE3ZDNlYjgiLCJpYXQiOjE2MDMzMDYxMjgsImV4cCI6MTYwMzMwOTcyOH0.2lbgLoRCkj0MsDc9BpquoaYuq0-XwRf_URdXru2JKrVzaWUqQfyKRK76_sQ0aJyVwavM3pPswLlHq2r9032O7Q
+```
+
+Token Header:
+```json
+{
+  "alg": "ES256",
+  "typ": "dpop+jwt",
+  "jwk": {
+    "kty": "EC",
+    "kid": "2i00gHnREsMhD5WqsABPSaqEjLC5MS-E98ykd-qtF1I",
+    "use": "sig",
+    "alg": "EC",
+    "crv": "P-256",
+    "x":"N6VsICiPA1ciAA82Jhv7ykkPL9B0ippUjmla8Snr4HY",
+    "y":"ay9qDOrFGdGe_3hAivW5HnqHYdnYUkXJJevHOBU4z5s",
+  }
+}
+```
+ - `"alg": "ES256"`: The signing algorithm used in this token. In this case, `ES256` because we generated the keys using eliptic curves.
+ - `"typ": "dpop+jwt"`: The type of token. All DPoP Tokens should have a type of "dpop+jwt"
+ - `"jwk": { "kty": "EC" ... }`: The client's public key.
+
+Token Body:
+```json
+{
+  "htu": "https://secureauth.example/token",
+  "htm": "post",
+  "jti": "4ba3e9ef-e98d-4644-9878-7160fa7d3eb8",
+  "iat": 1603306128,
+  "exp": 1603309728
+}
+```
+ - `"htu": "https://secureauth.example/token"`: htu limits the token for use only on the given url.
+ - `"htm": "post"`: htm limits the token for use only on a specific http method, in this case `POST`.
+ - `"jti": "4ba3e9ef-e98d-4644-9878-7160fa7d3eb8"`: jti is a unique identifier for the DPoP token that can optionally be used by ther server to defend against replays
+ - `"iat": 1603306128`: The date the token was issued, in this case October 21, 2020 14:48:48 GMT.
+ - `"exp": 1603309728`: The date this token will expire, in this case October 21, 2020 15:48:48 GMT.
+
+ #### 15. Generates Basic Authentication
+
+When sending a token request, we need to use Basic Authentication. This works by combining the client id and client secret in a string separated by a colon then base64 encoding it.
+
+For example, our client id is `https://decentphotos.com/webid#this` and our client secret is `thisIsASecret`, so the full string would be `https://decentphotos.com/webid#this:thisIsASecret` which is `aHR0cHM6Ly9kZWNlbnRwaG90b3MuY29tL3dlYmlkI3RoaXM6dGhpc0lzQVNlY3JldA==` when base64 encoded.
+
+NOTE: Based on the spec, it is currently unknown how an app with an app WebId gets its client secret.
+
+ #### 16. Token requst with code and code verifier
+
+Now, we have everything we need to make an auth request. No need to redirect the web browser for this one. We only need to make an AJAX request to the `token` enpoint as defined in the OS's `openid-configuration` file, in our case `https://secureauth.example/token`
+
+```
+POST https://secureauth.example/token
+Headers: {
+  "Authorization": "Basic aHR0cHM6Ly9kZWNlbnRwaG90b3MuY29tL3dlYmlkI3RoaXM6dGhpc0lzQVNlY3JldA==",
+  "DPoP": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRwb3Arand0IiwiandrIjp7Imt0eSI6IkVDIiwia2lkIjoiZkJ1STExTkdGbTQ4Vlp6RzNGMjVDOVJmMXYtaGdEakVnV2pEQ1BrdV9pVSIsInVzZSI6InNpZyIsImFsZyI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiOWxlT2gxeF9IWkhzVkNScDcyQzVpR01jek1nUnpDUFBjNjBoWldfSFlLMCIsInkiOiJqOVVYcnRjUzRLVzBIYmVteW1vRWlMXzZ1cko0TFFHZXJQZXVNaFNEaV80In19.eyJodHUiOiJodHRwczovL3NlY3VyZWF1dGguZXhhbXBsZS90b2tlbiIsImh0bSI6InBvc3QiLCJqdGkiOiI0YmEzZTllZi1lOThkLTQ2NDQtOTg3OC03MTYwZmE3ZDNlYjgiLCJpYXQiOjE2MDMzMDYxMjgsImV4cCI6MTYwMzMwOTcyOH0.2lbgLoRCkj0MsDc9BpquoaYuq0-XwRf_URdXru2JKrVzaWUqQfyKRK76_sQ0aJyVwavM3pPswLlHq2r9032O7Q",
+  "content-type": "application/x-www-form-urlencoded"
+}
+Body:
+  grant_type=authorization_code&
+  code_verifier=JXPOuToEB7&
+  code=m-OrTPHdRsm8W_e9P0J2Bt&
+  redirect_uri=https%3A%2F%2Fdecentphotos.example%2Fcallback&
+  client_id=https%3A%2F%2Fdecentphotos.example%2Fwebid%23this
+```
+
+ - `headers.Authorization: "Basic aHR0cHM6L..."`: The basic authorization we made in the previous step. Be sure to include the word "Basic" followed by a space in this header.
+ - `headers.DPoP: "eyJhbGciOiJFUz..."`: The DPoP token we generated before. This will tell the OS what the client's public key is.
+ - `headers.content-type: "application/x-www-form-urlencoded"`: Sets to body's content type to `application/x-www-form-urlencoded`. Some OSs will accept other content types like `application/json` but they all must access urlencoded content types, so it's safest to use that.
+ - `body.grant_type=authorization_code`: Tells the OS that we are doing the authorization code flow.
+ - `body.code_verifier=JXPOuToEB7`: Our code verifier that we stored in local storage
+ - `body.code=m-OrTPHdRsm8W_e9P0J2Bt`: The code that we received from the OS upon redirect
+ - `body.redirect_uri`: The app's redirect url. In this case, this isn't needed because we're doing an AJAX request.
+ - `body.client_id=https%3A%2F%2Fdecentphotos.example%2Fwebid%23this`: The app's client id.
+
+Once this request is completed decentphotos can remove the code verifier from local storage.
+
+#### 17. Validate Client Id and Secret
+
+The OS base64 decodes the `Authroization` header and splits the client id and client secret. The OS verifies that the given client id corresponds to the client secret. If it does not it must reject the request with a 403.
+
+NOTE: It is currently not known how the client secret is correlated with the client id for app that use app WebIds.
+
+#### 18. Validate code verifier
+
+The OS looks up the code that was saved earlier in a keystore. It checks to see that the client id in the keystore corresponds to the client id from the request. If it does not, it must reject the request with a 403.
+
+The OS then verifies that the code verifier [corresponds with the code challenge](https://tools.ietf.org/html/rfc7636#section-4.6) stored in the keystore. 
+
+```
+BASE64URL-ENCODE(SHA256(ASCII(code_verifier))) == code_challenge
+```
+
+If they do not correspond the OS must reject the request with a 403.
+
+#### 19. Validates DPoP Token Signature
+
+The OS extracts the client's public key from the DPoP header (at header.jwk). It confirms that the DPoP token was signed by the key's private counterpart. If it was not, the OS must reject the request with a 403.
+
+#### 20. Converts the DPoP public key to a JWK thumbprint
+
+Currently the DPoP token contains a JWK public key, but before we place it inside the access token, it needs to be converted into a [JWK thumbprint](https://tools.ietf.org/html/rfc7638). Our JWK thumbprint looks more like:
+
+```
+9XmwK8mQ3H5-PnzAt3lFHzWBW_v5QhYynezbbit4kC8
+```
+
+#### 21. Generates access token
+
+The OS generates an access token. To do so it constructs a JSON Web Token and signs it using its own keys. The access token could look like (remember you can decode it using https://jwt.io):
+
+```
+eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJodHRwczovL2FsaWNlLmNvb2xwb2QuZXhhbXBsZS9wcm9maWxlL2NhcmQjbWUiLCJ3ZWJpZCI6Imh0dHBzOi8vYWxpY2UuY29vbHBvZC5leGFtcGxlL3Byb2ZpbGUvY2FyZCNtZSIsImlzcyI6Imh0dHBzOi8vc2VjdXJlYXV0aC5leGFtcGxlIiwiYXVkIjoic29saWQiLCJjbmYiOnsiamt0IjoiOVhtd0s4bVEzSDUtUG56QXQzbEZIeldCV192NVFoWXluZXpiYml0NGtDOCJ9LCJjbGllbnRfaWQiOiJodHRwczovL2RlY2VudHBob3Rvcy5leGFtcGxlL3dlYmlkI3RoaXMiLCJqdGkiOiJmZDBhMTM1My0yNWYzLTRjN2UtOGY4Yi1jMTQyNjRmMWMxMmUiLCJpYXQiOjE2MDMzODUyNjEsImV4cCI6MTYwMzM4NTg2MX0.HIIYiovILPvsdkD3s3xomR1MkA_Ir8Mx_C-eHxbWEnw9Z2rv2rOWbvMPZ--BqH3qVSupgYTZZsTDbZXA8giCLA
+```
+
+Token Header:
+```
+{
+  "alg": "ES256",
+  "typ": "JWT"
+}
+```
+ - `"alg": "ES256"`: indicates the token was signed using eliptic curve
+ - `"typ": "JWT"`: indicates that this is a JSON web token
+
+Token Body:
+```
+{
+  "sub": "https://alice.coolpod.example/profile/card#me",
+  "webid": "https://alice.coolpod.example/profile/card#me",
+  "iss": "https://secureauth.example",
+  "aud": "solid",
+  "cnf": {
+    "jkt": "9XmwK8mQ3H5-PnzAt3lFHzWBW_v5QhYynezbbit4kC8"
+  },
+  "client_id": "https://decentphotos.example/webid#this",
+  "jti": "fd0a1353-25f3-4c7e-8f8b-c14264f1c12e",
+  "iat": 1603385261,
+  "exp": 1603385861
+}
+```
+ - `"sub": "https://alice.coolpod.example/profile/card#me"`: The user this token corresponds to. (their WebId)
+ - `"webid": "https://alice.coolpod.example/profile/card#me"`: The WebId of the user that logged in
+ - `"iss": "https://secureauth.example"`: The OP that was used to generate this token
+ - `"aud": "solid"`: The token's audience. Because DPoP handles scoping the audience in all practical senses, the audience for a solid token is simply "solid."
+ - `"cnf": { "jkt": "9XmwK8mQ3H5-PnzAt3lFHzWBW_v5QhYynezbbit4kC8" }`: The jwk thrumbprint must be embedded in an object on the field "jkt"
+ - `"client_id": "https://decentphotos.example/webid#this"`: The client id of the application
+ - `"iat": 1603370641`: The date the token was issued, in this case October 22, 2020 8:44:01
+ - `"exp": 1603371241`: The token's expiration date, in this case October 22, 2020 8:54:01
+
+#### 22. Generates id token
+
+If `id_token` was included in the authorization request, generate the id_token again just as you generated it in step 10.
+
+#### 23. Generates refresh token
+
+If `offline_access` was provided as a scope, the OP creates a cryptographically random long as a refresh token. It could be like the one below. Notice the one below is a JWT, but a refresh token does not need to be a JWT.
+
+```
+eyJhbGciOiJub25lIn0.eyJqdGkiOiJhNzhiNDllZi03MWM1LTQ5ODUtYTUwYy01ZWYzYWVmMGZkOGYifQ.
+```
+
+Save the token to a persistant store
+
+#### 24. Sends access token
+
+Once the OP has confirmed that everything checks out and all the tokens are generated, it sends a response with the access token in the body:
+
+Response (content-type: application/json)
+```
+{
+  "access_token": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJodHRwczovL2FsaWNlLmNvb2xwb2QuZXhhbXBsZS9wcm9maWxlL2NhcmQjbWUiLCJ3ZWJpZCI6Imh0dHBzOi8vYWxpY2UuY29vbHBvZC5leGFtcGxlL3Byb2ZpbGUvY2FyZCNtZSIsImlzcyI6Imh0dHBzOi8vc2VjdXJlYXV0aC5leGFtcGxlIiwiYXVkIjoic29saWQiLCJjbmYiOnsiamt0IjoiOVhtd0s4bVEzSDUtUG56QXQzbEZIeldCV192NVFoWXluZXpiYml0NGtDOCJ9LCJjbGllbnRfaWQiOiJodHRwczovL2RlY2VudHBob3Rvcy5leGFtcGxlL3dlYmlkI3RoaXMiLCJqdGkiOiJmZDBhMTM1My0yNWYzLTRjN2UtOGY4Yi1jMTQyNjRmMWMxMmUiLCJpYXQiOjE2MDMzODUyNjEsImV4cCI6MTYwMzM4NTg2MX0.HIIYiovILPvsdkD3s3xomR1MkA_Ir8Mx_C-eHxbWEnw9Z2rv2rOWbvMPZ--BqH3qVSupgYTZZsTDbZXA8giCLA",
+  "expires_in":	300,
+  "token_type":	"DPoP",
+  "id_token": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJodHRwczovL2FsaWNlLmNvb2xwb2QuZXhhbXBsZS9wcm9maWxlL2NhcmQjbWUiLCJhdWQiOiJodHRwczovL2RlY2VudHBob3Rvcy5leGFtcGxlL3dlYmlkI3RoaXMiLCJ3ZWJpZCI6Imh0dHBzOi8vYWxpY2UuY29vbHBvZC5leGFtcGxlL3Byb2ZpbGUvY2FyZCNtZSIsImlzcyI6Imh0dHBzOi8vc2VjdXJlYXV0aC5leGFtcGxlIiwianRpIjoiODQ0YTA5NWMtOWNkYi00N2U1LTk1MTAtMWRiYTk4N2MwYTVmIiwiaWF0IjoxNjAzMzg2NDQ4LCJleHAiOjE2MDMzODcwNDh9.T306vT8dmn9gQIMEdG92AM4WRnrhqWZTfDpovwqZ6Zn0mK9yxj0iOVGqXD4CW8-tzDTitNwEGorAo85atL0Oeg",
+  "refresh_token":	"eyJhbGciOiJub25lIn0.eyJqdGkiOiJhNzhiNDllZi03MWM1LTQ5ODUtYTUwYy01ZWYzYWVmMGZkOGYifQ."
+  "scope":	"openid webid offline_access"
+}
+```
+ - `access_token": "eyJhbGciOiJ..."`: The access token we generated. The client will use this to authenticate with the server.
+ - `"expires_in":	300`: Tells the client that the access token will expire in 300 seconds (5 minutes)
+ - `"token_type":	"DPoP"`: Tells the client that the token type is DPoP
+ - `"id_token": "eyJhbGciOiJFU..."`: The id token we generated. The client will use this to extract information like the user's WebId.
+ - `"refresh_token":	"eyJhbGciOiJ..."`: The refresh token. The client will use this to get a new access token when its current one expires.
+ - `"scope":	"openid webid offline_access"`: The scopes that were used.
+
+### Sending a Request
+
+<img src="primer-request.png" />
+
+#### 1. An AJAX request is initiated
+
+In this example, Alice has logged into https://decentphotos.example and has completed the authentication steps above. She wants to make a request to Bob's Pod to get a photo album information at `https://bob.otherpod.example/private/photo_album.ttl`. Bob has previously granted access to Alice but has not granted access to anyone else.
+
+#### 2. Creates a DPoP header token
+
+Before we send a request, we need to generate a DPoP header token. A new DPoP token must be generated every time a request is made.
+
+Generating a DPoP token is done the same way we did it in the authentication section. Our token could look like the following (you can decode the token using https://jwt.io):
+```
+eyJhbGciOiJFUzI1NiIsInR5cCI6ImRwb3Arand0IiwiandrIjp7Imt0eSI6IkVDIiwia2lkIjoiQ21HVE9Dd3ZKWXhrb0dGOGNxcFpBNTdab2xVdThBcFJQb3MwVlduWk1TNCIsInVzZSI6InNpZyIsImFsZyI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiU0FZcmF5VUh4Z1FPQ29YSC1MbHdyOW1iSWJpUHBsLXRQRUpLeE1WWFltcyIsInkiOiJ6eGJQODdPQ3JpeEZpMk9vZjU1QkhsTC1ySHhvWHVuUmttNFBkV3duUzJnIn19.eyJodHUiOiJodHRwczovL2JvYi5vdGhlcnBvZC5leGFtcGxlL3ByaXZhdGUvcGhvdG9fYWxidW0udHRsIiwiaHRtIjoiZ2V0IiwianRpIjoiZmIxMjY0ZGQtZmZmMS00NTA5LWE3YjEtMGZlNThkMDhkM2UxIiwiaWF0IjoxNjAzMzg5NjE2LCJleHAiOjE2MDMzOTMyMTZ9.G8JktoMOadenCYtO4Z_ZI7ACnjKJvT59OyKlQ6WpB1Qq2GoCK6v1ocrpsfELDOKIL5nt5fwWccfvCAA2bMrkjA
+```
+
+Token Header:
+```json
+{
+  "alg": "ES256",
+  "typ": "dpop+jwt",
+  "jwk": {
+    "kty": "EC",
+    "kid": "2i00gHnREsMhD5WqsABPSaqEjLC5MS-E98ykd-qtF1I",
+    "use": "sig",
+    "alg": "EC",
+    "crv": "P-256",
+    "x":"N6VsICiPA1ciAA82Jhv7ykkPL9B0ippUjmla8Snr4HY",
+    "y":"ay9qDOrFGdGe_3hAivW5HnqHYdnYUkXJJevHOBU4z5s",
+  }
+}
+```
+ - `"alg": "ES256"`: The signing algorithm used in this token. In this case, `ES256` because we generated the keys using eliptic curves.
+ - `"typ": "dpop+jwt"`: The type of token. All DPoP Tokens should have a type of "dpop+jwt"
+ - `"jwk": { "kty": "EC" ... }`: The client's public key.
+
+Token Body:
+```json
+{
+  "htu": "https://bob.otherpod.example/private/photo_album.ttl",
+  "htm": "get",
+  "jti": "fb1264dd-fff1-4509-a7b1-0fe58d08d3e1",
+  "iat": 1603389616,
+  "exp": 1603393216
+}
+```
+ - `"htu": "https://bob.otherpod.example/private/photo_album.ttl"`: htu limits the token for use only on the given url.
+ - `"htm": "get"`: htm limits the token for use only on a specific http method, in this case `POST`.
+ - `"jti": "fb1264dd-fff1-4509-a7b1-0fe58d08d3e1"`: jti is a unique identifier for the DPoP token that can optionally be used by ther server to defend against replays
+ - `"iat": 1603389616`: The date the token was issued, in this case October 22, 2020 14:00:16 GMT.
+ - `"exp": 1603393216`: The date this token will expire, in this case October 22, 2020 15:00:16 GMT.
+
+#### 3. Sends request
+
+With the access token and new DPoP token in hand, we're ready to make our request.
+
+```
+GET https://bob.otherpod.example/private/photo_album.ttl
+Headers: {
+  authorization: "DPOP eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJodHRwczovL2FsaWNlLmNvb2xwb2QuZXhhbXBsZS9wcm9maWxlL2NhcmQjbWUiLCJ3ZWJpZCI6Imh0dHBzOi8vYWxpY2UuY29vbHBvZC5leGFtcGxlL3Byb2ZpbGUvY2FyZCNtZSIsImlzcyI6Imh0dHBzOi8vc2VjdXJlYXV0aC5leGFtcGxlIiwiYXVkIjoic29saWQiLCJjbmYiOnsiamt0IjoiOVhtd0s4bVEzSDUtUG56QXQzbEZIeldCV192NVFoWXluZXpiYml0NGtDOCJ9LCJjbGllbnRfaWQiOiJodHRwczovL2RlY2VudHBob3Rvcy5leGFtcGxlL3dlYmlkI3RoaXMiLCJqdGkiOiJmZDBhMTM1My0yNWYzLTRjN2UtOGY4Yi1jMTQyNjRmMWMxMmUiLCJpYXQiOjE2MDMzODUyNjEsImV4cCI6MTYwMzM4NTg2MX0.HIIYiovILPvsdkD3s3xomR1MkA_Ir8Mx_C-eHxbWEnw9Z2rv2rOWbvMPZ--BqH3qVSupgYTZZsTDbZXA8giCLA",
+  dpop: "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRwb3Arand0IiwiandrIjp7Imt0eSI6IkVDIiwia2lkIjoiQ21HVE9Dd3ZKWXhrb0dGOGNxcFpBNTdab2xVdThBcFJQb3MwVlduWk1TNCIsInVzZSI6InNpZyIsImFsZyI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiU0FZcmF5VUh4Z1FPQ29YSC1MbHdyOW1iSWJpUHBsLXRQRUpLeE1WWFltcyIsInkiOiJ6eGJQODdPQ3JpeEZpMk9vZjU1QkhsTC1ySHhvWHVuUmttNFBkV3duUzJnIn19.eyJodHUiOiJodHRwczovL2JvYi5vdGhlcnBvZC5leGFtcGxlL3ByaXZhdGUvcGhvdG9fYWxidW0udHRsIiwiaHRtIjoiZ2V0IiwianRpIjoiZmIxMjY0ZGQtZmZmMS00NTA5LWE3YjEtMGZlNThkMDhkM2UxIiwiaWF0IjoxNjAzMzg5NjE2LCJleHAiOjE2MDMzOTMyMTZ9.G8JktoMOadenCYtO4Z_ZI7ACnjKJvT59OyKlQ6WpB1Qq2GoCK6v1ocrpsfELDOKIL5nt5fwWccfvCAA2bMrkjA"
+}
+```
+ - `headers.authorization: "DPOP eyJhbGciOiJFUzI1N..."`: The authorization header contains the ACCESS TOKEN that we received from the OS during the auth phase. Putting "DPOP" followed by a space tells the Resource Server that this is a DPOP bound access token.
+ - `dpop: "eyJhbGciOi..."`: The dpop token we just generated.
+
+#### 4. Checks DPoP and Access Token expirations
+
+The RS checks if the DPoP token and access tokens are still valid by looking at the `exp` claim. If either token does not have an `exp` claim or either token is expired, the OP must reject the request with a 403.
+
+#### 5. Checks the DPoP token url and method
+
+The RS checks the `htu` and `htm` claims of the dpop token. If the `htu` does not match the protocol, origin and path of the request or the `htm` does not correspond the the http method of the request, the OP must reject the request with a 403.
+
+#### 5.1. (Optional) Checks DPoP token unique identifier
+
+The RS can optionally keep track of all DPoP `jti` claims it received. Because a new DPoP token must be generated each time a request is made, no two tokens should have the same `jti`. If the RS receives a DPoP token with a `jti` it has already encoutnered it may reject the request with a 403.
+
+#### 6. Checks DPoP signature against Access Token
+
+The RS first confirms that the DPoP token was signed by the public key listed in its `header.jwk`. If it was not, the RS must reject the request with a 403.
+
+The RS checks if the private key in the DPoP token's `header.jwk` corresponds to the jwk thumbprint in the access token in the `cnf` field. If they do not, the OP must reject the request with a 403.
+
+#### 7. Retrieves Profile
+
+Using the `sub` claim in the access token (for us, it's `https://alice.coolpod.example/profile/card#me`), the RS retreives the user's WebId document.
+
+Request
+```
+GET https://alice.coolpod.example/profile/card#me
+```
+
+Response
+```
+@prefix : <#>.
+@prefix solid: <http://www.w3.org/ns/solid/terms#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix schema: <http://schema.org/>.
+
+<>
+    a foaf:PersonalProfileDocument ;
+    foaf:maker <https://localhost:8443/profile/card#me> ;
+    foaf:primaryTopic <https://localhost:8443/profile/card#me> .
+
+:me a foaf:Person ;
+    a schema:Person ;
+    foaf:name "Alice" ;
+    solid:oidcIssuer <https://secureauth.example> ;
+```
+
+#### 8. Checks issuer
+
+The RS checks that the `iss` claim in the access token matches the issuer listed in the user's WebID. If it does not, the RS must reject the request with a 403.
+
+#### 9. Retrieves OP configuration
+
+The RS uses the `iss` claim to get the issuer's configuration. The url is the issuer claim with `/.well-known/openid-configuration` appended to the end.
+
+Request
+```
+GET https://secureauth.example/.well-known/openid-configuration
+```
+
+Response
+```json
+{  
+   "issuer":"https://secureauth.example",
+   "authorization_endpoint":"https://secureauth.example/authorize",
+   "token_endpoint":"https://secureauth.example/token",
+   "userinfo_endpoint":"https://secureauth.example/userinfo",
+   "jwks_uri":"https://secureauth.example/jwks",
+   "registration_endpoint":"https://secureauth.example/register",
+   "response_types_supported":[  
+      "code",
+      "code token",
+      "code id_token",
+      "id_token",
+      "id_token token",
+      "code id_token token",
+      "none"
+   ],
+   "response_modes_supported":[  
+      "query",
+      "fragment"
+   ],
+   "grant_types_supported":[  
+      "authorization_code",
+      "implicit",
+      "refresh_token",
+      "client_credentials"
+   ],
+   "subject_types_supported":[  
+      "public"
+   ],
+   "id_token_signing_alg_values_supported":[  
+      "RS256",
+      "RS384",
+      "RS512",
+      "none"
+   ],
+   "token_endpoint_auth_methods_supported":[  
+      "client_secret_basic"
+   ],
+   "token_endpoint_auth_signing_alg_values_supported":[  
+      "RS256"
+   ],
+   "display_values_supported":[  
+
+   ],
+   "claim_types_supported":[  
+      "normal"
+   ],
+   "claims_supported":[  
+
+   ],
+   "claims_parameter_supported":false,
+   "request_parameter_supported":true,
+   "request_uri_parameter_supported":false,
+   "require_request_uri_registration":false,
+   "check_session_iframe":"https://secureauth.example/session",
+   "end_session_endpoint":"https://secureauth.example/logout"
+}
+```
+
+#### 10. Requests JWKS
+
+Using the `jwks_uri` field in the openid-configuration, the RS makes a request to retreive the OS's public keys.
+
+Request
+```
+GET https://secureauth.example/jwks
+```
+
+Response (application/json)
+```json
+{
+  keys: [
+    {
+      alg: "EC"
+      crv: "P-256"
+      d: "r9vj-KBwanlREOB62F-CXNR5Q_Q-WKkm_9amJDcDcDM"
+      kid: "Xu68Q0ZfwDiRfWOb2UE8N77GoEQQ7q58_3gl1wsKENs"
+      kty: "EC"
+      use: "sig"
+      x: "qBbrIQNVTIm7M88iJFVB3e1GqsbFbYYfFiibkd48_Ac"
+      y: "SCl_hDR_6SEuJhKFOiVo8-zLqNglZ56jiJw2_PNE9hU"
+    }
+  ]
+}
+```
+
+Notice that the `keys` field is an array, so an OP could have multiple public keys.
+
+#### 11. Checks access token signature validity
+
+The RS checks to see if the access token was signed by one of the keys in the key set. If it was not, the RS must reject the request with a 403.
+
+#### 12. Performs Authorization
+
+Now that the RS has performed all of its checks, we can trust that the user in the `sub` claim (https://alice.coolpod.example/profile/card#me) is truely the user that made the request. Using that information, the RS performs authorization.
+
+# 13. Returns Result
+
+Given all went well, the RS should return the requested content.
+
