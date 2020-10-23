@@ -7,24 +7,21 @@ Alice's WebID->RP:
 RP->Alice's OP: 3. Retrieves OP configuration
 Alice's OP->RP:
 note over RP: 4. Generates PKCE code and code verifier
-note over RP: 5. Saves code verifier to localstorage
+note over RP: 5. Saves code verifier to session storage
 RP->Alice's OP: 6. Authorization Request
-Alice's OP->RS WebID: 7. Fetch RS WebID
-RS WebID->Alice's OP:
+Alice's OP->RP WebID: 7. Fetch RP WebID
+RP WebID->Alice's OP:
 note over Alice's OP: 8. Validates redirect url with WebID
 note over Alice's OP: 9. Alice Logs In
-note over Alice's OP: 10. Generates id token
-note over Alice's OP: 11. Generates a code
-Alice's OP->RP: 12. Sends code to redirect url
-note over RP: 13. Generates DPoP Client Key Pair
-note over RP: 14. Generates a DPoP Header
-note over RP: 15. Generates Basic Authentication
-RP->Alice's OP: 16. Token requst with code and code verifier
-note over Alice's OP: 17. Validate client id and secret
-note over Alice's OP: 18. Validates code verifier
-note over Alice's OP: 19. Validates DPoP Token signature
-note over Alice's OP: 20. Converts the DPoP public key to a JWK thumbprint
-note over Alice's OP: 21. Generates access token
-note over Alice's OP: 22. Generates id token
-note over Alice's OP: 23. Generates refresh token
-Alice's OP->RP: 23. Sends tokens
+note over Alice's OP: 10. Generates a code
+Alice's OP->RP: 11. Sends code to redirect url
+note over RP: 12. Generates DPoP Client Key Pair
+note over RP: 13. Generates a DPoP Header
+RP->Alice's OP: 14. Token requst with code and code verifier
+note over Alice's OP: 15. Validates code verifier
+note over Alice's OP: 16. Validates DPoP Token signature
+note over Alice's OP: 17. Converts the DPoP public key to a JWK thumbprint
+note over Alice's OP: 18. Generates access token
+note over Alice's OP: 19. Generates id token
+note over Alice's OP: 20. Generates refresh token
+Alice's OP->RP: 21. Sends tokens

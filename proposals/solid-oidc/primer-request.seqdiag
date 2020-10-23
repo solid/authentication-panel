@@ -3,7 +3,7 @@ title: Sending a Request
 note over RP: 1. An AJAX request is initiated
 note over RP: 2. Creates a DPoP header token
 RP->Bob's Pod (RS): 3. Sends Request
-note over Bob's Pod (RS): 4. Checks DPoP and Access token expirations
+note over Bob's Pod (RS): 4. Checks Access token expirations
 note over Bob's Pod (RS): 5. Checks DPoP Token url and method
 note over Bob's Pod (RS): 5.1. (Optional) Checks DPoP token unique identifier
 note over Bob's Pod (RS): 6. Checks DPoP signature against Access Token
