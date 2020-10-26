@@ -113,7 +113,7 @@ openid-configuration`
 GET https://secureauth.example/.well-known/openid-configuration
 ```
 
-The [openid-configuration](https://auth0.com/docs/protocols/oidc/openid-connect-discovery)
+The [openid-configuration](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata)
 describes everything the client will need to know to authorize with Alice's specific OP.
 
 Response Body:
@@ -404,7 +404,7 @@ Token Body:
  - `"iat": 1603306128`: The date the token was issued, in this case October 21, 2020 15:52:33
  GMT.
 
- #### 14. Token requst with code and code verifier
+ #### 14. Token request with code and code verifier
 
 Now, we have everything we need to make an auth request. No need to redirect the web browser
 for this one. We only need to make an AJAX request to the `token` endpoint as defined in the
@@ -474,7 +474,7 @@ Our JWK thumbprint looks more like:
 
 The OP generates an access token. To do so it constructs a JSON Web Token and signs it using
 its own keys. The access token could look like (remember you can decode it using 
-https://jwt.io:
+https://jwt.io):
 
 ```
 eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJodHRwczovL2FsaWNlLmNvb2xwb2QuZXhhbXBsZS9wcm9maWxlL2NhcmQjbWUiLCJ3ZWJpZCI6Imh0dHBzOi8vYWxpY2UuY29vbHBvZC5leGFtcGxlL3Byb2ZpbGUvY2FyZCNtZSIsImlzcyI6Imh0dHBzOi8vc2VjdXJlYXV0aC5leGFtcGxlIiwiYXVkIjoic29saWQiLCJjbmYiOnsiamt0IjoiOVhtd0s4bVEzSDUtUG56QXQzbEZIeldCV192NVFoWXluZXpiYml0NGtDOCJ9LCJjbGllbnRfaWQiOiJodHRwczovL2RlY2VudHBob3Rvcy5leGFtcGxlL3dlYmlkI3RoaXMiLCJqdGkiOiJmZDBhMTM1My0yNWYzLTRjN2UtOGY4Yi1jMTQyNjRmMWMxMmUiLCJpYXQiOjE2MDMzODUyNjEsImV4cCI6MTYwMzM4NTg2MX0.HIIYiovILPvsdkD3s3xomR1MkA_Ir8Mx_C-eHxbWEnw9Z2rv2rOWbvMPZ--BqH3qVSupgYTZZsTDbZXA8giCLA
