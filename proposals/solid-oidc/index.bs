@@ -232,8 +232,11 @@ registered with the IdP via either OIDC dynamic or static registration.
 
 # Token Instantiation # {#tokens}
 
-Assuming the Client ID and Secret, and the DPoP Proof are valid, the IdP MUST return two tokens to
-the Client:
+Assuming one of the following options
+ - Client ID and Secret, and valid DPoP Proof (for dynamic and static registration)
+ - Client WebID with a proper registration and valid DPoP Proof (for a client webid)
+ - A client id of `http://www.w3.org/ns/solid/terms#PublicOidcClient` (for a public WebId)
+the IdP MUST return two tokens to the Client:
 
 1. A DPoP-bound Access Token
 2. An OIDC ID Token
@@ -293,7 +296,7 @@ The `webid` claim MUST be the user's WebID.
             "iss": "https://idp.example.com",
             "sub": "https://janedoe.com/web#id",
             "webid": "https://janedoe.com/web#id",
-            "aud": "https://client.example.com",
+            "aud": "https://client.example.com/web#id",
             "nonce": "n-0S6_WzA2Mj",
             "exp": 1311281970,
             "iat": 1311280970,
