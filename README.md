@@ -18,8 +18,9 @@ to propose a project for the panel to undertake.
 
 ### Solid OIDC
 
-* Current Draft - [Source](https://github.com/solid/authentication-panel/tree/master/proposals/solid-oidc/index.bs) - [Rendered](https://solid.github.io/authentication-panel/solid-oidc/)
-* [Open Issues](https://github.com/solid/authentication-panel/issues?q=is%3Aissue+is%3Aopen+label%3ASolid-OIDC)
+* Specification - [Source](https://github.com/solid/authentication-panel/tree/master/proposals/solid-oidc/index.bs) - [Rendered](https://solid.github.io/authentication-panel/solid-oidc/)
+  * [Open Issues](https://github.com/solid/authentication-panel/issues?q=is%3Aissue+is%3Aopen+label%3ASolid-OIDC)
+* Primer - [Source](https://github.com/solid/authentication-panel/tree/master/proposals/solid-oidc-primer/index.bs) - [Rendered](https://solid.github.io/authentication-panel/solid-oidc-primer/)
 
 ## Meetings
 
