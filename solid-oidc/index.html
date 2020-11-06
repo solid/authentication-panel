@@ -1323,7 +1323,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 89ebb6ab, updated Fri Oct 9 15:32:07 2020 -0700" name="generator">
   <link href="https://solid.github.io/specification/solid-oidc/" rel="canonical">
-  <meta content="9d8f92950f61d6144dfcf2209bcdd6daef025bff" name="document-revision">
+  <meta content="f87826fcae84a38cfa6d14c106c254491f95d0cd" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -1703,7 +1703,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref allcaps" id="title">SOLID-OIDC</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2020-11-02">2 November 2020</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2020-11-06">6 November 2020</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1718,7 +1718,7 @@ dfn > a.self-link::before      { content: "#"; }
    <div data-fill-with="warning"></div>
    <p class="copyright" data-fill-with="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="https://licensebuttons.net/p/zero/1.0/80x15.png"></a> To the extent possible under law, the editors have waived all copyright
 and related or neighboring rights to this work.
-In addition, as of 2 November 2020,
+In addition, as of 6 November 2020,
 the editors have made this specification available under the <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
 Parts of this work may be from another specification document.  If so, those parts are instead covered by the license of that specification document. </p>
@@ -1999,7 +1999,7 @@ MUST be present when a DPoP-bound Access Token is used.</p>
 requested resource.</p>
    <p>The user’s WebID in the <code>webid</code> claim MUST be dereferenced and checked against the <code>iss</code> claim in the
 Access Token. If the <code>iss</code> claim is different from the domain of the WebID, then the RS MUST check
-the WebID document for an existance of a statement matching <code>?webid &lt;http://www.w3.org/ns/solid/terms#oidcIssuer> ?iss.</code> Where <code>?webid</code> and <code>?iss</code> are values of <code>webid</code> and <code>iss</code> claims accordingly.
+the WebID document for an existance of a statement matching <code>?webid &lt;http://www.w3.org/ns/solid/terms#oidcIssuer> ?iss.</code> Where <code>?webid</code> and <code>?iss</code> are values of <code>webid</code> and <code>iss</code> claims respectively.
 This prevents a malicious identity provider from issuing valid Access Tokens for arbitrary WebIDs.</p>
    <p>Unless RS knows IdP keys through some other means, or IdP chooses to reject tokens issued by this IdP,
 the IdP MUST follow OpenID Connect Discovery 1.0 <a data-link-type="biblio" href="#biblio-openiddiscovery">[OpenID.Discovery]</a> to find an IdP’s signing keys (JWK).</p>
