@@ -318,7 +318,7 @@ requested resource.
 The user's WebID in the `webid` claim MUST be dereferenced and checked against the `iss` claim in the
 Access Token. If the `iss` claim is different from the domain of the WebID, then the RS MUST check
 the WebID document for an existance of a statement matching `?webid <http://www.w3.org/ns/solid/terms#oidcIssuer> ?iss.`
-Where `?webid` and `?iss` are values of `webid` and `iss` claims accordingly.
+Where `?webid` and `?iss` are values of `webid` and `iss` claims respectively.
 This prevents a malicious identity provider from issuing valid Access Tokens for arbitrary WebIDs.
 
 Unless RS knows IdP keys through some other means, or IdP chooses to reject tokens issued by this IdP,
