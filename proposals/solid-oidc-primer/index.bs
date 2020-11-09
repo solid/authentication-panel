@@ -367,7 +367,8 @@ This redirect gives decentphotos the code that it will exchange for an access to
 
 <h4 id="pkce-login-flow-step-12" class="no-num">12. Generates a DPoP Client Key Pair</h4>
 
-Solid-OIDC depends on [Demonstration of Proof-of-Possession (DPoP) tokens](https://tools.ietf.org/html/draft-fett-oauth-dpop-04).
+Solid-OIDC depends on
+[Demonstration of Proof-of-Possession (DPoP) tokens](https://tools.ietf.org/html/draft-fett-oauth-dpop-04).
 DPoP tokens ensure that third-party web applications can send requests to any number of
 Pods while ensuring that evil Pods can't steal a user's token.
 
