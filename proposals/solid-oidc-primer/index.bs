@@ -93,7 +93,7 @@ Several actors are at play in our example Solid OIDC authentication flows:
 
 ## Authorization Code with PKCE tokens Login Flow ## {#pkce-login-flow}
 
-The Authorization Code with PKCE tokens login flow described here is the primary flow for Solid OIDC.
+The Authorization Code grant with PKCE is the primary OAuth 2.0 authorization flow recommended by the Solid OIDC. It is defined by the PKCE RFC [[!RFC7636]] and described here in the Solid OIDC context.
 
 <img src="primer-login.svg" />
 
