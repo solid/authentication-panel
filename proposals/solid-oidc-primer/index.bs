@@ -600,7 +600,7 @@ Token Body:
 ```
 
 - `"sub": "https://alice.coolpod.example/profile/card#me"`: The subject claim. It must
-    be the same as the authenticated user's webid.
+    be the same as the authenticated user's WebID.
 - `"aud": "https://decentphotos.example/webid#this"`: The token's audience. Because an
     id_token is intended for the client, its audience is the client id.
 - `"webid": "https://alice.coolpod.example/profile/card#me"`: The WebId of the user that
