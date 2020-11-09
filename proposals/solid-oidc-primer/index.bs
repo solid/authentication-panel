@@ -91,19 +91,19 @@ Several actors are at play in our example Solid OIDC authentication flows:
 
 # Solid OIDC Flow # {#solid-oidc-flow}
 
-## Authorization Code with PKCE tokens Login Flow ## {#pkce-login-flow}
+## Authorization Code Grant with PKCE Authorization Flow ## {#authorization-code-pkce-flow}
 
 The Authorization Code grant with PKCE is the primary OAuth 2.0 authorization flow recommended by the Solid OIDC. It is defined by the PKCE RFC [[!RFC7636]] and described here in the Solid OIDC context.
 
 <img src="primer-login.svg" />
 
-<h4 id="pkce-login-flow-step-1" class="no-num">1. Alice uses the Decent Photos web app</h4>
+<h4 id="authorization-code-pkce-flow-step-1" class="no-num">1. Alice uses the Decent Photos web app</h4>
 
 Alice has heard of a great new site that allows her to view her friend's photos and tag faces.
 She navigates to `https://decentphotos.example` via her web browser which returns an HTML page.
 This page contains JavaScript that will help with the authentication process.
 
-<h4 id="pkce-login-flow-step-2" class="no-num">2. Alice selects her OP or WebID</h4>
+<h4 id="authorization-code-pkce-flow-step-2" class="no-num">2. Alice selects her OP or WebID</h4>
 
 Before decentphotos can start displaying images, Alice needs to start the process of providing
 consent. To do so, she must either provide her WebID
@@ -114,7 +114,7 @@ While it is not the case with Alice, a user's Pod and OP can be hosted at the sa
 example, Bob's Pod could be `bob.otherpod.example` with a WebID of
 `https://bob.otherpod.example/profile/card#me`, but his OP is at `https://solid.example`.
 
-<h4 id="pkce-login-flow-step-2.1" class="no-num">2.1 Retrieve Profile (Only needed if a WebID is provided)</h4>
+<h4 id="authorization-code-pkce-flow-step-2.1" class="no-num">2.1 Retrieve Profile (Only needed if a WebID is provided)</h4>
 
 If Alice entered her WebID's URL rather than her OP's URL, a request should be made to
 determine her OP. To do so, a request should be made to Alice's WebId:
@@ -144,7 +144,7 @@ It will return a body similar to this:
 
 The OP URL is located at `:me -> solid:oidcIssuer`
 
-<h4 id="pkce-login-flow-step-3" class="no-num">3. Retrieves OP Configuration</h4>
+<h4 id="authorization-code-pkce-flow-step-3" class="no-num">3. Retrieves OP Configuration</h4>
 
 Now that we have Alice's OP's URL, the RP must make a request to retrieve the OP's
 configuration. This is always located at the OP's hostname followed by `/.well-known
@@ -237,7 +237,7 @@ Response Body:
 The thing we care about here is the `authorization_endpoint` field. This will be the url we use
 when we're ready to send an authorization request to the OP.
 
-<h4 id="pkce-login-flow-step-4" class="no-num">4. Generates PKCE code challenge and code verifier</h4>
+<h4 id="authorization-code-pkce-flow-step-4" class="no-num">4. Generates PKCE code challenge and code verifier</h4>
 
 To follow the [PKCE code flow](https://oauth.net/2/pkce/) we need to generate a code challenge
 and code verifier as instructed in the
@@ -250,13 +250,13 @@ Now using the code verifier, we construct a code challenge. This can be made by 
 the code verifier with Sha 256: `BASE64URL-ENCODE(SHA256(ASCII(code_verifier)))`. Here's our
 code challenge: `"HSi9dwlvRpNHCDm-L8GOdM16qcb0tLHPZqQSvaWXTI0"`
 
-<h4 id="pkce-login-flow-step-5" class="no-num">5. Saved code verifier to session storage</h4>
+<h4 id="authorization-code-pkce-flow-step-5" class="no-num">5. Saved code verifier to session storage</h4>
 
 Now, we save the code verifier (`"JXPOuToEB7"`) to session storage. We'll need it later to
 confirm to the OP that this is the app that initiated the request. Do not save the code
 challenge anywhere.
 
-<h4 id="pkce-login-flow-step-6" class="no-num">6. Authorization request</h4>
+<h4 id="authorization-code-pkce-flow-step-6" class="no-num">6. Authorization request</h4>
 
 Now that the web app is registered, we can finally make an auth request to authorize the web
 application.
@@ -289,7 +289,7 @@ via some UI on the OP or [dynamic registration](https://openid.net/specs/openid-
 You may also use `http://www.w3.org/ns/solid/terms#PublicOidcClient` as your client id. This will designate the
 client as a public client. Doing this may cause the RS to provide less access to your app.
 
-<h4 id="pkce-login-flow-step-7" class="no-num">7. Fetch RP WebID</h4>
+<h4 id="authorization-code-pkce-flow-step-7" class="no-num">7. Fetch RP WebID</h4>
 
 If an app WebID is provided as the client id (see note above to see other options), we must
 fetch that app WebID to confirm its validity.
@@ -322,21 +322,21 @@ Notice that the application WebID contains one required triple `?webid solid:oid
 jsonRegistration`. This is a JSON representation of an
 [OIDC Client Registration](https://tools.ietf.org/html/rfc7591#section-2).
 
-<h4 id="pkce-login-flow-step-8" class="no-num">8. Validate redirect url with WebID</h4>
+<h4 id="authorization-code-pkce-flow-step-8" class="no-num">8. Validate redirect url with WebID</h4>
 
 Check to be sure that the `redierct_uri` value provided in the auth request
 (`https://decentphotos.example/callback`) is listed in the `redirect_uris` array in the
 oidcRegistration. If it is not, the OP MUST reject the request with a `403`. In our case, it
 is, so we may continue.
 
-<h4 id="pkce-login-flow-step-9" class="no-num">9. Alice Logs In</h4>
+<h4 id="authorization-code-pkce-flow-step-9" class="no-num">9. Alice Logs In</h4>
 
 The OP should redirect to its login screen. The actual implementation of this is completely up
 to the OP. A user can log in with her password, a TLS certificate, or any other proven method
 of authentication. The important thing is that, thanks to the redirect, the control is now out
 of the hands of the RP and is in complete control of the OP.
 
-<h4 id="pkce-login-flow-step-10" class="no-num">10. Generate a code</h4>
+<h4 id="authorization-code-pkce-flow-step-10" class="no-num">10. Generate a code</h4>
 
 Generate a cryptographically random string that will be used as a code (Let's say ours is
 `m-OrTPHdRsm8W_e9P0J2Bt`). Store that string in a persistant keystore as the key for the client
@@ -354,7 +354,7 @@ id, the code challenge, the user's webid, their desired response types, and thei
 }
 ```
 
-<h4 id="pkce-login-flow-step-11" class="no-num">11. Send code to redirect url</h4>
+<h4 id="authorization-code-pkce-flow-step-11" class="no-num">11. Send code to redirect url</h4>
 
 Once Alice successfully logs in, the OP redirects back to the application via the provided
 redirect uri, including useful information with it:
@@ -365,7 +365,7 @@ redirect uri, including useful information with it:
 
 This redirect gives decentphotos the code that it will exchange for an access token.
 
-<h4 id="pkce-login-flow-step-12" class="no-num">12. Generates a DPoP Client Key Pair</h4>
+<h4 id="authorization-code-pkce-flow-step-12" class="no-num">12. Generates a DPoP Client Key Pair</h4>
 
 Solid-OIDC depends on
 [Demonstration of Proof-of-Possession (DPoP) tokens](https://tools.ietf.org/html/draft-fett-oauth-dpop-04).
@@ -404,7 +404,7 @@ The public key looks like:
 }
 ```
 
-<h4 id="pkce-login-flow-step-13" class="no-num">13. Generates a DPoP Header</h4>
+<h4 id="authorization-code-pkce-flow-step-13" class="no-num">13. Generates a DPoP Header</h4>
 
 Now that we generated a private key for the client, we need to generate the DPoP header. To do
 so, we create a [JSON Web Token](https://jwt.io/introduction/) and sign it using the key we
@@ -451,7 +451,7 @@ Token Body:
 - `"jti": "4ba3e9ef-e98d-4644-9878-7160fa7d3eb8"`: jti is a unique identifier for the DPoP token that can optionally be used by the server to defend against replay attacks
 - `"iat": 1603306128`: The date the token was issued, in this case October 21, 2020 15:52:33 GMT.
 
-<h4 id="pkce-login-flow-step-14" class="no-num">14. Token request with code and code verifier</h4>
+<h4 id="authorization-code-pkce-flow-step-14" class="no-num">14. Token request with code and code verifier</h4>
 
 Now, we have everything we need to make an auth request. No need to redirect the web browser
 for this one. We only need to make an AJAX request to the `token` endpoint as defined in the
@@ -487,7 +487,7 @@ Body:
 
 Once this request is completed decentphotos can remove the code verifier from session storage.
 
-<h4 id="pkce-login-flow-step-15" class="no-num">15. Validate code verifier</h4>
+<h4 id="authorization-code-pkce-flow-step-15" class="no-num">15. Validate code verifier</h4>
 
 The OP looks up the code that was saved earlier in a keystore. It checks to see that the client
 id in the keystore corresponds to the client id from the request. If it does not, it must
@@ -502,12 +502,12 @@ BASE64URL-ENCODE(SHA256(ASCII(code_verifier))) == code_challenge
 
 If they do not correspond the OP must reject the request with a 403.
 
-<h4 id="pkce-login-flow-step-16" class="no-num">16. Validates DPoP Token Signature</h4>
+<h4 id="authorization-code-pkce-flow-step-16" class="no-num">16. Validates DPoP Token Signature</h4>
 
 The OP extracts the client's public key from the DPoP header (at header.jwk). It confirms that
 the DPoP token has a valid signature. If not, the OP must reject the request with a 403.
 
-<h4 id="pkce-login-flow-step-17" class="no-num">17. Converts the DPoP public key to a JWK thumbprint</h4>
+<h4 id="authorization-code-pkce-flow-step-17" class="no-num">17. Converts the DPoP public key to a JWK thumbprint</h4>
 
 Currently the DPoP token contains a JWK public key, but before we place it inside the access
 token, it needs to be converted into a [JWK thumbprint](https://tools.ietf.org/html/rfc7638).
@@ -517,7 +517,7 @@ Our JWK thumbprint looks more like:
 9XmwK8mQ3H5-PnzAt3lFHzWBW_v5QhYynezbbit4kC8
 ```
 
-<h4 id="pkce-login-flow-step-18" class="no-num">18. Generates access token</h4>
+<h4 id="authorization-code-pkce-flow-step-18" class="no-num">18. Generates access token</h4>
 
 The OP generates an access token. To do so it constructs a JSON Web Token and signs it using
 its own keys. The access token could look like (remember you can decode it using 
@@ -565,7 +565,7 @@ Token Body:
 - `"iat": 1603370641`: The date the token was issued, in this case October 22, 2020 8:44:01
 - `"exp": 1603371241`: The token's expiration date, in this case October 22, 2020 8:54:01
 
-<h4 id="pkce-login-flow-step-19" class="no-num">19. Generates the id_token</h4>
+<h4 id="authorization-code-pkce-flow-step-19" class="no-num">19. Generates the id_token</h4>
 
 If `openid` was listed as a scope during the authorization request, the OP generates an id
 token. The id token is not used to access anything. It is simply to communicate information to
@@ -612,7 +612,7 @@ Token Body:
 - `"iat": 1603370641`: The date the token was issued, in this case October 22, 2020 8:44:01
 - `"exp": 1603371241`: The token's expiration date, in this case October 22, 2020 8:54:01
 
-<h4 id="pkce-login-flow-step-20" class="no-num">20. Generates refresh token</h4>
+<h4 id="authorization-code-pkce-flow-step-20" class="no-num">20. Generates refresh token</h4>
 
 If `offline_access` was provided as a scope, the OP creates an opaque token as
 a refresh token. It could be like the one below. Notice the one below is a JWT, but a refresh
@@ -640,7 +640,7 @@ Token Body:
 
 Save the refresh token to a persistant store.
 
-<h4 id="pkce-login-flow-step-21" class="no-num">21. Sends tokens</h4>
+<h4 id="authorization-code-pkce-flow-step-21" class="no-num">21. Sends tokens</h4>
 
 Once the OP has confirmed that everything checks out and all the tokens are generated, it sends
 a response with the tokens in the body:
