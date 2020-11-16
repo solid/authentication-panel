@@ -164,78 +164,59 @@ Response Body:
     "authorization_endpoint": "https://secureauth.example/authorize",
     "token_endpoint": "https://secureauth.example/token",
     "userinfo_endpoint": "https://secureauth.example/userinfo",
-    "jwks_uri": "https://secureauth.example/jwks",
     "registration_endpoint": "https://secureauth.example/register",
+    "end_session_endpoint": "https://secureauth.example/endsession",
+    "jwks_uri": "https://secureauth.example/jwks",
     "response_types_supported": [
-        "code",
-        "code token",
-        "code id_token",
-        "id_token",
-        "id_token token",
-        "code id_token token",
-        "none"
-    ],
-    "response_modes_supported": [
-        "query",
-        "fragment"
+        "code"
     ],
     "grant_types_supported": [
         "authorization_code",
-        "implicit",
-        "refresh_token",
-        "client_credentials"
+        "refresh_token"
     ],
     "subject_types_supported": [
         "public"
     ],
-    "id_token_signing_alg_values_supported": [
-        "RS256",
-        "RS384",
-        "RS512",
-        "none"
+    "claims_supported": [
+        "sub",
+        "webid"
+    ],
+    "scopes_supported": [
+        "openid",
+        "profile",
+        "email",
+        "offline_access"
     ],
     "token_endpoint_auth_methods_supported": [
         "client_secret_basic"
     ],
     "token_endpoint_auth_signing_alg_values_supported": [
-        "RS256"
+        "ES256"
     ],
-    "claim_types_supported": [
-        "normal"
+    "request_object_signing_alg_values_supported": [
+        "ES256"
     ],
-    "claims_supported": [
-        "sub",
-        "name",
-        "preferred_username",
-        "given_name",
-        "family_name",
-        "middle_name",
-        "nickname",
-        "profile",
-        "picture",
-        "website",
-        "gender",
-        "zoneinfo",
-        "locale",
-        "updated_at",
-        "birthdate",
-        "email",
-        "email_verified",
-        "phone_number",
-        "phone_number_verified",
-        "address"
+    "id_token_signing_alg_values_supported": [
+        "ES256"
+    ],
+    "code_challenge_methods_supported": [
+        "plain",
+        "S256"
     ],
     "claims_parameter_supported": false,
     "request_parameter_supported": true,
     "request_uri_parameter_supported": false,
-    "require_request_uri_registration": false,
-    "check_session_iframe": "https://secureauth.example/session",
-    "end_session_endpoint": "https://secureauth.example/logout"
+    "require_request_uri_registration": false
 }
 ```
 
 The thing we care about here is the `authorization_endpoint` field. This will be the url we use
 when we're ready to send an authorization request to the OP.
+
+Note that we only support the `code` response type. The OIDC discovery specification [recommends
+that Dynamic OpenID Providers MUST also support `id_token` and `token id_token`. However, [implicit
+flows should not be used for security reasons](https://oauth.net/2/grant-types/implicit/). Therefore,
+we don't recommend enabling them. For the same reason, we do not support the `implicit` grand type.
 
 <h4 id="authorization-code-pkce-flow-step-4" class="no-num">4. Generates PKCE code challenge and code verifier</h4>
 
@@ -817,78 +798,55 @@ GET https://secureauth.example/.well-known/openid-configuration
 
 Response
 ```json
+```json
 {
     "issuer": "https://secureauth.example",
     "authorization_endpoint": "https://secureauth.example/authorize",
     "token_endpoint": "https://secureauth.example/token",
     "userinfo_endpoint": "https://secureauth.example/userinfo",
-    "jwks_uri": "https://secureauth.example/jwks",
     "registration_endpoint": "https://secureauth.example/register",
+    "end_session_endpoint": "https://secureauth.example/endsession",
+    "jwks_uri": "https://secureauth.example/jwks",
     "response_types_supported": [
-        "code",
-        "code token",
-        "code id_token",
-        "id_token",
-        "id_token token",
-        "code id_token token",
-        "none"
-    ],
-    "response_modes_supported": [
-        "query",
-        "fragment"
+        "code"
     ],
     "grant_types_supported": [
         "authorization_code",
-        "implicit",
-        "refresh_token",
-        "client_credentials"
+        "refresh_token"
     ],
     "subject_types_supported": [
         "public"
     ],
-    "id_token_signing_alg_values_supported": [
-        "RS256",
-        "RS384",
-        "RS512",
-        "none"
+    "claims_supported": [
+        "sub",
+        "webid"
+    ],
+    "scopes_supported": [
+        "openid",
+        "profile",
+        "email",
+        "offline_access"
     ],
     "token_endpoint_auth_methods_supported": [
         "client_secret_basic"
     ],
     "token_endpoint_auth_signing_alg_values_supported": [
-        "RS256"
+        "ES256"
     ],
-    "claim_types_supported": [
-        "normal"
+    "request_object_signing_alg_values_supported": [
+        "ES256"
     ],
-    "claims_supported": [
-        "sub",
-        "name",
-        "preferred_username",
-        "given_name",
-        "family_name",
-        "middle_name",
-        "nickname",
-        "profile",
-        "picture",
-        "website",
-        "gender",
-        "zoneinfo",
-        "locale",
-        "updated_at",
-        "birthdate",
-        "email",
-        "email_verified",
-        "phone_number",
-        "phone_number_verified",
-        "address"
+    "id_token_signing_alg_values_supported": [
+        "ES256"
+    ],
+    "code_challenge_methods_supported": [
+        "plain",
+        "S256"
     ],
     "claims_parameter_supported": false,
     "request_parameter_supported": true,
     "request_uri_parameter_supported": false,
-    "require_request_uri_registration": false,
-    "check_session_iframe": "https://secureauth.example/session",
-    "end_session_endpoint": "https://secureauth.example/logout"
+    "require_request_uri_registration": false
 }
 ```
 
