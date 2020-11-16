@@ -798,7 +798,6 @@ GET https://secureauth.example/.well-known/openid-configuration
 
 Response
 ```json
-```json
 {
     "issuer": "https://secureauth.example",
     "authorization_endpoint": "https://secureauth.example/authorize",
