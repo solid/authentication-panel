@@ -1,7 +1,7 @@
 title: Logging in with Authorization Code Flow with PKCE
 
-note over RP: 1.Alice uses the decentphotos app
-note over RP: 2. Alice selets her OP or WebID
+note over RP: 1. Alice uses the decentphotos app
+note over RP: 2. Alice selects her OP or WebID
 RP->Alice's WebID: 2.1 Retrieve Profile
 Alice's WebID->RP:
 RP->Alice's OP: 3. Retrieves OP configuration
