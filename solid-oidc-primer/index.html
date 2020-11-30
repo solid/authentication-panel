@@ -8,7 +8,7 @@
   <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
   <meta content="Bikeshed version c5172e83, updated Fri Nov 20 15:35:20 2020 -0800" name="generator">
   <link href="https://solid.github.io/authentication-panel/solid-oidc/" rel="canonical">
-  <meta content="e58f09029a58d5f4444123e2b9929266a778b930" name="document-revision">
+  <meta content="352271a16a4e1356b4030a81e519154180e20e8f" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -334,7 +334,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Solid OIDC Primer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2020-11-26">26 November 2020</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2020-11-30">30 November 2020</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -377,7 +377,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
     <li>
      <a href="#solid-oidc-flow"><span class="secno">4</span> <span class="content">Solid OIDC Flow</span></a>
      <ol class="toc">
-      <li><a href="#pkce-login-flow"><span class="secno">4.1</span> <span class="content">Authorization Code with PKCE tokens Login Flow</span></a>
+      <li><a href="#authorization-code-pkce-flow"><span class="secno">4.1</span> <span class="content">Authorization Code Grant with PKCE Authorization Flow</span></a>
       <li><a href="#request-flow"><span class="secno">4.2</span> <span class="content">Request Flow</span></a>
      </ol>
     <li>
@@ -401,7 +401,7 @@ Bob’s Solid Data Pods (resource servers).</p>
    <h2 class="heading settled" data-level="2" id="definitions"><span class="secno">2. </span><span class="content">Definitions</span><a class="self-link" href="#definitions"></a></h2>
    <dl>
     <dt id="openid-provider"><a class="self-link" href="#openid-provider"></a>OpenID Provider (OP)
-    <dd>An OAuth 2.0 authentication server implementing OpenID Connect as defined in the OpenID Connect Core 1.0 specification. <a data-link-type="biblio" href="#biblio-openidconnect">[OpenIDConnect]</a>
+    <dd>An OAuth 2.0 authorization server implementing OpenID Connect as defined in the OpenID Connect Core 1.0 specification. <a data-link-type="biblio" href="#biblio-openidconnect">[OpenIDConnect]</a>
     <dt id="relying-party"><a class="self-link" href="#relying-party"></a>Relying Party (RP)
     <dd>A client application using OpenID Connect to make resource requests on behalf of the resource owner. Client is one of the four roles <a href="https://tools.ietf.org/html/rfc6749#section-1.1">defined in the OAuth 2.0 specification</a>. <a data-link-type="biblio" href="#biblio-rfc6749">[RFC6749]</a>
     <dt id="resource"><a class="self-link" href="#resource"></a>Resource
@@ -450,21 +450,21 @@ Bob’s Solid Data Pods (resource servers).</p>
  may access some of his photos using any web app. Bob’s Solid Data Pod is hosted at <code>https://bob.otherpod.example</code>.
    </dl>
    <h2 class="heading settled" data-level="4" id="solid-oidc-flow"><span class="secno">4. </span><span class="content">Solid OIDC Flow</span><a class="self-link" href="#solid-oidc-flow"></a></h2>
-   <h3 class="heading settled" data-level="4.1" id="pkce-login-flow"><span class="secno">4.1. </span><span class="content">Authorization Code with PKCE tokens Login Flow</span><a class="self-link" href="#pkce-login-flow"></a></h3>
-   <p>The Authorization Code with PKCE tokens described here is the primary flow for Solid OIDC.</p>
+   <h3 class="heading settled" data-level="4.1" id="authorization-code-pkce-flow"><span class="secno">4.1. </span><span class="content">Authorization Code Grant with PKCE Authorization Flow</span><a class="self-link" href="#authorization-code-pkce-flow"></a></h3>
+   <p>The Authorization Code grant with PKCE is the primary OAuth 2.0 authorization flow recommended by the Solid OIDC. It is defined by the PKCE RFC <a data-link-type="biblio" href="#biblio-rfc7636">[RFC7636]</a> and described here in the Solid OIDC context.</p>
    <p><img src="primer-login.svg"></p>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-1"><span class="content">1. Alice uses the Decent Photos web app</span><a class="self-link" href="#pkce-login-flow-step-1"></a></h4>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-1"><span class="content">1. Alice uses the Decent Photos web app</span><a class="self-link" href="#authorization-code-pkce-flow-step-1"></a></h4>
    <p>Alice has heard of a great new site that allows her to view her friend’s photos and tag faces.
 She navigates to <code>https://decentphotos.example</code> via her web browser which returns an HTML page.
 This page contains JavaScript that will help with the authentication process.</p>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-2"><span class="content">2. Alice selects her OP or WebID</span><a class="self-link" href="#pkce-login-flow-step-2"></a></h4>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-2"><span class="content">2. Alice selects her OP or WebID</span><a class="self-link" href="#authorization-code-pkce-flow-step-2"></a></h4>
    <p>Before decentphotos can start displaying images, Alice needs to start the process of providing
 consent. To do so, she must either provide her WebID
 (<code>https://alice.coolpod.example/profile/card#me</code>) or the URL of her OP
 (<code>https://secureauth.example</code>)</p>
    <p>While it is not the case with Alice, a user’s Pod and OP can be hosted at the same domain. For
 example, Bob’s Pod could be <code>bob.otherpod.example</code> with a WebID of <code>https://bob.otherpod.example/profile/card#me</code>, but his OP is at <code>https://solid.example</code>.</p>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-2.1"><span class="content">2.1 Retrieve Profile (Only needed if a WebID is provided)</span><a class="self-link" href="#pkce-login-flow-step-2.1"></a></h4>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-2.1"><span class="content">2.1 Retrieve Profile (Only needed if a WebID is provided)</span><a class="self-link" href="#authorization-code-pkce-flow-step-2.1"></a></h4>
    <p>If Alice entered her WebID’s URL rather than her OP’s URL, a request should be made to
 determine her OP. To do so, a request should be made to Alice’s WebId:</p>
 <pre class="language-http highlight">GET https://alice.coolpod.example/profile/card#me
@@ -486,7 +486,7 @@ determine her OP. To do so, a request should be made to Alice’s WebId:</p>
     <c- g>solid</c->:<c- g>oidcIssuer</c-> <c- o>&lt;</c-><c- g>https</c->:<c- o>//</c-><c- g>secureauth</c->.<c- g>example</c-><c- o>></c-> <c- c1>;</c->
 </pre>
    <p>The OP URL is located at <code>:me -> solid:oidcIssuer</code></p>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-3"><span class="content">3. Retrieves OP Configuration</span><a class="self-link" href="#pkce-login-flow-step-3"></a></h4>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-3"><span class="content">3. Retrieves OP Configuration</span><a class="self-link" href="#authorization-code-pkce-flow-step-3"></a></h4>
    <p>Now that we have Alice’s OP’s URL, the RP must make a request to retrieve the OP’s
 configuration. This is always located at the OP’s hostname followed by <code>/.well-known
 openid-configuration</code></p>
@@ -494,80 +494,75 @@ openid-configuration</code></p>
 </pre>
    <p>The <a href="https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata">openid-configuration</a> describes everything the client will need to know to authorize with Alice’s specific OP.</p>
    <p>Response Body:</p>
-<pre class="language-json highlight"><c- p>{</c->  
-   <c- f>"issuer"</c-><c- p>:</c-><c- u>"https://secureauth.example"</c-><c- p>,</c->
-   <c- f>"authorization_endpoint"</c-><c- p>:</c-><c- u>"https://secureauth.example/authorize"</c-><c- p>,</c->
-   <c- f>"token_endpoint"</c-><c- p>:</c-><c- u>"https://secureauth.example/token"</c-><c- p>,</c->
-   <c- f>"userinfo_endpoint"</c-><c- p>:</c-><c- u>"https://secureauth.example/userinfo"</c-><c- p>,</c->
-   <c- f>"jwks_uri"</c-><c- p>:</c-><c- u>"https://secureauth.example/jwks"</c-><c- p>,</c->
-   <c- f>"registration_endpoint"</c-><c- p>:</c-><c- u>"https://secureauth.example/register"</c-><c- p>,</c->
-   <c- f>"response_types_supported"</c-><c- p>:[</c->  
-      <c- u>"code"</c-><c- p>,</c->
-      <c- u>"code token"</c-><c- p>,</c->
-      <c- u>"code id_token"</c-><c- p>,</c->
-      <c- u>"id_token"</c-><c- p>,</c->
-      <c- u>"id_token token"</c-><c- p>,</c->
-      <c- u>"code id_token token"</c-><c- p>,</c->
-      <c- u>"none"</c->
-   <c- p>],</c->
-   <c- f>"response_modes_supported"</c-><c- p>:[</c->  
-      <c- u>"query"</c-><c- p>,</c->
-      <c- u>"fragment"</c->
-   <c- p>],</c->
-   <c- f>"grant_types_supported"</c-><c- p>:[</c->  
-      <c- u>"authorization_code"</c-><c- p>,</c->
-      <c- u>"implicit"</c-><c- p>,</c->
-      <c- u>"refresh_token"</c-><c- p>,</c->
-      <c- u>"client_credentials"</c->
-   <c- p>],</c->
-   <c- f>"subject_types_supported"</c-><c- p>:[</c->  
-      <c- u>"public"</c->
-   <c- p>],</c->
-   <c- f>"id_token_signing_alg_values_supported"</c-><c- p>:[</c->  
-      <c- u>"RS256"</c-><c- p>,</c->
-      <c- u>"RS384"</c-><c- p>,</c->
-      <c- u>"RS512"</c-><c- p>,</c->
-      <c- u>"none"</c->
-   <c- p>],</c->
-   <c- f>"token_endpoint_auth_methods_supported"</c-><c- p>:[</c->  
-      <c- u>"client_secret_basic"</c->
-   <c- p>],</c->
-   <c- f>"token_endpoint_auth_signing_alg_values_supported"</c-><c- p>:[</c->  
-      <c- u>"RS256"</c->
-   <c- p>],</c->
-   <c- f>"display_values_supported"</c-><c- p>:[</c->  
-
-   <c- p>],</c->
-   <c- f>"claim_types_supported"</c-><c- p>:[</c->  
-      <c- u>"normal"</c->
-   <c- p>],</c->
-   <c- f>"claims_supported"</c-><c- p>:[</c->  
-
-   <c- p>],</c->
-   <c- f>"claims_parameter_supported"</c-><c- p>:</c-><c- kc>false</c-><c- p>,</c->
-   <c- f>"request_parameter_supported"</c-><c- p>:</c-><c- kc>true</c-><c- p>,</c->
-   <c- f>"request_uri_parameter_supported"</c-><c- p>:</c-><c- kc>false</c-><c- p>,</c->
-   <c- f>"require_request_uri_registration"</c-><c- p>:</c-><c- kc>false</c-><c- p>,</c->
-   <c- f>"check_session_iframe"</c-><c- p>:</c-><c- u>"https://secureauth.example/session"</c-><c- p>,</c->
-   <c- f>"end_session_endpoint"</c-><c- p>:</c-><c- u>"https://secureauth.example/logout"</c->
+<pre class="language-json highlight"><c- p>{</c->
+    <c- f>"issuer"</c-><c- p>:</c-> <c- u>"https://secureauth.example"</c-><c- p>,</c->
+    <c- f>"authorization_endpoint"</c-><c- p>:</c-> <c- u>"https://secureauth.example/authorize"</c-><c- p>,</c->
+    <c- f>"token_endpoint"</c-><c- p>:</c-> <c- u>"https://secureauth.example/token"</c-><c- p>,</c->
+    <c- f>"userinfo_endpoint"</c-><c- p>:</c-> <c- u>"https://secureauth.example/userinfo"</c-><c- p>,</c->
+    <c- f>"registration_endpoint"</c-><c- p>:</c-> <c- u>"https://secureauth.example/register"</c-><c- p>,</c->
+    <c- f>"end_session_endpoint"</c-><c- p>:</c-> <c- u>"https://secureauth.example/endsession"</c-><c- p>,</c->
+    <c- f>"jwks_uri"</c-><c- p>:</c-> <c- u>"https://secureauth.example/jwks"</c-><c- p>,</c->
+    <c- f>"response_types_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"code"</c->
+    <c- p>],</c->
+    <c- f>"grant_types_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"authorization_code"</c-><c- p>,</c->
+        <c- u>"refresh_token"</c->
+    <c- p>],</c->
+    <c- f>"subject_types_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"public"</c->
+    <c- p>],</c->
+    <c- f>"claims_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"sub"</c-><c- p>,</c->
+        <c- u>"webid"</c->
+    <c- p>],</c->
+    <c- f>"scopes_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"openid"</c-><c- p>,</c->
+        <c- u>"profile"</c-><c- p>,</c->
+        <c- u>"email"</c-><c- p>,</c->
+        <c- u>"offline_access"</c->
+    <c- p>],</c->
+    <c- f>"token_endpoint_auth_methods_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"client_secret_basic"</c->
+    <c- p>],</c->
+    <c- f>"token_endpoint_auth_signing_alg_values_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"ES256"</c->
+    <c- p>],</c->
+    <c- f>"request_object_signing_alg_values_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"ES256"</c->
+    <c- p>],</c->
+    <c- f>"id_token_signing_alg_values_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"ES256"</c->
+    <c- p>],</c->
+    <c- f>"code_challenge_methods_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"plain"</c-><c- p>,</c->
+        <c- u>"S256"</c->
+    <c- p>],</c->
+    <c- f>"claims_parameter_supported"</c-><c- p>:</c-> <c- kc>false</c-><c- p>,</c->
+    <c- f>"request_parameter_supported"</c-><c- p>:</c-> <c- kc>true</c-><c- p>,</c->
+    <c- f>"request_uri_parameter_supported"</c-><c- p>:</c-> <c- kc>false</c-><c- p>,</c->
+    <c- f>"require_request_uri_registration"</c-><c- p>:</c-> <c- kc>false</c->
 <c- p>}</c->
 </pre>
    <p>The thing we care about here is the <code>authorization_endpoint</code> field. This will be the url we use
 when we’re ready to send an authorization request to the OP.</p>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-4"><span class="content">4. Generates PKCE code challenge and code verifier</span><a class="self-link" href="#pkce-login-flow-step-4"></a></h4>
+   <p>Note that we only support the <code>code</code> response type. The OIDC discovery specification [recommends
+that Dynamic OpenID Providers MUST also support <code>id_token</code> and <code>token id_token</code>. However, <a href="https://oauth.net/2/grant-types/implicit/">implicit
+flows should not be used for security reasons</a>. Therefore,
+we don’t recommend enabling them. For the same reason, we do not support the <code>implicit</code> grand type.</p>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-4"><span class="content">4. Generates PKCE code challenge and code verifier</span><a class="self-link" href="#authorization-code-pkce-flow-step-4"></a></h4>
    <p>To follow the <a href="https://oauth.net/2/pkce/">PKCE code flow</a> we need to generate a code challenge
-and code verifier as instructed in the [Proof Key for Code Exchange spec]
-(https://tools.ietf.org/html/rfc7636#section-4.1)</p>
+and code verifier as instructed in the <a href="https://tools.ietf.org/html/rfc7636#section-4.1">Proof Key for Code Exchange spec</a>.</p>
    <p>We start by generating a code verifier. The can be done by creating a cryptographically random
 string. Let’s say ours looks like this: <code>"JXPOuToEB7"</code>.</p>
    <p>Now using the code verifier, we construct a code challenge. This can be made by transforming
 the code verifier with Sha 256: <code>BASE64URL-ENCODE(SHA256(ASCII(code_verifier)))</code>. Here’s our
 code challenge: <code>"HSi9dwlvRpNHCDm-L8GOdM16qcb0tLHPZqQSvaWXTI0"</code></p>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-5"><span class="content">5. Saved code verifier to session storage</span><a class="self-link" href="#pkce-login-flow-step-5"></a></h4>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-5"><span class="content">5. Saved code verifier to session storage</span><a class="self-link" href="#authorization-code-pkce-flow-step-5"></a></h4>
    <p>Now, we save the code verifier (<code>"JXPOuToEB7"</code>) to session storage. We’ll need it later to
 confirm to the OP that this is the app that initiated the request. Do not save the code
 challenge anywhere.</p>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-6"><span class="content">6. Authorization request</span><a class="self-link" href="#pkce-login-flow-step-6"></a></h4>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-6"><span class="content">6. Authorization request</span><a class="self-link" href="#authorization-code-pkce-flow-step-6"></a></h4>
    <p>Now that the web app is registered, we can finally make an auth request to authorize the web
 application.</p>
 <pre class="language-http highlight">GET https://secureauth.example/authorize?response_type=code&amp;
@@ -605,7 +600,7 @@ The url that the OP will redirect to once the user has logged in (<code>https://
 via some UI on the OP or <a href="https://openid.net/specs/openid-connect-registration-1_0.html">dynamic registration</a>.
 You may also use <code>http://www.w3.org/ns/solid/terms#PublicOidcClient</code> as your client id. This will designate the
 client as a public client. Doing this may cause the RS to provide less access to your app.</p>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-7"><span class="content">7. Fetch RP WebID</span><a class="self-link" href="#pkce-login-flow-step-7"></a></h4>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-7"><span class="content">7. Fetch RP WebID</span><a class="self-link" href="#authorization-code-pkce-flow-step-7"></a></h4>
    <p>If an app WebID is provided as the client id (see note above to see other options), we must
 fetch that app WebID to confirm its validity.</p>
    <p>Request:</p>
@@ -615,33 +610,32 @@ fetch that app WebID to confirm its validity.</p>
 <pre class="language-ttl highlight">@<c- g>prefix</c-> <c- g>solid</c->:  .
 
 <c- o>&lt;</c->#<c- g>this</c-><c- o>></c-> <c- g>solid</c->:<c- g>oidcRegistration</c-> <c- u>"""</c-><c- s>{</c->
-    <c- u>"</c-><c- s>client_id</c-><c- u>"</c-> : <c- u>"</c-><c- s>https://decentphtos.example/webid#this</c-><c- u>"</c->,
-    <c- u>"</c-><c- s>redirect_uris</c-><c- u>"</c-> : [<c- u>"</c-><c- s>https://decentphotos.example/callback</c-><c- u>"</c->],
-    <c- u>"</c-><c- s>client_name</c-><c- u>"</c-> : <c- u>"</c-><c- s>DecentPhotos</c-><c- u>"</c->,
-    <c- u>"</c-><c- s>client_uri</c-><c- u>"</c-> : <c- u>"</c-><c- s>https://decentphotos.example/</c-><c- u>"</c->,
-    <c- u>"</c-><c- s>logo_uri</c-><c- u>"</c-> : <c- u>"</c-><c- s>https://decentphotos.example/logo.png</c-><c- u>"</c->,
-    <c- u>"</c-><c- s>tos_uri</c-><c- u>"</c-> : <c- u>"</c-><c- s>https://decentphotos.example/tos.html</c-><c- u>"</c->,
-    <c- u>"</c-><c- s>scope</c-><c- u>"</c-> : <c- u>"</c-><c- s>openid profile offline_access</c-><c- u>"</c->,
-    <c- u>"</c-><c- s>grant_types</c-><c- u>"</c-> : [<c- u>"</c-><c- s>refresh_token</c-><c- u>"</c->,<c- u>"</c-><c- s>authorization_code</c-><c- u>"</c->],
-    <c- u>"</c-><c- s>response_types</c-><c- u>"</c-> : [<c- u>"</c-><c- s>code</c-><c- u>"</c->],
-    <c- u>"</c-><c- s>default_max_age</c-><c- u>"</c-> : <c- mi>60000</c->,
-    <c- u>"</c-><c- s>require_auth_time</c-><c- u>"</c-> : <c- g>true</c->
+    <c- u>"</c-><c- s>client_id</c-><c- u>"</c->: <c- u>"</c-><c- s>https://decentphtos.example/webid#this</c-><c- u>"</c->,
+    <c- u>"</c-><c- s>redirect_uris</c-><c- u>"</c->: [ <c- u>"</c-><c- s>https://decentphotos.example/callback</c-><c- u>"</c-> ],
+    <c- u>"</c-><c- s>client_name</c-><c- u>"</c->: <c- u>"</c-><c- s>DecentPhotos</c-><c- u>"</c->,
+    <c- u>"</c-><c- s>client_uri</c-><c- u>"</c->: <c- u>"</c-><c- s>https://decentphotos.example/</c-><c- u>"</c->,
+    <c- u>"</c-><c- s>logo_uri</c-><c- u>"</c->: <c- u>"</c-><c- s>https://decentphotos.example/logo.png</c-><c- u>"</c->,
+    <c- u>"</c-><c- s>tos_uri</c-><c- u>"</c->: <c- u>"</c-><c- s>https://decentphotos.example/tos.html</c-><c- u>"</c->,
+    <c- u>"</c-><c- s>scope</c-><c- u>"</c->: <c- u>"</c-><c- s>openid profile offline_access</c-><c- u>"</c->,
+    <c- u>"</c-><c- s>grant_types</c-><c- u>"</c->: [ <c- u>"</c-><c- s>refresh_token</c-><c- u>"</c->, <c- u>"</c-><c- s>authorization_code</c-><c- u>"</c-> ],
+    <c- u>"</c-><c- s>response_types</c-><c- u>"</c->: [ <c- u>"</c-><c- s>code</c-><c- u>"</c-> ],
+    <c- u>"</c-><c- s>default_max_age</c-><c- u>"</c->: <c- mi>60000</c->,
+    <c- u>"</c-><c- s>require_auth_time</c-><c- u>"</c->: <c- g>true</c->
     }<c- u>"""</c-><c- s> .</c->
 </pre>
    <p>Notice that the application WebID contains one required triple <code>?webid solid:oidcRegistration
-jsonRegistration</code>. This is a JSON representation of an [OIDC Client Registration]
-(https://tools.ietf.org/html/rfc7591#section-2).</p>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-8"><span class="content">8. Validate redirect url with WebID</span><a class="self-link" href="#pkce-login-flow-step-8"></a></h4>
+jsonRegistration</code>. This is a JSON representation of an <a href="https://tools.ietf.org/html/rfc7591#section-2">OIDC Client Registration</a>.</p>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-8"><span class="content">8. Validate redirect url with WebID</span><a class="self-link" href="#authorization-code-pkce-flow-step-8"></a></h4>
    <p>Check to be sure that the <code>redierct_uri</code> value provided in the auth request
 (<code>https://decentphotos.example/callback</code>) is listed in the <code>redirect_uris</code> array in the
 oidcRegistration. If it is not, the OP MUST reject the request with a <code>403</code>. In our case, it
 is, so we may continue.</p>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-9"><span class="content">9. Alice Logs In</span><a class="self-link" href="#pkce-login-flow-step-9"></a></h4>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-9"><span class="content">9. Alice Logs In</span><a class="self-link" href="#authorization-code-pkce-flow-step-9"></a></h4>
    <p>The OP should redirect to its login screen. The actual implementation of this is completely up
 to the OP. A user can log in with her password, a TLS certificate, or any other proven method
 of authentication. The important thing is that, thanks to the redirect, the control is now out
 of the hands of the RP and is in complete control of the OP.</p>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-10"><span class="content">10. Generate a code</span><a class="self-link" href="#pkce-login-flow-step-10"></a></h4>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-10"><span class="content">10. Generate a code</span><a class="self-link" href="#authorization-code-pkce-flow-step-10"></a></h4>
    <p>Generate a cryptographically random string that will be used as a code (Let’s say ours is <code>m-OrTPHdRsm8W_e9P0J2Bt</code>). Store that string in a persistant keystore as the key for the client
 id, the code challenge, the user’s webid, their desired response types, and their scopes:</p>
 <pre class="language-json highlight"><c- p>{</c->
@@ -654,44 +648,43 @@ id, the code challenge, the user’s webid, their desired response types, and th
   <c- p>}</c->
 <c- p>}</c->
 </pre>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-11"><span class="content">11. Send code to redirect url</span><a class="self-link" href="#pkce-login-flow-step-11"></a></h4>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-11"><span class="content">11. Send code to redirect url</span><a class="self-link" href="#authorization-code-pkce-flow-step-11"></a></h4>
    <p>Once Alice successfully logs in, the OP redirects back to the application via the provided
 redirect uri, including useful information with it:</p>
 <pre class="language-http highlight">302 redirect to: https://decentphotos.example/callback?code=m-OrTPHdRsm8W_e9P0J2Bt
 </pre>
    <p>This redirect gives decentphotos the code that it will exchange for an access token.</p>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-12"><span class="content">12. Generates a DPoP Client Key Pair</span><a class="self-link" href="#pkce-login-flow-step-12"></a></h4>
-   <p>Solid-OIDC depends on [Demonstration of Proof-of-Possession (DPoP) tokens]
-(https://tools.ietf.org/html/draft-fett-oauth-dpop-04). DPoP tokens ensure that third-party web
-applications can send requests to any number of Pods while ensuring that evil Pods can’t steal
-a user’s token.</p>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-12"><span class="content">12. Generates a DPoP Client Key Pair</span><a class="self-link" href="#authorization-code-pkce-flow-step-12"></a></h4>
+   <p>Solid-OIDC depends on <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04">Demonstration of Proof-of-Possession (DPoP) tokens</a>.
+DPoP tokens ensure that third-party web applications can send requests to any number of
+Pods while ensuring that evil Pods can’t steal a user’s token.</p>
    <p>The first step to generating a DPoP token is generating a public and private key pair on the
 third-party RP. In our example, the private key is generated using elliptic curves and looks
 like:</p>
 <pre class="language-json highlight"><c- p>{</c->
-  <c- f>"kty"</c-><c- p>:</c-><c- u>"EC"</c-><c- p>,</c->
-  <c- f>"kid"</c-><c- p>:</c-><c- u>"2i00gHnREsMhD5WqsABPSaqEjLC5MS-E98ykd-qtF1I"</c-><c- p>,</c->
-  <c- f>"use"</c-><c- p>:</c-><c- u>"sig"</c-><c- p>,</c->
-  <c- f>"alg"</c-><c- p>:</c-><c- u>"EC"</c-><c- p>,</c->
-  <c- f>"crv"</c-><c- p>:</c-><c- u>"P-256"</c-><c- p>,</c->
-  <c- f>"x"</c-><c- p>:</c-><c- u>"N6VsICiPA1ciAA82Jhv7ykkPL9B0ippUjmla8Snr4HY"</c-><c- p>,</c->
-  <c- f>"y"</c-><c- p>:</c-><c- u>"ay9qDOrFGdGe_3hAivW5HnqHYdnYUkXJJevHOBU4z5s"</c-><c- p>,</c->
-  <c- f>"d"</c-><c- p>:</c-><c- u>"RrM4Ou_7PzjP24B4k06B9ZML16HbfzNPKFN11Z8c9_s"</c->
+    <c- f>"kty"</c-><c- p>:</c-> <c- u>"EC"</c-><c- p>,</c->
+    <c- f>"kid"</c-><c- p>:</c-> <c- u>"2i00gHnREsMhD5WqsABPSaqEjLC5MS-E98ykd-qtF1I"</c-><c- p>,</c->
+    <c- f>"use"</c-><c- p>:</c-> <c- u>"sig"</c-><c- p>,</c->
+    <c- f>"alg"</c-><c- p>:</c-> <c- u>"EC"</c-><c- p>,</c->
+    <c- f>"crv"</c-><c- p>:</c-> <c- u>"P-256"</c-><c- p>,</c->
+    <c- f>"x"</c-><c- p>:</c-> <c- u>"N6VsICiPA1ciAA82Jhv7ykkPL9B0ippUjmla8Snr4HY"</c-><c- p>,</c->
+    <c- f>"y"</c-><c- p>:</c-> <c- u>"ay9qDOrFGdGe_3hAivW5HnqHYdnYUkXJJevHOBU4z5s"</c-><c- p>,</c->
+    <c- f>"d"</c-><c- p>:</c-> <c- u>"RrM4Ou_7PzjP24B4k06B9ZML16HbfzNPKFN11Z8c9_s"</c->
 <c- p>}</c->
 </pre>
    <p>From now on we will refer to this as <code>RP_PRIVATE_KEY</code>.</p>
    <p>The public key looks like:</p>
 <pre class="language-json highlight"><c- p>{</c->
-  <c- f>"kty"</c-><c- p>:</c-> <c- u>"EC"</c-><c- p>,</c->
-  <c- f>"kid"</c-><c- p>:</c-> <c- u>"2i00gHnREsMhD5WqsABPSaqEjLC5MS-E98ykd-qtF1I"</c-><c- p>,</c->
-  <c- f>"use"</c-><c- p>:</c-> <c- u>"sig"</c-><c- p>,</c->
-  <c- f>"alg"</c-><c- p>:</c-> <c- u>"EC"</c-><c- p>,</c->
-  <c- f>"crv"</c-><c- p>:</c-> <c- u>"P-256"</c-><c- p>,</c->
-  <c- f>"x"</c-><c- p>:</c-><c- u>"N6VsICiPA1ciAA82Jhv7ykkPL9B0ippUjmla8Snr4HY"</c-><c- p>,</c->
-  <c- f>"y"</c-><c- p>:</c-><c- u>"ay9qDOrFGdGe_3hAivW5HnqHYdnYUkXJJevHOBU4z5s"</c-><c- p>,</c->
+    <c- f>"kty"</c-><c- p>:</c-> <c- u>"EC"</c-><c- p>,</c->
+    <c- f>"kid"</c-><c- p>:</c-> <c- u>"2i00gHnREsMhD5WqsABPSaqEjLC5MS-E98ykd-qtF1I"</c-><c- p>,</c->
+    <c- f>"use"</c-><c- p>:</c-> <c- u>"sig"</c-><c- p>,</c->
+    <c- f>"alg"</c-><c- p>:</c-> <c- u>"EC"</c-><c- p>,</c->
+    <c- f>"crv"</c-><c- p>:</c-> <c- u>"P-256"</c-><c- p>,</c->
+    <c- f>"x"</c-><c- p>:</c-> <c- u>"N6VsICiPA1ciAA82Jhv7ykkPL9B0ippUjmla8Snr4HY"</c-><c- p>,</c->
+    <c- f>"y"</c-><c- p>:</c-> <c- u>"ay9qDOrFGdGe_3hAivW5HnqHYdnYUkXJJevHOBU4z5s"</c->
 <c- p>}</c->
 </pre>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-13"><span class="content">13. Generates a DPoP Header</span><a class="self-link" href="#pkce-login-flow-step-13"></a></h4>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-13"><span class="content">13. Generates a DPoP Header</span><a class="self-link" href="#authorization-code-pkce-flow-step-13"></a></h4>
    <p>Now that we generated a private key for the client, we need to generate the DPoP header. To do
 so, we create a <a href="https://jwt.io/introduction/">JSON Web Token</a> and sign it using the key we
 generated.</p>
@@ -700,17 +693,17 @@ generated.</p>
 </pre>
    <p>Token Header:</p>
 <pre class="language-json highlight"><c- p>{</c->
-  <c- f>"alg"</c-><c- p>:</c-> <c- u>"ES256"</c-><c- p>,</c->
-  <c- f>"typ"</c-><c- p>:</c-> <c- u>"dpop+jwt"</c-><c- p>,</c->
-  <c- f>"jwk"</c-><c- p>:</c-> <c- p>{</c->
-    <c- f>"kty"</c-><c- p>:</c-> <c- u>"EC"</c-><c- p>,</c->
-    <c- f>"kid"</c-><c- p>:</c-> <c- u>"2i00gHnREsMhD5WqsABPSaqEjLC5MS-E98ykd-qtF1I"</c-><c- p>,</c->
-    <c- f>"use"</c-><c- p>:</c-> <c- u>"sig"</c-><c- p>,</c->
-    <c- f>"alg"</c-><c- p>:</c-> <c- u>"EC"</c-><c- p>,</c->
-    <c- f>"crv"</c-><c- p>:</c-> <c- u>"P-256"</c-><c- p>,</c->
-    <c- f>"x"</c-><c- p>:</c-><c- u>"N6VsICiPA1ciAA82Jhv7ykkPL9B0ippUjmla8Snr4HY"</c-><c- p>,</c->
-    <c- f>"y"</c-><c- p>:</c-><c- u>"ay9qDOrFGdGe_3hAivW5HnqHYdnYUkXJJevHOBU4z5s"</c-><c- p>,</c->
-  <c- p>}</c->
+    <c- f>"alg"</c-><c- p>:</c-> <c- u>"ES256"</c-><c- p>,</c->
+    <c- f>"typ"</c-><c- p>:</c-> <c- u>"dpop+jwt"</c-><c- p>,</c->
+    <c- f>"jwk"</c-><c- p>:</c-> <c- p>{</c->
+        <c- f>"kty"</c-><c- p>:</c-> <c- u>"EC"</c-><c- p>,</c->
+        <c- f>"kid"</c-><c- p>:</c-> <c- u>"2i00gHnREsMhD5WqsABPSaqEjLC5MS-E98ykd-qtF1I"</c-><c- p>,</c->
+        <c- f>"use"</c-><c- p>:</c-> <c- u>"sig"</c-><c- p>,</c->
+        <c- f>"alg"</c-><c- p>:</c-> <c- u>"EC"</c-><c- p>,</c->
+        <c- f>"crv"</c-><c- p>:</c-> <c- u>"P-256"</c-><c- p>,</c->
+        <c- f>"x"</c-><c- p>:</c-> <c- u>"N6VsICiPA1ciAA82Jhv7ykkPL9B0ippUjmla8Snr4HY"</c-><c- p>,</c->
+        <c- f>"y"</c-><c- p>:</c-> <c- u>"ay9qDOrFGdGe_3hAivW5HnqHYdnYUkXJJevHOBU4z5s"</c->
+    <c- p>}</c->
 <c- p>}</c->
 </pre>
    <ul>
@@ -723,10 +716,10 @@ generated.</p>
    </ul>
    <p>Token Body:</p>
 <pre class="language-json highlight"><c- p>{</c->
-  <c- f>"htu"</c-><c- p>:</c-> <c- u>"https://secureauth.example/token"</c-><c- p>,</c->
-  <c- f>"htm"</c-><c- p>:</c-> <c- u>"POST"</c-><c- p>,</c->
-  <c- f>"jti"</c-><c- p>:</c-> <c- u>"4ba3e9ef-e98d-4644-9878-7160fa7d3eb8"</c-><c- p>,</c->
-  <c- f>"iat"</c-><c- p>:</c-> <c- mi>1603306128</c->
+    <c- f>"htu"</c-><c- p>:</c-> <c- u>"https://secureauth.example/token"</c-><c- p>,</c->
+    <c- f>"htm"</c-><c- p>:</c-> <c- u>"POST"</c-><c- p>,</c->
+    <c- f>"jti"</c-><c- p>:</c-> <c- u>"4ba3e9ef-e98d-4644-9878-7160fa7d3eb8"</c-><c- p>,</c->
+    <c- f>"iat"</c-><c- p>:</c-> <c- mi>1603306128</c->
 <c- p>}</c->
 </pre>
    <ul>
@@ -739,7 +732,7 @@ generated.</p>
     <li data-md>
      <p><code>"iat": 1603306128</code>: The date the token was issued, in this case October 21, 2020 15:52:33 GMT.</p>
    </ul>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-14"><span class="content">14. Token request with code and code verifier</span><a class="self-link" href="#pkce-login-flow-step-14"></a></h4>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-14"><span class="content">14. Token request with code and code verifier</span><a class="self-link" href="#authorization-code-pkce-flow-step-14"></a></h4>
    <p>Now, we have everything we need to make an auth request. No need to redirect the web browser
 for this one. We only need to make an AJAX request to the <code>token</code> endpoint as defined in the
 OP’s <code>openid-configuration</code> file, in our case <code>https://secureauth.example/token</code></p>
@@ -776,7 +769,7 @@ doing an AJAX request.</p>
      <p><code>body.client_id=https%3A%2F%2Fdecentphotos.example%2Fwebid%23this</code>: The app’s client id.</p>
    </ul>
    <p>Once this request is completed decentphotos can remove the code verifier from session storage.</p>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-15"><span class="content">15. Validate code verifier</span><a class="self-link" href="#pkce-login-flow-step-15"></a></h4>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-15"><span class="content">15. Validate code verifier</span><a class="self-link" href="#authorization-code-pkce-flow-step-15"></a></h4>
    <p>The OP looks up the code that was saved earlier in a keystore. It checks to see that the client
 id in the keystore corresponds to the client id from the request. If it does not, it must
 reject the request with a 403.</p>
@@ -785,25 +778,24 @@ reject the request with a 403.</p>
 <pre class="language-bash highlight">BASE64URL-ENCODE<c- o>(</c->SHA256<c- o>(</c->ASCII<c- o>(</c->code_verifier<c- o>)))</c-> <c- o>==</c-> code_challenge
 </pre>
    <p>If they do not correspond the OP must reject the request with a 403.</p>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-16"><span class="content">16. Validates DPoP Token Signature</span><a class="self-link" href="#pkce-login-flow-step-16"></a></h4>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-16"><span class="content">16. Validates DPoP Token Signature</span><a class="self-link" href="#authorization-code-pkce-flow-step-16"></a></h4>
    <p>The OP extracts the client’s public key from the DPoP header (at header.jwk). It confirms that
 the DPoP token has a valid signature. If not, the OP must reject the request with a 403.</p>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-17"><span class="content">17. Converts the DPoP public key to a JWK thumbprint</span><a class="self-link" href="#pkce-login-flow-step-17"></a></h4>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-17"><span class="content">17. Converts the DPoP public key to a JWK thumbprint</span><a class="self-link" href="#authorization-code-pkce-flow-step-17"></a></h4>
    <p>Currently the DPoP token contains a JWK public key, but before we place it inside the access
 token, it needs to be converted into a <a href="https://tools.ietf.org/html/rfc7638">JWK thumbprint</a>.
 Our JWK thumbprint looks more like:</p>
 <pre class="language-text highlight">9XmwK8mQ3H5-PnzAt3lFHzWBW_v5QhYynezbbit4kC8
 </pre>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-18"><span class="content">18. Generates access token</span><a class="self-link" href="#pkce-login-flow-step-18"></a></h4>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-18"><span class="content">18. Generates access token</span><a class="self-link" href="#authorization-code-pkce-flow-step-18"></a></h4>
    <p>The OP generates an access token. To do so it constructs a JSON Web Token and signs it using
-its own keys. The access token could look like (remember you can decode it using 
-https://jwt.io):</p>
+its own keys. The access token could look like (remember you can decode it using <a href="https://jwt.io/#debugger-io?token=eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJodHRwczovL2FsaWNlLmNvb2xwb2QuZXhhbXBsZS9wcm9maWxlL2NhcmQjbWUiLCJ3ZWJpZCI6Imh0dHBzOi8vYWxpY2UuY29vbHBvZC5leGFtcGxlL3Byb2ZpbGUvY2FyZCNtZSIsImlzcyI6Imh0dHBzOi8vc2VjdXJlYXV0aC5leGFtcGxlIiwiYXVkIjoic29saWQiLCJjbmYiOnsiamt0IjoiOVhtd0s4bVEzSDUtUG56QXQzbEZIeldCV192NVFoWXluZXpiYml0NGtDOCJ9LCJjbGllbnRfaWQiOiJodHRwczovL2RlY2VudHBob3Rvcy5leGFtcGxlL3dlYmlkI3RoaXMiLCJqdGkiOiJmZDBhMTM1My0yNWYzLTRjN2UtOGY4Yi1jMTQyNjRmMWMxMmUiLCJpYXQiOjE2MDMzODUyNjEsImV4cCI6MTYwMzM4NTg2MX0.HIIYiovILPvsdkD3s3xomR1MkA_Ir8Mx_C-eHxbWEnw9Z2rv2rOWbvMPZ--BqH3qVSupgYTZZsTDbZXA8giCLA">https://jwt.io</a>):</p>
 <pre class="language-text highlight">eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJodHRwczovL2FsaWNlLmNvb2xwb2QuZXhhbXBsZS9wcm9maWxlL2NhcmQjbWUiLCJ3ZWJpZCI6Imh0dHBzOi8vYWxpY2UuY29vbHBvZC5leGFtcGxlL3Byb2ZpbGUvY2FyZCNtZSIsImlzcyI6Imh0dHBzOi8vc2VjdXJlYXV0aC5leGFtcGxlIiwiYXVkIjoic29saWQiLCJjbmYiOnsiamt0IjoiOVhtd0s4bVEzSDUtUG56QXQzbEZIeldCV192NVFoWXluZXpiYml0NGtDOCJ9LCJjbGllbnRfaWQiOiJodHRwczovL2RlY2VudHBob3Rvcy5leGFtcGxlL3dlYmlkI3RoaXMiLCJqdGkiOiJmZDBhMTM1My0yNWYzLTRjN2UtOGY4Yi1jMTQyNjRmMWMxMmUiLCJpYXQiOjE2MDMzODUyNjEsImV4cCI6MTYwMzM4NTg2MX0.HIIYiovILPvsdkD3s3xomR1MkA_Ir8Mx_C-eHxbWEnw9Z2rv2rOWbvMPZ--BqH3qVSupgYTZZsTDbZXA8giCLA
 </pre>
    <p>Token Header:</p>
 <pre class="language-json highlight"><c- p>{</c->
-  <c- f>"alg"</c-><c- p>:</c-> <c- u>"ES256"</c-><c- p>,</c->
-  <c- f>"typ"</c-><c- p>:</c-> <c- u>"JWT"</c->
+    <c- f>"alg"</c-><c- p>:</c-> <c- u>"ES256"</c-><c- p>,</c->
+    <c- f>"typ"</c-><c- p>:</c-> <c- u>"JWT"</c->
 <c- p>}</c->
 </pre>
    <ul>
@@ -813,18 +805,18 @@ https://jwt.io):</p>
      <p><code>"typ": "JWT"</code>: indicates that this is a JSON web token</p>
    </ul>
    <p>Token Body:</p>
-<pre>{
-  "webid": "https://alice.coolpod.example/profile/card#me",
-  "iss": "https://secureauth.example",
-  "aud": "solid",
-  "cnf": {
-    "jkt": "9XmwK8mQ3H5-PnzAt3lFHzWBW_v5QhYynezbbit4kC8"
-  },
-  "client_id": "https://decentphotos.example/webid#this",
-  "jti": "fd0a1353-25f3-4c7e-8f8b-c14264f1c12e",
-  "iat": 1603385261,
-  "exp": 1603385861
-}
+<pre class="language-json highlight"><c- p>{</c->
+    <c- f>"webid"</c-><c- p>:</c-> <c- u>"https://alice.coolpod.example/profile/card#me"</c-><c- p>,</c->
+    <c- f>"iss"</c-><c- p>:</c-> <c- u>"https://secureauth.example"</c-><c- p>,</c->
+    <c- f>"aud"</c-><c- p>:</c-> <c- u>"solid"</c-><c- p>,</c->
+    <c- f>"cnf"</c-><c- p>:</c-> <c- p>{</c->
+        <c- f>"jkt"</c-><c- p>:</c-> <c- u>"9XmwK8mQ3H5-PnzAt3lFHzWBW_v5QhYynezbbit4kC8"</c->
+    <c- p>},</c->
+    <c- f>"client_id"</c-><c- p>:</c-> <c- u>"https://decentphotos.example/webid#this"</c-><c- p>,</c->
+    <c- f>"jti"</c-><c- p>:</c-> <c- u>"fd0a1353-25f3-4c7e-8f8b-c14264f1c12e"</c-><c- p>,</c->
+    <c- f>"iat"</c-><c- p>:</c-> <c- mi>1603385261</c-><c- p>,</c->
+    <c- f>"exp"</c-><c- p>:</c-> <c- mi>1603385861</c->
+<c- p>}</c->
 </pre>
    <ul>
     <li data-md>
@@ -845,17 +837,17 @@ be embedded in an object on the field "jkt"</p>
     <li data-md>
      <p><code>"exp": 1603371241</code>: The token’s expiration date, in this case October 22, 2020 8:54:01</p>
    </ul>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-19"><span class="content">19. Generates the id_token</span><a class="self-link" href="#pkce-login-flow-step-19"></a></h4>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-19"><span class="content">19. Generates the id_token</span><a class="self-link" href="#authorization-code-pkce-flow-step-19"></a></h4>
    <p>If <code>openid</code> was listed as a scope during the authorization request, the OP generates an id
 token. The id token is not used to access anything. It is simply to communicate information to
-the client. This token is a (JSON Web Token)[https://jwt.io/introduction/]. It would look like
-the following (you can decrypt the token with https://jwt.io):</p>
+the client. This token is a <a href="https://jwt.io/introduction/">JSON Web Token</a>. It would look like
+the following (you can decrypt the token with <a href="https://jwt.io/#debugger-io?token=eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJodHRwczovL2FsaWNlLmNvb2xwb2QuZXhhbXBsZS9wcm9maWxlL2NhcmQjbWUiLCJhdWQiOiJodHRwczovL2RlY2VudHBob3Rvcy5leGFtcGxlL3dlYmlkI3RoaXMiLCJ3ZWJpZCI6Imh0dHBzOi8vYWxpY2UuY29vbHBvZC5leGFtcGxlL3Byb2ZpbGUvY2FyZCNtZSIsImlzcyI6Imh0dHBzOi8vc2VjdXJlYXV0aC5leGFtcGxlIiwianRpIjoiODQ0YTA5NWMtOWNkYi00N2U1LTk1MTAtMWRiYTk4N2MwYTVmIiwiaWF0IjoxNjAzMzg2NDQ4LCJleHAiOjE2MDMzODcwNDh9.T306vT8dmn9gQIMEdG92AM4WRnrhqWZTfDpovwqZ6Zn0mK9yxj0iOVGqXD4CW8-tzDTitNwEGorAo85atL0Oeg">https://jwt.io</a>):</p>
 <pre class="language-text highlight">eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJodHRwczovL2FsaWNlLmNvb2xwb2QuZXhhbXBsZS9wcm9maWxlL2NhcmQjbWUiLCJhdWQiOiJodHRwczovL2RlY2VudHBob3Rvcy5leGFtcGxlL3dlYmlkI3RoaXMiLCJ3ZWJpZCI6Imh0dHBzOi8vYWxpY2UuY29vbHBvZC5leGFtcGxlL3Byb2ZpbGUvY2FyZCNtZSIsImlzcyI6Imh0dHBzOi8vc2VjdXJlYXV0aC5leGFtcGxlIiwianRpIjoiODQ0YTA5NWMtOWNkYi00N2U1LTk1MTAtMWRiYTk4N2MwYTVmIiwiaWF0IjoxNjAzMzg2NDQ4LCJleHAiOjE2MDMzODcwNDh9.T306vT8dmn9gQIMEdG92AM4WRnrhqWZTfDpovwqZ6Zn0mK9yxj0iOVGqXD4CW8-tzDTitNwEGorAo85atL0Oeg
 </pre>
    <p>Token Header:</p>
 <pre class="language-json highlight"><c- p>{</c->
-  <c- f>"alg"</c-><c- p>:</c-> <c- u>"ES256"</c-><c- p>,</c->
-  <c- f>"typ"</c-><c- p>:</c-> <c- u>"JWT"</c->
+    <c- f>"alg"</c-><c- p>:</c-> <c- u>"ES256"</c-><c- p>,</c->
+    <c- f>"typ"</c-><c- p>:</c-> <c- u>"JWT"</c->
 <c- p>}</c->
 </pre>
    <ul>
@@ -865,26 +857,28 @@ the following (you can decrypt the token with https://jwt.io):</p>
      <p><code>"typ": "JWT"</code>: indicates that this is a JSON web token</p>
    </ul>
    <p>Token Body:</p>
-<pre>{
-  "aud": "https://decentphotos.example/webid#this",
-  "webid": "https://alice.coolpod.example/profile/card#me",
-  "iss": "https://secureauth.example",
-  "jti": "844a095c-9cdb-47e5-9510-1dba987c0a5f",
-  "iat": 1603370641,
-  "exp": 1603371241
-}
+<pre class="language-json highlight"><c- p>{</c->
+    <c- f>"sub"</c-><c- p>:</c-> <c- u>"https://alice.coolpod.example/profile/card#me"</c-><c- p>,</c->
+    <c- f>"aud"</c-><c- p>:</c-> <c- u>"https://decentphotos.example/webid#this"</c-><c- p>,</c->
+    <c- f>"webid"</c-><c- p>:</c-> <c- u>"https://alice.coolpod.example/profile/card#me"</c-><c- p>,</c->
+    <c- f>"iss"</c-><c- p>:</c-> <c- u>"https://secureauth.example"</c-><c- p>,</c->
+    <c- f>"jti"</c-><c- p>:</c-> <c- u>"844a095c-9cdb-47e5-9510-1dba987c0a5f"</c-><c- p>,</c->
+    <c- f>"iat"</c-><c- p>:</c-> <c- mi>1603370641</c-><c- p>,</c->
+    <c- f>"exp"</c-><c- p>:</c-> <c- mi>1603371241</c->
+<c- p>}</c->
 </pre>
    <ul>
     <li data-md>
-     <p><code>"aud": "https://decentphotos.example/webid#this",</code>: The token’s audience. Because an
+     <p><code>"sub": "https://alice.coolpod.example/profile/card#me"</code>: The subject claim. It must
+be the same as the authenticated user’s WebID.</p>
+    <li data-md>
+     <p><code>"aud": "https://decentphotos.example/webid#this"</code>: The token’s audience. Because an
 id_token is intended for the client, its audience is the client id.</p>
     <li data-md>
-     <p><code>"webid": "https://alice.coolpod.example/profile/card#me"</code>: The WebId of the user that
+     <p><code>"webid": "https://alice.coolpod.example/profile/card#me"</code>: The WebID of the user that
 logged in</p>
     <li data-md>
      <p><code>"iss": "https://secureauth.example"</code>: The OP that was used to generate this token</p>
-    <li data-md>
-     <p><code>"client_id": "https://decentphotos.example/webid#this"</code>: The client id of the application</p>
     <li data-md>
      <p><code>"jti": "844a095c-9cdb-47e5-9510-1dba987c0a5f"</code>: The jti is an optional unique identifier
 for this token that can be used to prevent replay attacks.</p>
@@ -893,24 +887,35 @@ for this token that can be used to prevent replay attacks.</p>
     <li data-md>
      <p><code>"exp": 1603371241</code>: The token’s expiration date, in this case October 22, 2020 8:54:01</p>
    </ul>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-20"><span class="content">20. Generates refresh token</span><a class="self-link" href="#pkce-login-flow-step-20"></a></h4>
-   <p>If <code>offline_access</code> was provided as a scope, the OP creates a opaque token as
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-20"><span class="content">20. Generates refresh token</span><a class="self-link" href="#authorization-code-pkce-flow-step-20"></a></h4>
+   <p>If <code>offline_access</code> was provided as a scope, the OP creates an opaque token as
 a refresh token. It could be like the one below. Notice the one below is a JWT, but a refresh
 token does not need to be a JWT.</p>
 <pre class="language-text highlight">eyJhbGciOiJub25lIn0.eyJqdGkiOiJhNzhiNDllZi03MWM1LTQ5ODUtYTUwYy01ZWYzYWVmMGZkOGYifQ.
 </pre>
-   <p>Save the token to a persistant store</p>
-   <h4 class="no-num heading settled" id="pkce-login-flow-step-21"><span class="content">21. Sends tokens</span><a class="self-link" href="#pkce-login-flow-step-21"></a></h4>
+   <p>The example token would decrypt as:</p>
+   <p>Token Header:</p>
+<pre class="language-json highlight"><c- p>{</c->
+    <c- f>"alg"</c-><c- p>:</c-> <c- u>"none"</c->
+<c- p>}</c->
+</pre>
+   <p>Token Body:</p>
+<pre class="language-json highlight"><c- p>{</c->
+    <c- f>"jti"</c-><c- p>:</c-> <c- u>"a78b49ef-71c5-4985-a50c-5ef3aef0fd8f"</c->
+<c- p>}</c->
+</pre>
+   <p>Save the refresh token to a persistant store.</p>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-21"><span class="content">21. Sends tokens</span><a class="self-link" href="#authorization-code-pkce-flow-step-21"></a></h4>
    <p>Once the OP has confirmed that everything checks out and all the tokens are generated, it sends
 a response with the tokens in the body:</p>
    <p>Response (content-type: application/json)</p>
 <pre class="language-json highlight"><c- p>{</c->
-  <c- f>"access_token"</c-><c- p>:</c-> <c- u>"eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJodHRwczovL2FsaWNlLmNvb2xwb2QuZXhhbXBsZS9wcm9maWxlL2NhcmQjbWUiLCJ3ZWJpZCI6Imh0dHBzOi8vYWxpY2UuY29vbHBvZC5leGFtcGxlL3Byb2ZpbGUvY2FyZCNtZSIsImlzcyI6Imh0dHBzOi8vc2VjdXJlYXV0aC5leGFtcGxlIiwiYXVkIjoic29saWQiLCJjbmYiOnsiamt0IjoiOVhtd0s4bVEzSDUtUG56QXQzbEZIeldCV192NVFoWXluZXpiYml0NGtDOCJ9LCJjbGllbnRfaWQiOiJodHRwczovL2RlY2VudHBob3Rvcy5leGFtcGxlL3dlYmlkI3RoaXMiLCJqdGkiOiJmZDBhMTM1My0yNWYzLTRjN2UtOGY4Yi1jMTQyNjRmMWMxMmUiLCJpYXQiOjE2MDMzODUyNjEsImV4cCI6MTYwMzM4NTg2MX0.HIIYiovILPvsdkD3s3xomR1MkA_Ir8Mx_C-eHxbWEnw9Z2rv2rOWbvMPZ--BqH3qVSupgYTZZsTDbZXA8giCLA"</c-><c- p>,</c->
-  <c- f>"expires_in"</c-><c- p>:</c->	<c- mi>300</c-><c- p>,</c->
-  <c- f>"token_type"</c-><c- p>:</c->	<c- u>"DPoP"</c-><c- p>,</c->
-  <c- f>"id_token"</c-><c- p>:</c-> <c- u>"eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJodHRwczovL2FsaWNlLmNvb2xwb2QuZXhhbXBsZS9wcm9maWxlL2NhcmQjbWUiLCJhdWQiOiJodHRwczovL2RlY2VudHBob3Rvcy5leGFtcGxlL3dlYmlkI3RoaXMiLCJ3ZWJpZCI6Imh0dHBzOi8vYWxpY2UuY29vbHBvZC5leGFtcGxlL3Byb2ZpbGUvY2FyZCNtZSIsImlzcyI6Imh0dHBzOi8vc2VjdXJlYXV0aC5leGFtcGxlIiwianRpIjoiODQ0YTA5NWMtOWNkYi00N2U1LTk1MTAtMWRiYTk4N2MwYTVmIiwiaWF0IjoxNjAzMzg2NDQ4LCJleHAiOjE2MDMzODcwNDh9.T306vT8dmn9gQIMEdG92AM4WRnrhqWZTfDpovwqZ6Zn0mK9yxj0iOVGqXD4CW8-tzDTitNwEGorAo85atL0Oeg"</c-><c- p>,</c->
-  <c- f>"refresh_token"</c-><c- p>:</c->	<c- u>"eyJhbGciOiJub25lIn0.eyJqdGkiOiJhNzhiNDllZi03MWM1LTQ5ODUtYTUwYy01ZWYzYWVmMGZkOGYifQ."</c->
-  <c- u>"scope"</c-><c- p>:</c->	<c- u>"openid profile offline_access"</c->
+    <c- f>"access_token"</c-><c- p>:</c-> <c- u>"eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJodHRwczovL2FsaWNlLmNvb2xwb2QuZXhhbXBsZS9wcm9maWxlL2NhcmQjbWUiLCJ3ZWJpZCI6Imh0dHBzOi8vYWxpY2UuY29vbHBvZC5leGFtcGxlL3Byb2ZpbGUvY2FyZCNtZSIsImlzcyI6Imh0dHBzOi8vc2VjdXJlYXV0aC5leGFtcGxlIiwiYXVkIjoic29saWQiLCJjbmYiOnsiamt0IjoiOVhtd0s4bVEzSDUtUG56QXQzbEZIeldCV192NVFoWXluZXpiYml0NGtDOCJ9LCJjbGllbnRfaWQiOiJodHRwczovL2RlY2VudHBob3Rvcy5leGFtcGxlL3dlYmlkI3RoaXMiLCJqdGkiOiJmZDBhMTM1My0yNWYzLTRjN2UtOGY4Yi1jMTQyNjRmMWMxMmUiLCJpYXQiOjE2MDMzODUyNjEsImV4cCI6MTYwMzM4NTg2MX0.HIIYiovILPvsdkD3s3xomR1MkA_Ir8Mx_C-eHxbWEnw9Z2rv2rOWbvMPZ--BqH3qVSupgYTZZsTDbZXA8giCLA"</c-><c- p>,</c->
+    <c- f>"expires_in"</c-><c- p>:</c-> <c- mi>300</c-><c- p>,</c->
+    <c- f>"token_type"</c-><c- p>:</c-> <c- u>"DPoP"</c-><c- p>,</c->
+    <c- f>"id_token"</c-><c- p>:</c-> <c- u>"eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJodHRwczovL2FsaWNlLmNvb2xwb2QuZXhhbXBsZS9wcm9maWxlL2NhcmQjbWUiLCJhdWQiOiJodHRwczovL2RlY2VudHBob3Rvcy5leGFtcGxlL3dlYmlkI3RoaXMiLCJ3ZWJpZCI6Imh0dHBzOi8vYWxpY2UuY29vbHBvZC5leGFtcGxlL3Byb2ZpbGUvY2FyZCNtZSIsImlzcyI6Imh0dHBzOi8vc2VjdXJlYXV0aC5leGFtcGxlIiwianRpIjoiODQ0YTA5NWMtOWNkYi00N2U1LTk1MTAtMWRiYTk4N2MwYTVmIiwiaWF0IjoxNjAzMzg2NDQ4LCJleHAiOjE2MDMzODcwNDh9.T306vT8dmn9gQIMEdG92AM4WRnrhqWZTfDpovwqZ6Zn0mK9yxj0iOVGqXD4CW8-tzDTitNwEGorAo85atL0Oeg"</c-><c- p>,</c->
+    <c- f>"refresh_token"</c-><c- p>:</c-> <c- u>"eyJhbGciOiJub25lIn0.eyJqdGkiOiJhNzhiNDllZi03MWM1LTQ5ODUtYTUwYy01ZWYzYWVmMGZkOGYifQ."</c-><c- p>,</c->
+    <c- f>"scope"</c-><c- p>:</c-> <c- u>"openid profile offline_access"</c->
 <c- p>}</c->
 </pre>
    <ul>
@@ -947,17 +952,17 @@ could look like the following (you can decode the token using https://jwt.io):</
 </pre>
    <p>Token Header:</p>
 <pre class="language-json highlight"><c- p>{</c->
-  <c- f>"alg"</c-><c- p>:</c-> <c- u>"ES256"</c-><c- p>,</c->
-  <c- f>"typ"</c-><c- p>:</c-> <c- u>"dpop+jwt"</c-><c- p>,</c->
-  <c- f>"jwk"</c-><c- p>:</c-> <c- p>{</c->
-    <c- f>"kty"</c-><c- p>:</c-> <c- u>"EC"</c-><c- p>,</c->
-    <c- f>"kid"</c-><c- p>:</c-> <c- u>"2i00gHnREsMhD5WqsABPSaqEjLC5MS-E98ykd-qtF1I"</c-><c- p>,</c->
-    <c- f>"use"</c-><c- p>:</c-> <c- u>"sig"</c-><c- p>,</c->
-    <c- f>"alg"</c-><c- p>:</c-> <c- u>"EC"</c-><c- p>,</c->
-    <c- f>"crv"</c-><c- p>:</c-> <c- u>"P-256"</c-><c- p>,</c->
-    <c- f>"x"</c-><c- p>:</c-><c- u>"N6VsICiPA1ciAA82Jhv7ykkPL9B0ippUjmla8Snr4HY"</c-><c- p>,</c->
-    <c- f>"y"</c-><c- p>:</c-><c- u>"ay9qDOrFGdGe_3hAivW5HnqHYdnYUkXJJevHOBU4z5s"</c-><c- p>,</c->
-  <c- p>}</c->
+    <c- f>"alg"</c-><c- p>:</c-> <c- u>"ES256"</c-><c- p>,</c->
+    <c- f>"typ"</c-><c- p>:</c-> <c- u>"dpop+jwt"</c-><c- p>,</c->
+    <c- f>"jwk"</c-><c- p>:</c-> <c- p>{</c->
+        <c- f>"kty"</c-><c- p>:</c-> <c- u>"EC"</c-><c- p>,</c->
+        <c- f>"kid"</c-><c- p>:</c-> <c- u>"2i00gHnREsMhD5WqsABPSaqEjLC5MS-E98ykd-qtF1I"</c-><c- p>,</c->
+        <c- f>"use"</c-><c- p>:</c-> <c- u>"sig"</c-><c- p>,</c->
+        <c- f>"alg"</c-><c- p>:</c-> <c- u>"EC"</c-><c- p>,</c->
+        <c- f>"crv"</c-><c- p>:</c-> <c- u>"P-256"</c-><c- p>,</c->
+        <c- f>"x"</c-><c- p>:</c-> <c- u>"N6VsICiPA1ciAA82Jhv7ykkPL9B0ippUjmla8Snr4HY"</c-><c- p>,</c->
+        <c- f>"y"</c-><c- p>:</c-> <c- u>"ay9qDOrFGdGe_3hAivW5HnqHYdnYUkXJJevHOBU4z5s"</c-><c- p>,</c->
+    <c- p>}</c->
 <c- p>}</c->
 </pre>
    <ul>
@@ -971,10 +976,10 @@ generated the keys using eliptic curves.</p>
    </ul>
    <p>Token Body:</p>
 <pre class="language-json highlight"><c- p>{</c->
-  <c- f>"htu"</c-><c- p>:</c-> <c- u>"https://bob.otherpod.example/private/photo_album.ttl"</c-><c- p>,</c->
-  <c- f>"htm"</c-><c- p>:</c-> <c- u>"GET"</c-><c- p>,</c->
-  <c- f>"jti"</c-><c- p>:</c-> <c- u>"fb1264dd-fff1-4509-a7b1-0fe58d08d3e1"</c-><c- p>,</c->
-  <c- f>"iat"</c-><c- p>:</c-> <c- mi>1603389616</c->
+    <c- f>"htu"</c-><c- p>:</c-> <c- u>"https://bob.otherpod.example/private/photo_album.ttl"</c-><c- p>,</c->
+    <c- f>"htm"</c-><c- p>:</c-> <c- u>"GET"</c-><c- p>,</c->
+    <c- f>"jti"</c-><c- p>:</c-> <c- u>"fb1264dd-fff1-4509-a7b1-0fe58d08d3e1"</c-><c- p>,</c->
+    <c- f>"iat"</c-><c- p>:</c-> <c- mi>1603389616</c->
 <c- p>}</c->
 </pre>
    <ul>
@@ -994,8 +999,8 @@ GMT.</p>
    <p>With the access token and new DPoP token in hand, we’re ready to make our request.</p>
 <pre class="language-http highlight">GET https://bob.otherpod.example/private/photo_album.ttl
 Headers: {
-  authorization: "DPoP eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJodHRwczovL2FsaWNlLmNvb2xwb2QuZXhhbXBsZS9wcm9maWxlL2NhcmQjbWUiLCJ3ZWJpZCI6Imh0dHBzOi8vYWxpY2UuY29vbHBvZC5leGFtcGxlL3Byb2ZpbGUvY2FyZCNtZSIsImlzcyI6Imh0dHBzOi8vc2VjdXJlYXV0aC5leGFtcGxlIiwiYXVkIjoic29saWQiLCJjbmYiOnsiamt0IjoiOVhtd0s4bVEzSDUtUG56QXQzbEZIeldCV192NVFoWXluZXpiYml0NGtDOCJ9LCJjbGllbnRfaWQiOiJodHRwczovL2RlY2VudHBob3Rvcy5leGFtcGxlL3dlYmlkI3RoaXMiLCJqdGkiOiJmZDBhMTM1My0yNWYzLTRjN2UtOGY4Yi1jMTQyNjRmMWMxMmUiLCJpYXQiOjE2MDMzODUyNjEsImV4cCI6MTYwMzM4NTg2MX0.HIIYiovILPvsdkD3s3xomR1MkA_Ir8Mx_C-eHxbWEnw9Z2rv2rOWbvMPZ--BqH3qVSupgYTZZsTDbZXA8giCLA",
-  dpop: "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRwb3Arand0IiwiandrIjp7Imt0eSI6IkVDIiwia2lkIjoiQ21HVE9Dd3ZKWXhrb0dGOGNxcFpBNTdab2xVdThBcFJQb3MwVlduWk1TNCIsInVzZSI6InNpZyIsImFsZyI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiU0FZcmF5VUh4Z1FPQ29YSC1MbHdyOW1iSWJpUHBsLXRQRUpLeE1WWFltcyIsInkiOiJ6eGJQODdPQ3JpeEZpMk9vZjU1QkhsTC1ySHhvWHVuUmttNFBkV3duUzJnIn19.eyJodHUiOiJodHRwczovL2JvYi5vdGhlcnBvZC5leGFtcGxlL3ByaXZhdGUvcGhvdG9fYWxidW0udHRsIiwiaHRtIjoiZ2V0IiwianRpIjoiZmIxMjY0ZGQtZmZmMS00NTA5LWE3YjEtMGZlNThkMDhkM2UxIiwiaWF0IjoxNjAzMzg5NjE2LCJleHAiOjE2MDMzOTMyMTZ9.G8JktoMOadenCYtO4Z_ZI7ACnjKJvT59OyKlQ6WpB1Qq2GoCK6v1ocrpsfELDOKIL5nt5fwWccfvCAA2bMrkjA"
+    authorization: "DPoP eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJodHRwczovL2FsaWNlLmNvb2xwb2QuZXhhbXBsZS9wcm9maWxlL2NhcmQjbWUiLCJ3ZWJpZCI6Imh0dHBzOi8vYWxpY2UuY29vbHBvZC5leGFtcGxlL3Byb2ZpbGUvY2FyZCNtZSIsImlzcyI6Imh0dHBzOi8vc2VjdXJlYXV0aC5leGFtcGxlIiwiYXVkIjoic29saWQiLCJjbmYiOnsiamt0IjoiOVhtd0s4bVEzSDUtUG56QXQzbEZIeldCV192NVFoWXluZXpiYml0NGtDOCJ9LCJjbGllbnRfaWQiOiJodHRwczovL2RlY2VudHBob3Rvcy5leGFtcGxlL3dlYmlkI3RoaXMiLCJqdGkiOiJmZDBhMTM1My0yNWYzLTRjN2UtOGY4Yi1jMTQyNjRmMWMxMmUiLCJpYXQiOjE2MDMzODUyNjEsImV4cCI6MTYwMzM4NTg2MX0.HIIYiovILPvsdkD3s3xomR1MkA_Ir8Mx_C-eHxbWEnw9Z2rv2rOWbvMPZ--BqH3qVSupgYTZZsTDbZXA8giCLA",
+    dpop: "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRwb3Arand0IiwiandrIjp7Imt0eSI6IkVDIiwia2lkIjoiQ21HVE9Dd3ZKWXhrb0dGOGNxcFpBNTdab2xVdThBcFJQb3MwVlduWk1TNCIsInVzZSI6InNpZyIsImFsZyI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiU0FZcmF5VUh4Z1FPQ29YSC1MbHdyOW1iSWJpUHBsLXRQRUpLeE1WWFltcyIsInkiOiJ6eGJQODdPQ3JpeEZpMk9vZjU1QkhsTC1ySHhvWHVuUmttNFBkV3duUzJnIn19.eyJodHUiOiJodHRwczovL2JvYi5vdGhlcnBvZC5leGFtcGxlL3ByaXZhdGUvcGhvdG9fYWxidW0udHRsIiwiaHRtIjoiZ2V0IiwianRpIjoiZmIxMjY0ZGQtZmZmMS00NTA5LWE3YjEtMGZlNThkMDhkM2UxIiwiaWF0IjoxNjAzMzg5NjE2LCJleHAiOjE2MDMzOTMyMTZ9.G8JktoMOadenCYtO4Z_ZI7ACnjKJvT59OyKlQ6WpB1Qq2GoCK6v1ocrpsfELDOKIL5nt5fwWccfvCAA2bMrkjA"
 }
 </pre>
    <ul>
@@ -1054,62 +1059,54 @@ WebID. If it does not, the RS must reject the request with a 403.</p>
 <pre class="language-http highlight">GET https://secureauth.example/.well-known/openid-configuration
 </pre>
    <p>Response</p>
-<pre class="language-json highlight"><c- p>{</c->  
-   <c- f>"issuer"</c-><c- p>:</c-><c- u>"https://secureauth.example"</c-><c- p>,</c->
-   <c- f>"authorization_endpoint"</c-><c- p>:</c-><c- u>"https://secureauth.example/authorize"</c-><c- p>,</c->
-   <c- f>"token_endpoint"</c-><c- p>:</c-><c- u>"https://secureauth.example/token"</c-><c- p>,</c->
-   <c- f>"userinfo_endpoint"</c-><c- p>:</c-><c- u>"https://secureauth.example/userinfo"</c-><c- p>,</c->
-   <c- f>"jwks_uri"</c-><c- p>:</c-><c- u>"https://secureauth.example/jwks"</c-><c- p>,</c->
-   <c- f>"registration_endpoint"</c-><c- p>:</c-><c- u>"https://secureauth.example/register"</c-><c- p>,</c->
-   <c- f>"response_types_supported"</c-><c- p>:[</c->  
-      <c- u>"code"</c-><c- p>,</c->
-      <c- u>"code token"</c-><c- p>,</c->
-      <c- u>"code id_token"</c-><c- p>,</c->
-      <c- u>"id_token"</c-><c- p>,</c->
-      <c- u>"id_token token"</c-><c- p>,</c->
-      <c- u>"code id_token token"</c-><c- p>,</c->
-      <c- u>"none"</c->
-   <c- p>],</c->
-   <c- f>"response_modes_supported"</c-><c- p>:[</c->  
-      <c- u>"query"</c-><c- p>,</c->
-      <c- u>"fragment"</c->
-   <c- p>],</c->
-   <c- f>"grant_types_supported"</c-><c- p>:[</c->  
-      <c- u>"authorization_code"</c-><c- p>,</c->
-      <c- u>"implicit"</c-><c- p>,</c->
-      <c- u>"refresh_token"</c-><c- p>,</c->
-      <c- u>"client_credentials"</c->
-   <c- p>],</c->
-   <c- f>"subject_types_supported"</c-><c- p>:[</c->  
-      <c- u>"public"</c->
-   <c- p>],</c->
-   <c- f>"id_token_signing_alg_values_supported"</c-><c- p>:[</c->  
-      <c- u>"RS256"</c-><c- p>,</c->
-      <c- u>"RS384"</c-><c- p>,</c->
-      <c- u>"RS512"</c-><c- p>,</c->
-      <c- u>"none"</c->
-   <c- p>],</c->
-   <c- f>"token_endpoint_auth_methods_supported"</c-><c- p>:[</c->  
-      <c- u>"client_secret_basic"</c->
-   <c- p>],</c->
-   <c- f>"token_endpoint_auth_signing_alg_values_supported"</c-><c- p>:[</c->  
-      <c- u>"RS256"</c->
-   <c- p>],</c->
-   <c- f>"display_values_supported"</c-><c- p>:[</c->  
-
-   <c- p>],</c->
-   <c- f>"claim_types_supported"</c-><c- p>:[</c->  
-      <c- u>"normal"</c->
-   <c- p>],</c->
-   <c- f>"claims_supported"</c-><c- p>:[</c->  
-
-   <c- p>],</c->
-   <c- f>"claims_parameter_supported"</c-><c- p>:</c-><c- kc>false</c-><c- p>,</c->
-   <c- f>"request_parameter_supported"</c-><c- p>:</c-><c- kc>true</c-><c- p>,</c->
-   <c- f>"request_uri_parameter_supported"</c-><c- p>:</c-><c- kc>false</c-><c- p>,</c->
-   <c- f>"require_request_uri_registration"</c-><c- p>:</c-><c- kc>false</c-><c- p>,</c->
-   <c- f>"check_session_iframe"</c-><c- p>:</c-><c- u>"https://secureauth.example/session"</c-><c- p>,</c->
-   <c- f>"end_session_endpoint"</c-><c- p>:</c-><c- u>"https://secureauth.example/logout"</c->
+<pre class="language-json highlight"><c- p>{</c->
+    <c- f>"issuer"</c-><c- p>:</c-> <c- u>"https://secureauth.example"</c-><c- p>,</c->
+    <c- f>"authorization_endpoint"</c-><c- p>:</c-> <c- u>"https://secureauth.example/authorize"</c-><c- p>,</c->
+    <c- f>"token_endpoint"</c-><c- p>:</c-> <c- u>"https://secureauth.example/token"</c-><c- p>,</c->
+    <c- f>"userinfo_endpoint"</c-><c- p>:</c-> <c- u>"https://secureauth.example/userinfo"</c-><c- p>,</c->
+    <c- f>"registration_endpoint"</c-><c- p>:</c-> <c- u>"https://secureauth.example/register"</c-><c- p>,</c->
+    <c- f>"end_session_endpoint"</c-><c- p>:</c-> <c- u>"https://secureauth.example/endsession"</c-><c- p>,</c->
+    <c- f>"jwks_uri"</c-><c- p>:</c-> <c- u>"https://secureauth.example/jwks"</c-><c- p>,</c->
+    <c- f>"response_types_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"code"</c->
+    <c- p>],</c->
+    <c- f>"grant_types_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"authorization_code"</c-><c- p>,</c->
+        <c- u>"refresh_token"</c->
+    <c- p>],</c->
+    <c- f>"subject_types_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"public"</c->
+    <c- p>],</c->
+    <c- f>"claims_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"sub"</c-><c- p>,</c->
+        <c- u>"webid"</c->
+    <c- p>],</c->
+    <c- f>"scopes_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"openid"</c-><c- p>,</c->
+        <c- u>"profile"</c-><c- p>,</c->
+        <c- u>"email"</c-><c- p>,</c->
+        <c- u>"offline_access"</c->
+    <c- p>],</c->
+    <c- f>"token_endpoint_auth_methods_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"client_secret_basic"</c->
+    <c- p>],</c->
+    <c- f>"token_endpoint_auth_signing_alg_values_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"ES256"</c->
+    <c- p>],</c->
+    <c- f>"request_object_signing_alg_values_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"ES256"</c->
+    <c- p>],</c->
+    <c- f>"id_token_signing_alg_values_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"ES256"</c->
+    <c- p>],</c->
+    <c- f>"code_challenge_methods_supported"</c-><c- p>:</c-> <c- p>[</c->
+        <c- u>"plain"</c-><c- p>,</c->
+        <c- u>"S256"</c->
+    <c- p>],</c->
+    <c- f>"claims_parameter_supported"</c-><c- p>:</c-> <c- kc>false</c-><c- p>,</c->
+    <c- f>"request_parameter_supported"</c-><c- p>:</c-> <c- kc>true</c-><c- p>,</c->
+    <c- f>"request_uri_parameter_supported"</c-><c- p>:</c-> <c- kc>false</c-><c- p>,</c->
+    <c- f>"require_request_uri_registration"</c-><c- p>:</c-> <c- kc>false</c->
 <c- p>}</c->
 </pre>
    <h4 class="no-num heading settled" id="request-flow-step-10"><span class="content">10. Requests JWKS</span><a class="self-link" href="#request-flow-step-10"></a></h4>
@@ -1120,18 +1117,18 @@ OP’s public keys.</p>
 </pre>
    <p>Response (application/json)</p>
 <pre class="language-json highlight"><c- p>{</c->
-  keys: [
-    {
-      alg: <c- f>"EC"</c->
-      crv<c- p>:</c-> <c- u>"P-256"</c->
-      kid<c- p>:</c-> <c- u>"Xu68Q0ZfwDiRfWOb2UE8N77GoEQQ7q58_3gl1wsKENs"</c->
-      kty<c- p>:</c-> <c- u>"EC"</c->
-      use<c- p>:</c-> <c- u>"sig"</c->
-      x<c- p>:</c-> <c- u>"qBbrIQNVTIm7M88iJFVB3e1GqsbFbYYfFiibkd48_Ac"</c->
-      y<c- p>:</c-> <c- u>"SCl_hDR_6SEuJhKFOiVo8-zLqNglZ56jiJw2_PNE9hU"</c->
-    <c- p>}</c->
-  ]
-}
+    <c- f>"keys"</c-><c- p>:</c-> <c- p>[</c->
+        <c- p>{</c->
+            <c- f>"alg"</c-><c- p>:</c-> <c- u>"EC"</c-><c- p>,</c->
+            <c- f>"crv"</c-><c- p>:</c-> <c- u>"P-256"</c-><c- p>,</c->
+            <c- f>"kid"</c-><c- p>:</c-> <c- u>"Xu68Q0ZfwDiRfWOb2UE8N77GoEQQ7q58_3gl1wsKENs"</c-><c- p>,</c->
+            <c- f>"kty"</c-><c- p>:</c-> <c- u>"EC"</c-><c- p>,</c->
+            <c- f>"use"</c-><c- p>:</c-> <c- u>"sig"</c-><c- p>,</c->
+            <c- f>"x"</c-><c- p>:</c-> <c- u>"qBbrIQNVTIm7M88iJFVB3e1GqsbFbYYfFiibkd48_Ac"</c-><c- p>,</c->
+            <c- f>"y"</c-><c- p>:</c-> <c- u>"SCl_hDR_6SEuJhKFOiVo8-zLqNglZ56jiJw2_PNE9hU"</c->
+        <c- p>}</c->
+    <c- p>]</c->
+<c- p>}</c->
 </pre>
    <p>Notice that the <code>keys</code> field is an array, so an OP could have multiple public keys.</p>
    <h4 class="no-num heading settled" id="request-flow-step-11"><span class="content">11. Checks access token signature validity</span><a class="self-link" href="#request-flow-step-11"></a></h4>
@@ -1197,6 +1194,8 @@ request was made. Using that information, the RS performs authorization.</p>
    <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
    <dt id="biblio-rfc6749">[RFC6749]
    <dd>D. Hardt, Ed.. <a href="https://tools.ietf.org/html/rfc6749">The OAuth 2.0 Authorization Framework</a>. October 2012. Proposed Standard. URL: <a href="https://tools.ietf.org/html/rfc6749">https://tools.ietf.org/html/rfc6749</a>
+   <dt id="biblio-rfc7636">[RFC7636]
+   <dd>N. Sakimura, Ed.; J. Bradley; N. Agarwal. <a href="https://tools.ietf.org/html/rfc7636">Proof Key for Code Exchange by OAuth Public Clients</a>. September 2015. Proposed Standard. URL: <a href="https://tools.ietf.org/html/rfc7636">https://tools.ietf.org/html/rfc7636</a>
    <dt id="biblio-solid">[Solid]
    <dd><a href="https://solid.github.io/specification/">The Solid Ecosystem</a>. URL: <a href="https://solid.github.io/specification/">https://solid.github.io/specification/</a>
    <dt id="biblio-solidoidc">[SolidOIDC]
