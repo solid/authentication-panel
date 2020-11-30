@@ -8,7 +8,7 @@
   <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
   <meta content="Bikeshed version c5172e83, updated Fri Nov 20 15:35:20 2020 -0800" name="generator">
   <link href="https://solid.github.io/authentication-panel/solid-oidc/" rel="canonical">
-  <meta content="352271a16a4e1356b4030a81e519154180e20e8f" name="document-revision">
+  <meta content="d142a9e463e3bdb67afdae7607a905ab052bfa96" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -603,8 +603,8 @@ client as a public client. Doing this may cause the RS to provide less access to
    <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-7"><span class="content">7. Fetch RP WebID</span><a class="self-link" href="#authorization-code-pkce-flow-step-7"></a></h4>
    <p>If an app WebID is provided as the client id (see note above to see other options), we must
 fetch that app WebID to confirm its validity.</p>
-   <p>Request:</p>
-<pre class="language-http highlight">GET https://decentphotos.example/webid#this
+   <p>For the WebID <code>https://decentphotos.example/webid#this</code>, request the WebID Profile with:</p>
+<pre class="language-http highlight">GET https://decentphotos.example/webid
 </pre>
    <p>Response:</p>
 <pre class="language-ttl highlight">@<c- g>prefix</c-> <c- g>solid</c->:  .
