@@ -275,9 +275,9 @@ client as a public client. Doing this may cause the RS to provide less access to
 If an app WebID is provided as the client id (see note above to see other options), we must
 fetch that app WebID to confirm its validity.
 
-Request:
+For the WebID `https://decentphotos.example/webid#this`, request the WebID Profile with:
 ```http
-GET https://decentphotos.example/webid#this
+GET https://decentphotos.example/webid
 ```
 
 Response:
