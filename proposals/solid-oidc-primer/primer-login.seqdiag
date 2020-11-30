@@ -1,10 +1,10 @@
 title: Authorization Code flow with PKCE
 
-note over RP: 1.Alice uses the decentphotos app
+note over RP: 1. Alice uses the decentphotos app
 note over RP: 2. Alice selects her OP or WebID
-RP->Alice's Pod (RS): 2.1 Retrieve Profile
-Alice's Pod (RS)->RP:
-RP->Alice's OP: 3. Retrieve OP configuration
+RP->Alice's WebID: 2.1 Retrieve Profile
+Alice's WebID->RP:
+RP->Alice's OP: 3. Retrieves OP configuration
 Alice's OP->RP:
 note over RP: 4. Generates PKCE code and code verifier
 note over RP: 5. Saves code verifier to session storage
