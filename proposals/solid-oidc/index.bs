@@ -261,7 +261,7 @@ claim redundant, so in Solid-OIDC the `aud` claim MUST be a string with the valu
 `cnf` — For all flows that require DPoP, the confirmation claim is REQUIRED, as per
 [DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-7) specification.
 
-`client_id` — REQUIRED in all flows except OIDC registration.
+`client_id` — REQUIRED in all flows except OIDC Dynamic Client registration. See [[!OpenIDConnectDynamicClientRegistration]].
 
 <div class="example">
     <p>An example DPoP-bound Access Token:
@@ -406,6 +406,16 @@ Verborgh, Ricky White, Paul Worrall, Dmitri Zagidulin.
         ],
         "href": "https://openid.net/specs/openid-connect-discovery-1_0.html",
         "title": "OpenID Connect Discovery 1.0",
+        "publisher": "The OpenID Foundation"
+    },
+    "OpenIDConnectDynamicClientRegistration": {
+        "authors": [
+            "N. Sakimura",
+            "J. Bradley",
+            "M.B. Jones"
+        ],
+        "href": "https://openid.net/specs/openid-connect-registration-1_0.html",
+        "title": "OpenID Connect Dynamic Client Registration 1.0",
         "publisher": "The OpenID Foundation"
     }
 }
