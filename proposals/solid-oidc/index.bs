@@ -253,7 +253,7 @@ The DPoP-bound Access Token MUST contain at least these claims:
 
 `aud` — REQUIRED. The audience claim MUST be the string `solid`. In the decentralized world of
 Solid OIDC, the principal of an access token is not a specific endpoint, but rather the Solid
-API, that is any Solid server at any accessible address on the world wide web.
+API; that is, any Solid server at any accessible address on the world wide web.
 
 `iat` — REQUIRED. The issued-at claim is the time at which this crendential was issued.
 
