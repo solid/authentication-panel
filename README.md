@@ -24,15 +24,6 @@ to propose a project for the panel to undertake.
 
 ## Meetings
 
-Meetings of the Authentication panel take place at 10AM eastern on Mondays. Meeting details listed below:
+Meetings of the Authentication panel take place at 10AM eastern on Mondays. 
 
-```
-https://inrupt.my.webex.com/inrupt.my/j.php?MTID=m131f1588eb27afc298276f1cbf077a79
-Meeting number:
-792 295 998
-Password: a9pRfXbZe78
-More ways to join
-Join by phone
-+1-408-418-9388 United States Toll
-Access code: 792 295 998
-```
+Meeting link: https://meet.jit.si/solid-authentication
