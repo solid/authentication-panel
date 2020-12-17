@@ -93,7 +93,9 @@ Several actors are at play in our example Solid OIDC authentication flows:
 
 ## Authorization Code Grant with PKCE Authorization Flow ## {#authorization-code-pkce-flow}
 
-The Authorization Code grant with PKCE is the primary OAuth 2.0 authorization flow recommended by the Solid OIDC. It is defined by the PKCE RFC [[!RFC7636]] and described here in the Solid OIDC context.
+The Authorization Code grant with PKCE is the primary OAuth 2.0 authorization flow 
+recommended by the Solid OIDC. It is defined by the PKCE RFC [[!RFC7636]] and 
+described here in the Solid OIDC context.
 
 <img src="primer-login.svg" />
 
@@ -114,7 +116,7 @@ While it is not the case with Alice, a user's Pod and OP can be hosted at the sa
 example, Bob's Pod could be `bob.otherpod.example` with a WebID of
 `https://bob.otherpod.example/profile/card#me`, but his OP is at `https://solid.example`.
 
-<h4 id="authorization-code-pkce-flow-step-2.1" class="no-num">2.1 Retrieve Profile (Only needed if a WebID is provided)</h4>
+<h4 id="authorization-code-pkce-flow-step-2.1" class="no-num">2.1 Retrieve Profile (only needed if a WebID is provided)</h4>
 
 If Alice entered her WebID's URL rather than her OP's URL, a request should be made to
 determine her OP. To do so, a request should be made to Alice's WebId:
@@ -257,11 +259,13 @@ That URL might look a little complex, but it's essentially a request to
 - `response_type=code` indicates the desired response data.
 - `redirect_uri=https%3A%2F%2Fdecentphotos.example%2Fcallback`:
     The url that the OP will redirect to once the user has logged in (`https://decentphotos.example/callback`).
-- `scope=openid%20profile%20offline_access`: a list of [OIDC scopes] (https://auth0.com/docs/scopes/current/oidc-scopes) (attributes of the RS to which this token should have access) seaparated by spaces (%20). 
+- `scope=openid%20profile%20offline_access`: a list of [OIDC scopes](https://auth0.com/docs/scopes/current/oidc-scopes) 
+  (attributes of the RS to which this token should have access) separated by spaces (%20). 
     - `open_id` is a scope that is needed to verify Alice's identity.
     - `profile` is required by the Solid OIDC specification to denote a WebID login.
     - `offline_access`: Is required to get a refresh token.
-- `client_id=https%3A%2F%2Fdecentphotos.example%2Fwebid%23this`: Usually the client id of a Solid application is the app's WebID (in our case `https://decentphotos.example/webid#this`) as seen here.
+- `client_id=https%3A%2F%2Fdecentphotos.example%2Fwebid%23this`: Usually the client id of a Solid 
+  application is the app's WebID (in our case `https://decentphotos.example/webid#this`) as seen here.
 - `code_challenge_method=S256`: Tells the OP that our code challenge was transformed using SHA-256.
 - `code_challenge=HSi9dwlvRpNHCDm-L8GOdM16qcb0tLHPZqQSvaWXTI0`: The code challenge we generated before.
 
@@ -413,7 +417,8 @@ Token Header:
 }
 ```
 
-- `"alg": "ES256"`: The signing algorithm used in this token. In this case, `ES256` because we generated the keys using eliptic curves.
+- `"alg": "ES256"`: The signing algorithm used in this token. In this case, `ES256` 
+  because we generated the keys using eliptic curves.
 - `"typ": "dpop+jwt"`: The type of token. All DPoP Tokens should have a type of "dpop+jwt"
 - `"jwk": { "kty": "EC" ... }`: The client's public key.
 
@@ -429,7 +434,8 @@ Token Body:
 
 - `"htu": "https://secureauth.example/token"`: htu limits the token for use only on the given url.
 - `"htm": "POST"`: htm limits the token for use only on a specific http method, in this case `POST`.
-- `"jti": "4ba3e9ef-e98d-4644-9878-7160fa7d3eb8"`: jti is a unique identifier for the DPoP token that can optionally be used by the server to defend against replay attacks
+- `"jti": "4ba3e9ef-e98d-4644-9878-7160fa7d3eb8"`: jti is a unique identifier for the DPoP token 
+  that can optionally be used by the server to defend against replay attacks
 - `"iat": 1603306128`: The date the token was issued, in this case October 21, 2020 15:52:33 GMT.
 
 <h4 id="authorization-code-pkce-flow-step-14" class="no-num">14. Token request with code and code verifier</h4>
