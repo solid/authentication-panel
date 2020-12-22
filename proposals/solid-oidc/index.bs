@@ -242,12 +242,13 @@ the Client:
 
 The DPoP-bound Access Token MUST be a valid JWT. See [[!RFC7519]].
 
-When requesting an DPoP-bound Access Token, the Client MUST send the IdP a DPoP proof that is valid
-according to the [DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04).
+When requesting a DPoP-bound Access Token, the Client MUST send the IdP a DPoP proof JWT that is valid
+according to the [DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-5).
+The DPoP proof JWT is used to bind the access token to a public key. See [[!DPOP]].
 
-The DPoP-bound Access Token MUST contain at least these claims:
+The DPoP-bound Access Token payload MUST contain at least these claims:
 
-`webid` — REQUIRED. This claim MUST be the user's WebID.
+`webid` — REQUIRED. The WebID claim MUST be the user's WebID.
 
 `iss` — REQUIRED. The issuer claim MUST be a valid URL of the IdP instantiating this token.
 
@@ -255,12 +256,12 @@ The DPoP-bound Access Token MUST contain at least these claims:
 Solid OIDC, the principal of an access token is not a specific endpoint, but rather the Solid
 API; that is, any Solid server at any accessible address on the world wide web.
 
-`iat` — REQUIRED. The issued-at claim is the time at which this crendential was issued.
+`iat` — REQUIRED. The issued-at claim is the time at which the DPoP-bound Access Token was issued.
 
-`exp` — REQUIRED. This credential expiration is seperate from the ID tokens expiration.
+`exp` — REQUIRED. The expiration claim is the time at which the DPoP-bound Access Token becomes invalid.
 
-`cnf` — For all flows that require DPoP, the confirmation claim is REQUIRED, as per
-[DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-7) specification.
+`cnf` — REQUIRED. The confirmation claim is used to identify the DPoP Public Key bound to the Access
+Token. See [DPoP Public Key Confirmation](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-7).
 
 `client_id` — REQUIRED in all flows except OIDC registration.
 
