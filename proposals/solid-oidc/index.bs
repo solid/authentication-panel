@@ -270,7 +270,6 @@ claim redundant, so in Solid-OIDC the `aud` claim MUST be a string with the valu
     {
         "webid": "https://janedoe.com/web#id",
         "iss": "https://idp.example.com",
-        "sub": "janedoe",
         "aud": "solid",
         "iat": 1541493724,
         "exp": 1573029723,
