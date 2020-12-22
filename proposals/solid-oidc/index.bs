@@ -229,6 +229,7 @@ Client is effectively anonymous to the RS.
 
 If the Client does not use a WebID as the client identifier, then it MUST present a client identifier
 registered with the IdP via either OIDC dynamic or static registration.
+See also [[!OpenIDConnectDynamicClientRegistration]].
 
 # Token Instantiation # {#tokens}
 
@@ -261,7 +262,7 @@ claim redundant, so in Solid-OIDC the `aud` claim MUST be a string with the valu
 `cnf` — For all flows that require DPoP, the confirmation claim is REQUIRED, as per
 [DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-7) specification.
 
-`client_id` — REQUIRED in all flows except OIDC Dynamic Client registration. See [[!OpenIDConnectDynamicClientRegistration]].
+`client_id` - REQUIRED. The ClientID claim is used to identify the client. See also [section 5. Client Identifiers](#clientids).
 
 <div class="example">
     <p>An example DPoP-bound Access Token:
