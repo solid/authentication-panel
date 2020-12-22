@@ -229,6 +229,7 @@ Client is effectively anonymous to the RS.
 
 If the Client does not use a WebID as the client identifier, then it MUST present a client identifier
 registered with the IdP via either OIDC dynamic or static registration.
+See also [[!OpenIDConnectDynamicClientRegistration]].
 
 # Token Instantiation # {#tokens}
 
@@ -263,7 +264,7 @@ API; that is, any Solid server at any accessible address on the world wide web.
 `cnf` — REQUIRED. The confirmation claim is used to identify the DPoP Public Key bound to the Access
 Token. See [DPoP Public Key Confirmation](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-7).
 
-`client_id` — REQUIRED in all flows except OIDC registration.
+`client_id` - REQUIRED. The ClientID claim is used to identify the client. See also [section 5. Client Identifiers](#clientids).
 
 <div class="example">
     <p>An example DPoP-bound Access Token:
@@ -409,6 +410,16 @@ Verborgh, Ricky White, Paul Worrall, Dmitri Zagidulin.
         ],
         "href": "https://openid.net/specs/openid-connect-discovery-1_0.html",
         "title": "OpenID Connect Discovery 1.0",
+        "publisher": "The OpenID Foundation"
+    },
+    "OpenIDConnectDynamicClientRegistration": {
+        "authors": [
+            "N. Sakimura",
+            "J. Bradley",
+            "M.B. Jones"
+        ],
+        "href": "https://openid.net/specs/openid-connect-registration-1_0.html",
+        "title": "OpenID Connect Dynamic Client Registration 1.0",
         "publisher": "The OpenID Foundation"
     }
 }
