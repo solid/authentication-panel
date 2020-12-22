@@ -251,8 +251,9 @@ The DPoP-bound Access Token MUST contain at least these claims:
 
 `iss` — REQUIRED. The issuer claim MUST be a valid URL of the IdP instantiating this token.
 
-`aud` — REQUIRED. However, the DPoP token provides the full URL of the request, making the `aud`
-claim redundant, so in Solid-OIDC the `aud` claim MUST be a string with the value of `solid`.
+`aud` — REQUIRED. The audience claim MUST be the string `solid`. In the decentralized world of
+Solid OIDC, the principal of an access token is not a specific endpoint, but rather the Solid
+API; that is, any Solid server at any accessible address on the world wide web.
 
 `iat` — REQUIRED. The issued-at claim is the time at which this crendential was issued.
 
