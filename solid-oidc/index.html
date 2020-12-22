@@ -8,7 +8,7 @@
   <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
   <meta content="Bikeshed version c5172e83, updated Fri Nov 20 15:35:20 2020 -0800" name="generator">
   <link href="https://solid.github.io/specification/solid-oidc/" rel="canonical">
-  <meta content="30756ec0526e04009872f9df798a3d85823ffa66" name="document-revision">
+  <meta content="cad28ec4ed281171506221959a1f90bddae482c9" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -548,7 +548,7 @@ same entity as an Authorization Server.</p>
     <dt><em>Demonstration of Proof-of-Possession at the Application Layer (DPoP)</em> as defined in the <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04">DPoP Internet-Draft</a> 
     <dd> A mechanism for sender-constraining OAuth tokens via a proof-of-possession mechanism on the
     application level. 
-    <dt><em>DPoP Proof</em> as defined by <a data-link-type="biblio" href="#biblio-dpop">[DPoP]</a> 
+    <dt><em>DPoP Proof</em> as defined by <a data-link-type="biblio" href="#biblio-dpop">[DPOP]</a> 
     <dd> A DPoP proof is a JWT that is signed (using JWS) using a private key chosen by the client. 
     <dt><em>Proof Key for Code Exchange (PKCE)</em> as defined by <a data-link-type="biblio" href="#biblio-rfc7636">[RFC7636]</a> 
     <dd> An extension to the Authorization Code flow which mitigates the risk of an authorization code
@@ -646,17 +646,19 @@ the Client:</p>
    </ol>
    <h3 class="heading settled" data-level="6.1" id="tokens-access"><span class="secno">6.1. </span><span class="content">DPoP-bound Access Token</span><a class="self-link" href="#tokens-access"></a></h3>
    <p>The DPoP-bound Access Token MUST be a valid JWT. See <a data-link-type="biblio" href="#biblio-rfc7519">[RFC7519]</a>.</p>
-   <p>When requesting an DPoP-bound Access Token, the Client MUST send the IdP a DPoP proof that is valid
-according to the <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04">DPoP Internet-Draft</a>.</p>
-   <p>The DPoP-bound Access Token MUST contain at least these claims:</p>
-   <p><code>webid</code> — REQUIRED. This claim MUST be the user’s WebID.</p>
+   <p>When requesting a DPoP-bound Access Token, the Client MUST send the IdP a DPoP proof JWT that is valid
+according to the <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-5">DPoP Internet-Draft</a>.
+The DPoP proof JWT is used to bind the access token to a public key. See <a data-link-type="biblio" href="#biblio-dpop">[DPOP]</a>.</p>
+   <p>The DPoP-bound Access Token payload MUST contain at least these claims:</p>
+   <p><code>webid</code> — REQUIRED. The WebID claim MUST be the user’s WebID.</p>
    <p><code>iss</code> — REQUIRED. The issuer claim MUST be a valid URL of the IdP instantiating this token.</p>
    <p><code>aud</code> — REQUIRED. The audience claim MUST be the string <code>solid</code>. In the decentralized world of
 Solid OIDC, the principal of an access token is not a specific endpoint, but rather the Solid
 API; that is, any Solid server at any accessible address on the world wide web.</p>
-   <p><code>iat</code> — REQUIRED. The issued-at claim is the time at which this crendential was issued.</p>
-   <p><code>exp</code> — REQUIRED. This credential expiration is seperate from the ID tokens expiration.</p>
-   <p><code>cnf</code> — For all flows that require DPoP, the confirmation claim is REQUIRED, as per <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-7">DPoP Internet-Draft</a> specification.</p>
+   <p><code>iat</code> — REQUIRED. The issued-at claim is the time at which the DPoP-bound Access Token was issued.</p>
+   <p><code>exp</code> — REQUIRED. The expiration claim is the time at which the DPoP-bound Access Token becomes invalid.</p>
+   <p><code>cnf</code> — REQUIRED. The confirmation claim is used to identify the DPoP Public Key bound to the Access
+Token. See <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-7">DPoP Public Key Confirmation</a>.</p>
    <p><code>client_id</code> — REQUIRED in all flows except OIDC registration.</p>
    <div class="example" id="example-908dd023">
     <a class="self-link" href="#example-908dd023"></a> 
@@ -668,20 +670,21 @@ API; that is, any Solid server at any accessible address on the world wide web.<
     "iat": 1541493724,
     "exp": 1573029723,
     "cnf":{
-    "jkt":"0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I"
+      "jkt":"0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I"
     },
     "client_id": "https://client.example.com/web#id"
 }
 </pre>
    </div>
    <h3 class="heading settled" data-level="6.2" id="tokens-id"><span class="secno">6.2. </span><span class="content">OIDC ID Token</span><a class="self-link" href="#tokens-id"></a></h3>
-   <p>The subject (<code>sub</code>) claim MUST be the user’s WebID.</p>
-   <div class="example" id="example-7fb780ce">
-    <a class="self-link" href="#example-7fb780ce"></a> 
+   <p>The agent’s WebID MUST be present in the ID Token as the <code>webid</code> claim.</p>
+   <div class="example" id="example-e39591eb">
+    <a class="self-link" href="#example-e39591eb"></a> 
     <p>An example OIDC ID Token: </p>
 <pre>{
+    "webid": "https://janedoe.com/web#id",
     "iss": "https://idp.example.com",
-    "sub": "https://janedoe.com/web#id",
+    "sub": "janedoe",
     "aud": "https://client.example.com",
     "nonce": "n-0S6_WzA2Mj",
     "exp": 1311281970,
@@ -784,7 +787,7 @@ Verborgh, Ricky White, Paul Worrall, Dmitri Zagidulin.</p>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
   <dl>
-   <dt id="biblio-dpop">[DPoP]
+   <dt id="biblio-dpop">[DPOP]
    <dd>D. Fett; et al. <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04">OAuth 2.0 Demonstration of Proof-of-Possession at the Application Layer (DPoP)</a>. URL: <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04">https://tools.ietf.org/html/draft-fett-oauth-dpop-04</a>
    <dt id="biblio-openiddiscovery">[OpenID.Discovery]
    <dd>N. Sakimura; et al. <a href="https://openid.net/specs/openid-connect-discovery-1_0.html">OpenID Connect Discovery 1.0</a>. URL: <a href="https://openid.net/specs/openid-connect-discovery-1_0.html">https://openid.net/specs/openid-connect-discovery-1_0.html</a>
