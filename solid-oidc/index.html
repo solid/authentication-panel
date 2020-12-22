@@ -8,7 +8,7 @@
   <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
   <meta content="Bikeshed version c5172e83, updated Fri Nov 20 15:35:20 2020 -0800" name="generator">
   <link href="https://solid.github.io/specification/solid-oidc/" rel="canonical">
-  <meta content="8cd773cdb0d5e65115be6f9ae49e4b287d2dc496" name="document-revision">
+  <meta content="30756ec0526e04009872f9df798a3d85823ffa66" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -396,7 +396,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref allcaps" id="title">SOLID-OIDC</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2020-12-07">7 December 2020</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2020-12-22">22 December 2020</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -651,7 +651,9 @@ according to the <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04">
    <p>The DPoP-bound Access Token MUST contain at least these claims:</p>
    <p><code>webid</code> — REQUIRED. This claim MUST be the user’s WebID.</p>
    <p><code>iss</code> — REQUIRED. The issuer claim MUST be a valid URL of the IdP instantiating this token.</p>
-   <p><code>aud</code> — REQUIRED. However, the DPoP token provides the full URL of the request, making the <code>aud</code> claim redundant, so in Solid-OIDC the <code>aud</code> claim MUST be a string with the value of <code>solid</code>.</p>
+   <p><code>aud</code> — REQUIRED. The audience claim MUST be the string <code>solid</code>. In the decentralized world of
+Solid OIDC, the principal of an access token is not a specific endpoint, but rather the Solid
+API; that is, any Solid server at any accessible address on the world wide web.</p>
    <p><code>iat</code> — REQUIRED. The issued-at claim is the time at which this crendential was issued.</p>
    <p><code>exp</code> — REQUIRED. This credential expiration is seperate from the ID tokens expiration.</p>
    <p><code>cnf</code> — For all flows that require DPoP, the confirmation claim is REQUIRED, as per <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-7">DPoP Internet-Draft</a> specification.</p>
