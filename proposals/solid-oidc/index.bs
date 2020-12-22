@@ -115,7 +115,7 @@ This specification also uses the following terms:
     A mechanism for sender-constraining OAuth tokens via a proof-of-possession mechanism on the
     application level.
 
-<dt>*DPoP Proof* as defined by [[!DPoP]]
+<dt>*DPoP Proof* as defined by [[!DPOP]]
 <dd>
     A DPoP proof is a JWT that is signed (using JWS) using a private key chosen by the client.
 
