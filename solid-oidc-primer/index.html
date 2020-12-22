@@ -8,7 +8,7 @@
   <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
   <meta content="Bikeshed version c5172e83, updated Fri Nov 20 15:35:20 2020 -0800" name="generator">
   <link href="https://solid.github.io/authentication-panel/solid-oidc/" rel="canonical">
-  <meta content="cad28ec4ed281171506221959a1f90bddae482c9" name="document-revision">
+  <meta content="fce2fd9b96533cce38cdec3be8836af09d9f5fa5" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -451,7 +451,9 @@ Bob’s Solid Data Pods (resource servers).</p>
    </dl>
    <h2 class="heading settled" data-level="4" id="solid-oidc-flow"><span class="secno">4. </span><span class="content">Solid OIDC Flow</span><a class="self-link" href="#solid-oidc-flow"></a></h2>
    <h3 class="heading settled" data-level="4.1" id="authorization-code-pkce-flow"><span class="secno">4.1. </span><span class="content">Authorization Code Grant with PKCE Authorization Flow</span><a class="self-link" href="#authorization-code-pkce-flow"></a></h3>
-   <p>The Authorization Code grant with PKCE is the primary OAuth 2.0 authorization flow recommended by the Solid OIDC. It is defined by the PKCE RFC <a data-link-type="biblio" href="#biblio-rfc7636">[RFC7636]</a> and described here in the Solid OIDC context.</p>
+   <p>The Authorization Code grant with PKCE is the primary OAuth 2.0 authorization flow
+recommended by the Solid OIDC. It is defined by the PKCE RFC <a data-link-type="biblio" href="#biblio-rfc7636">[RFC7636]</a> and 
+described here in the Solid OIDC context.</p>
    <p><img src="primer-login.svg"></p>
    <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-1"><span class="content">1. Alice uses the Decent Photos web app</span><a class="self-link" href="#authorization-code-pkce-flow-step-1"></a></h4>
    <p>Alice has heard of a great new site that allows her to view her friend’s photos and tag faces.
@@ -464,7 +466,7 @@ consent. To do so, she must either provide her WebID
 (<code>https://secureauth.example</code>)</p>
    <p>While it is not the case with Alice, a user’s Pod and OP can be hosted at the same domain. For
 example, Bob’s Pod could be <code>bob.otherpod.example</code> with a WebID of <code>https://bob.otherpod.example/profile/card#me</code>, but his OP is at <code>https://solid.example</code>.</p>
-   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-2.1"><span class="content">2.1 Retrieve Profile (Only needed if a WebID is provided)</span><a class="self-link" href="#authorization-code-pkce-flow-step-2.1"></a></h4>
+   <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-2.1"><span class="content">2.1 Retrieve Profile (only needed if a WebID is provided)</span><a class="self-link" href="#authorization-code-pkce-flow-step-2.1"></a></h4>
    <p>If Alice entered her WebID’s URL rather than her OP’s URL, a request should be made to
 determine her OP. To do so, a request should be made to Alice’s WebId:</p>
 <pre class="language-http highlight">GET https://alice.coolpod.example/profile/card#me
@@ -580,7 +582,7 @@ code_challenge=HSi9dwlvRpNHCDm-L8GOdM16qcb0tLHPZqQSvaWXTI0
      <p><code>redirect_uri=https%3A%2F%2Fdecentphotos.example%2Fcallback</code>:
 The url that the OP will redirect to once the user has logged in (<code>https://decentphotos.example/callback</code>).</p>
     <li data-md>
-     <p><code>scope=openid%20profile%20offline_access</code>: a list of [OIDC scopes] (https://auth0.com/docs/scopes/current/oidc-scopes) (attributes of the RS to which this token should have access) seaparated by spaces (%20).</p>
+     <p><code>scope=openid%20profile%20offline_access</code>: a list of <a href="https://auth0.com/docs/scopes/current/oidc-scopes">OIDC scopes</a> (attributes of the RS to which this token should have access) separated by spaces (%20).</p>
      <ul>
       <li data-md>
        <p><code>open_id</code> is a scope that is needed to verify Alice’s identity.</p>
@@ -590,7 +592,8 @@ The url that the OP will redirect to once the user has logged in (<code>https://
        <p><code>offline_access</code>: Is required to get a refresh token.</p>
      </ul>
     <li data-md>
-     <p><code>client_id=https%3A%2F%2Fdecentphotos.example%2Fwebid%23this</code>: Usually the client id of a Solid application is the app’s WebID (in our case <code>https://decentphotos.example/webid#this</code>) as seen here.</p>
+     <p><code>client_id=https%3A%2F%2Fdecentphotos.example%2Fwebid%23this</code>: Usually the client id of a Solid
+application is the app’s WebID (in our case <code>https://decentphotos.example/webid#this</code>) as seen here.</p>
     <li data-md>
      <p><code>code_challenge_method=S256</code>: Tells the OP that our code challenge was transformed using SHA-256.</p>
     <li data-md>
@@ -728,7 +731,8 @@ generated.</p>
     <li data-md>
      <p><code>"htm": "POST"</code>: htm limits the token for use only on a specific http method, in this case <code>POST</code>.</p>
     <li data-md>
-     <p><code>"jti": "4ba3e9ef-e98d-4644-9878-7160fa7d3eb8"</code>: jti is a unique identifier for the DPoP token that can optionally be used by the server to defend against replay attacks</p>
+     <p><code>"jti": "4ba3e9ef-e98d-4644-9878-7160fa7d3eb8"</code>: jti is a unique identifier for the DPoP token
+that can optionally be used by the server to defend against replay attacks</p>
     <li data-md>
      <p><code>"iat": 1603306128</code>: The date the token was issued, in this case October 21, 2020 15:52:33 GMT.</p>
    </ul>
