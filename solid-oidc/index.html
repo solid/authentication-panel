@@ -8,7 +8,7 @@
   <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
   <meta content="Bikeshed version c5172e83, updated Fri Nov 20 15:35:20 2020 -0800" name="generator">
   <link href="https://solid.github.io/specification/solid-oidc/" rel="canonical">
-  <meta content="fce2fd9b96533cce38cdec3be8836af09d9f5fa5" name="document-revision">
+  <meta content="80b1cfc86ae8d39e90c3b01eb4366baea69d1836" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -634,7 +634,8 @@ Client uses this identifier then IdP MAY accept any <code>redirect_uri</code> as
 Client is effectively anonymous to the RS.</p>
    <h3 class="heading settled" data-level="5.3" id="clientids-oidc"><span class="secno">5.3. </span><span class="content">OIDC Registration</span><a class="self-link" href="#clientids-oidc"></a></h3>
    <p>If the Client does not use a WebID as the client identifier, then it MUST present a client identifier
-registered with the IdP via either OIDC dynamic or static registration.</p>
+registered with the IdP via either OIDC dynamic or static registration.
+See also <a data-link-type="biblio" href="#biblio-openidconnectdynamicclientregistration">[OpenIDConnectDynamicClientRegistration]</a>.</p>
    <h2 class="heading settled" data-level="6" id="tokens"><span class="secno">6. </span><span class="content">Token Instantiation</span><a class="self-link" href="#tokens"></a></h2>
    <p>Assuming the Client ID and Secret, and the DPoP Proof are valid, the IdP MUST return two tokens to
 the Client:</p>
@@ -659,7 +660,7 @@ API; that is, any Solid server at any accessible address on the world wide web.<
    <p><code>exp</code> — REQUIRED. The expiration claim is the time at which the DPoP-bound Access Token becomes invalid.</p>
    <p><code>cnf</code> — REQUIRED. The confirmation claim is used to identify the DPoP Public Key bound to the Access
 Token. See <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-7">DPoP Public Key Confirmation</a>.</p>
-   <p><code>client_id</code> — REQUIRED in all flows except OIDC registration.</p>
+   <p><code>client_id</code> - REQUIRED. The ClientID claim is used to identify the client. See also <a href="#clientids">section 5. Client Identifiers</a>.</p>
    <div class="example" id="example-908dd023">
     <a class="self-link" href="#example-908dd023"></a> 
     <p>An example DPoP-bound Access Token: </p>
@@ -791,6 +792,8 @@ Verborgh, Ricky White, Paul Worrall, Dmitri Zagidulin.</p>
    <dd>D. Fett; et al. <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04">OAuth 2.0 Demonstration of Proof-of-Possession at the Application Layer (DPoP)</a>. URL: <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04">https://tools.ietf.org/html/draft-fett-oauth-dpop-04</a>
    <dt id="biblio-openiddiscovery">[OpenID.Discovery]
    <dd>N. Sakimura; et al. <a href="https://openid.net/specs/openid-connect-discovery-1_0.html">OpenID Connect Discovery 1.0</a>. URL: <a href="https://openid.net/specs/openid-connect-discovery-1_0.html">https://openid.net/specs/openid-connect-discovery-1_0.html</a>
+   <dt id="biblio-openidconnectdynamicclientregistration">[OpenIDConnectDynamicClientRegistration]
+   <dd>N. Sakimura; J. Bradley; M.B. Jones. <a href="https://openid.net/specs/openid-connect-registration-1_0.html">OpenID Connect Dynamic Client Registration 1.0</a>. URL: <a href="https://openid.net/specs/openid-connect-registration-1_0.html">https://openid.net/specs/openid-connect-registration-1_0.html</a>
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
    <dt id="biblio-rfc6749">[RFC6749]
