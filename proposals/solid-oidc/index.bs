@@ -237,6 +237,7 @@ Assuming one of the following options
  - Client ID and Secret, and valid DPoP Proof (for dynamic and static registration)
  - Client WebID with a proper registration and valid DPoP Proof (for a client webid)
  - A client id of `http://www.w3.org/ns/solid/terms#PublicOidcClient` (for a public WebId)
+
 the IdP MUST return two tokens to the Client:
 
 1. A DPoP-bound Access Token
