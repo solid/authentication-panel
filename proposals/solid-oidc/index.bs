@@ -58,7 +58,7 @@ client.
 The [OAuth 2.0](https://tools.ietf.org/html/rfc6749) and
 [OpenID Connect Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html) web standards were
 published in October 2012 and November 2014, respectively. Since publication they've seen rapid and
-widespread adoption right across the industry, in turn gaining extensive *"real-world"* data and
+widespread adoption across the industry, in turn gaining extensive *"real-world"* data and
 experience. The strengths of the protocols are now clear; however, in a changing eco-system where
 privacy and control of digital identities are becoming more pressing concerns, it is also clear
 that additional functionality is required.
