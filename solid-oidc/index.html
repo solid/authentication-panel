@@ -8,7 +8,7 @@
   <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
   <meta content="Bikeshed version c5172e83, updated Fri Nov 20 15:35:20 2020 -0800" name="generator">
   <link href="https://solid.github.io/specification/solid-oidc/" rel="canonical">
-  <meta content="6a985092d6b0476c0b09ab147cbbecdb27343b41" name="document-revision">
+  <meta content="3d223b58b9c187ecd01efeafc573dea0bd97184d" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -637,8 +637,16 @@ Client is effectively anonymous to the RS.</p>
 registered with the IdP via either OIDC dynamic or static registration.
 See also <a data-link-type="biblio" href="#biblio-openidconnectdynamicclientregistration">[OpenIDConnectDynamicClientRegistration]</a>.</p>
    <h2 class="heading settled" data-level="6" id="tokens"><span class="secno">6. </span><span class="content">Token Instantiation</span><a class="self-link" href="#tokens"></a></h2>
-   <p>Assuming the Client ID and Secret, and the DPoP Proof are valid, the IdP MUST return two tokens to
-the Client:</p>
+   <p>Assuming one of the following options</p>
+   <ul>
+    <li data-md>
+     <p>Client ID and Secret, and valid DPoP Proof (for dynamic and static registration)</p>
+    <li data-md>
+     <p>Client WebID with a proper registration and valid DPoP Proof (for a client webid)</p>
+    <li data-md>
+     <p>A client id of <code>http://www.w3.org/ns/solid/terms#PublicOidcClient</code> (for a public WebId)</p>
+   </ul>
+   <p>the IdP MUST return two tokens to the Client:</p>
    <ol>
     <li data-md>
      <p>A DPoP-bound Access Token</p>
@@ -678,15 +686,15 @@ Token. See <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section
 </pre>
    </div>
    <h3 class="heading settled" data-level="6.2" id="tokens-id"><span class="secno">6.2. </span><span class="content">OIDC ID Token</span><a class="self-link" href="#tokens-id"></a></h3>
-   <p>The agent’s WebID MUST be present in the ID Token as the <code>webid</code> claim.</p>
-   <div class="example" id="example-e39591eb">
-    <a class="self-link" href="#example-e39591eb"></a> 
+   <p>The user’s WebID MUST be present in the ID Token as the <code>webid</code> claim.</p>
+   <div class="example" id="example-1b087913">
+    <a class="self-link" href="#example-1b087913"></a> 
     <p>An example OIDC ID Token: </p>
 <pre>{
     "webid": "https://janedoe.com/web#id",
     "iss": "https://idp.example.com",
     "sub": "janedoe",
-    "aud": "https://client.example.com",
+    "aud": "https://client.example.com/web#id",
     "nonce": "n-0S6_WzA2Mj",
     "exp": 1311281970,
     "iat": 1311280970,
