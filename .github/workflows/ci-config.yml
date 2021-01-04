@@ -31,4 +31,4 @@ jobs:
           bikeshed update
 
       - name: generate html
-        run: for index in proposals/*/index.bs; do bikeshed spec $index; done
+        run: for bsdoc in proposals/**/*.bs; do bikeshed spec $bsdoc; done
