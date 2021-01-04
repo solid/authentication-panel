@@ -115,7 +115,7 @@ This specification also uses the following terms:
     A mechanism for sender-constraining OAuth tokens via a proof-of-possession mechanism on the
     application level.
 
-<dt>*DPoP Proof* as defined by [[!DPoP]]
+<dt>*DPoP Proof* as defined by [[!DPOP]]
 <dd>
     A DPoP proof is a JWT that is signed (using JWS) using a private key chosen by the client.
 
@@ -229,6 +229,7 @@ Client is effectively anonymous to the RS.
 
 If the Client does not use a WebID as the client identifier, then it MUST present a client identifier
 registered with the IdP via either OIDC dynamic or static registration.
+See also [[!OpenIDConnectDynamicClientRegistration]].
 
 # Token Instantiation # {#tokens}
 
@@ -245,26 +246,28 @@ the IdP MUST return two tokens to the Client:
 
 The DPoP-bound Access Token MUST be a valid JWT. See [[!RFC7519]].
 
-When requesting an DPoP-bound Access Token, the Client MUST send the IdP a DPoP proof that is valid
-according to the [DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04).
+When requesting a DPoP-bound Access Token, the Client MUST send the IdP a DPoP proof JWT that is valid
+according to the [DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-5).
+The DPoP proof JWT is used to bind the access token to a public key. See [[!DPOP]].
 
-The DPoP-bound Access Token MUST contain at least these claims:
+The DPoP-bound Access Token payload MUST contain at least these claims:
 
-`webid` — REQUIRED. This claim MUST be the user's WebID.
+`webid` — REQUIRED. The WebID claim MUST be the user's WebID.
 
 `iss` — REQUIRED. The issuer claim MUST be a valid URL of the IdP instantiating this token.
 
-`aud` — REQUIRED. However, the DPoP token provides the full URL of the request, making the `aud`
-claim redundant, so in Solid-OIDC the `aud` claim MUST be a string with the value of `solid`.
+`aud` — REQUIRED. The audience claim MUST be the string `solid`. In the decentralized world of
+Solid OIDC, the principal of an access token is not a specific endpoint, but rather the Solid
+API; that is, any Solid server at any accessible address on the world wide web.
 
-`iat` — REQUIRED. The issued-at claim is the time at which this crendential was issued.
+`iat` — REQUIRED. The issued-at claim is the time at which the DPoP-bound Access Token was issued.
 
-`exp` — REQUIRED. This credential expiration is seperate from the ID tokens expiration.
+`exp` — REQUIRED. The expiration claim is the time at which the DPoP-bound Access Token becomes invalid.
 
-`cnf` — For all flows that require DPoP, the confirmation claim is REQUIRED, as per
-[DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-7) specification.
+`cnf` — REQUIRED. The confirmation claim is used to identify the DPoP Public Key bound to the Access
+Token. See [DPoP Public Key Confirmation](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-7).
 
-`client_id` — REQUIRED in all flows except OIDC registration.
+`client_id` - REQUIRED. The ClientID claim is used to identify the client. See also [section 5. Client Identifiers](#clientids).
 
 <div class="example">
     <p>An example DPoP-bound Access Token:
@@ -277,7 +280,7 @@ claim redundant, so in Solid-OIDC the `aud` claim MUST be a string with the valu
         "iat": 1541493724,
         "exp": 1573029723,
         "cnf":{
-        "jkt":"0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I"
+          "jkt":"0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I"
         },
         "client_id": "https://client.example.com/web#id"
     }
@@ -286,16 +289,16 @@ claim redundant, so in Solid-OIDC the `aud` claim MUST be a string with the valu
 
 ## OIDC ID Token ## {#tokens-id}
 
-The `webid` claim MUST be the user's WebID.
+The user's WebID MUST be present in the ID Token as the `webid` claim.
 
 <div class="example">
     <p>An example OIDC ID Token:
 
     <pre>
         {
-            "iss": "https://idp.example.com",
-            "sub": "https://janedoe.com/web#id",
             "webid": "https://janedoe.com/web#id",
+            "iss": "https://idp.example.com",
+            "sub": "janedoe",
             "aud": "https://client.example.com/web#id",
             "nonce": "n-0S6_WzA2Mj",
             "exp": 1311281970,
@@ -322,7 +325,7 @@ requested resource.
 The user's WebID in the `webid` claim MUST be dereferenced and checked against the `iss` claim in the
 Access Token. If the `iss` claim is different from the domain of the WebID, then the RS MUST check
 the WebID document for an existance of a statement matching `?webid <http://www.w3.org/ns/solid/terms#oidcIssuer> ?iss.`
-Where `?webid` and `?iss` are values of `webid` and `iss` claims accordingly.
+Where `?webid` and `?iss` are values of `webid` and `iss` claims respectively.
 This prevents a malicious identity provider from issuing valid Access Tokens for arbitrary WebIDs.
 
 Unless RS knows IdP keys through some other means, or IdP chooses to reject tokens issued by this IdP,
@@ -410,6 +413,16 @@ Verborgh, Ricky White, Paul Worrall, Dmitri Zagidulin.
         ],
         "href": "https://openid.net/specs/openid-connect-discovery-1_0.html",
         "title": "OpenID Connect Discovery 1.0",
+        "publisher": "The OpenID Foundation"
+    },
+    "OpenIDConnectDynamicClientRegistration": {
+        "authors": [
+            "N. Sakimura",
+            "J. Bradley",
+            "M.B. Jones"
+        ],
+        "href": "https://openid.net/specs/openid-connect-registration-1_0.html",
+        "title": "OpenID Connect Dynamic Client Registration 1.0",
         "publisher": "The OpenID Foundation"
     }
 }
