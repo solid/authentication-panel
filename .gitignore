@@ -4,4 +4,7 @@
 .settings
 .venv
 proposals/*/index.html
+proposals/*/*.mmd.svg
 
+node_modules
+package-lock.json
