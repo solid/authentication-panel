@@ -335,6 +335,20 @@ This prevents a malicious identity provider from issuing valid Access Tokens for
 Unless the RS acquires IdP keys through some other means, or the IdP chooses to reject tokens issued by this IdP,
 the IdP MUST follow OpenID Connect Discovery 1.0 [[!OpenID.Discovery]] to find an IdP's signing keys (JWK).
 
+# Solid-OIDC Conformance Discovery # {#discovery}
+
+An Identity Provider that conforms to the Solid-OIDC specification MUST advertise this in the OpenID Connect
+Discovery 1.0 [[!OpenID.Discovery]] resource. An Identity Provider would indicate this support by using the
+`solid_oidc_supported` metadata property, referencing the Solid-OIDC specification URL.
+
+<div class="example">
+    <pre>
+        {
+            "solid_oidc_supported": "https://solidproject.org/TR/solid-oidc"
+        }
+    </pre>
+</div>
+
 # Security Considerations # {#security}
 
 *This section is non-normative*
