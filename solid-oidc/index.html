@@ -8,7 +8,7 @@
   <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
   <meta content="Bikeshed version c5172e83, updated Fri Nov 20 15:35:20 2020 -0800" name="generator">
   <link href="https://solid.github.io/specification/solid-oidc/" rel="canonical">
-  <meta content="0a33be3232f691db7896a6b7724733f1e76dcdd1" name="document-revision">
+  <meta content="eef12c4f8675d7ed2620ebb22a9741eeaab1fcc5" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -463,20 +463,21 @@ dfn > a.self-link::before      { content: "#"; }
       <li><a href="#resource-dpop-validation"><span class="secno">7.1</span> <span class="content">DPoP Proof Validation</span></a>
       <li><a href="#resource-access-validation"><span class="secno">7.2</span> <span class="content">Access Token Validation</span></a>
      </ol>
+    <li><a href="#discovery"><span class="secno">8</span> <span class="content">Solid-OIDC Conformance Discovery</span></a>
     <li>
-     <a href="#security"><span class="secno">8</span> <span class="content">Security Considerations</span></a>
+     <a href="#security"><span class="secno">9</span> <span class="content">Security Considerations</span></a>
      <ol class="toc">
-      <li><a href="#security-tls"><span class="secno">8.1</span> <span class="content">TLS Requirements</span></a>
-      <li><a href="#security-client-ids"><span class="secno">8.2</span> <span class="content">Client IDs</span></a>
-      <li><a href="#security-client-secrets"><span class="secno">8.3</span> <span class="content">Client Secrets</span></a>
-      <li><a href="#security-client-trust"><span class="secno">8.4</span> <span class="content">Client Trust</span></a>
+      <li><a href="#security-tls"><span class="secno">9.1</span> <span class="content">TLS Requirements</span></a>
+      <li><a href="#security-client-ids"><span class="secno">9.2</span> <span class="content">Client IDs</span></a>
+      <li><a href="#security-client-secrets"><span class="secno">9.3</span> <span class="content">Client Secrets</span></a>
+      <li><a href="#security-client-trust"><span class="secno">9.4</span> <span class="content">Client Trust</span></a>
      </ol>
     <li>
-     <a href="#privacy"><span class="secno">9</span> <span class="content">Privacy Considerations</span></a>
+     <a href="#privacy"><span class="secno">10</span> <span class="content">Privacy Considerations</span></a>
      <ol class="toc">
-      <li><a href="#privacy-token-reuse"><span class="secno">9.1</span> <span class="content">Access Token Reuse</span></a>
+      <li><a href="#privacy-token-reuse"><span class="secno">10.1</span> <span class="content">Access Token Reuse</span></a>
      </ol>
-    <li><a href="#acknowledgments"><span class="secno">10</span> <span class="content">Acknowledgments</span></a>
+    <li><a href="#acknowledgments"><span class="secno">11</span> <span class="content">Acknowledgments</span></a>
     <li>
      <a href="#w3c-conformance"><span class="secno"></span> <span class="content">Conformance</span></a>
      <ol class="toc">
@@ -720,35 +721,45 @@ where <code>?webid</code> and <code>?iss</code> are the values of the <code>webi
 This prevents a malicious identity provider from issuing valid Access Tokens for arbitrary WebIDs.</p>
    <p>Unless the RS acquires IdP keys through some other means, or the IdP chooses to reject tokens issued by this IdP,
 the IdP MUST follow OpenID Connect Discovery 1.0 <a data-link-type="biblio" href="#biblio-openiddiscovery">[OpenID.Discovery]</a> to find an IdP’s signing keys (JWK).</p>
-   <h2 class="heading settled" data-level="8" id="security"><span class="secno">8. </span><span class="content">Security Considerations</span><a class="self-link" href="#security"></a></h2>
+   <h2 class="heading settled" data-level="8" id="discovery"><span class="secno">8. </span><span class="content">Solid-OIDC Conformance Discovery</span><a class="self-link" href="#discovery"></a></h2>
+   <p>An Identity Provider that conforms to the Solid-OIDC specification MUST advertise this in the OpenID Connect
+Discovery 1.0 <a data-link-type="biblio" href="#biblio-openiddiscovery">[OpenID.Discovery]</a> resource. An Identity Provider would indicate this support by using the <code>solid_oidc_supported</code> metadata property, referencing the Solid-OIDC specification URL.</p>
+   <div class="example" id="example-489f4248">
+    <a class="self-link" href="#example-489f4248"></a> 
+<pre>{
+    "solid_oidc_supported": "https://solidproject.org/TR/solid-oidc"
+}
+</pre>
+   </div>
+   <h2 class="heading settled" data-level="9" id="security"><span class="secno">9. </span><span class="content">Security Considerations</span><a class="self-link" href="#security"></a></h2>
    <p><em>This section is non-normative</em></p>
    <p>As this specification builds upon existing web standards, security considerations from OAuth, OIDC,
 PKCE, and the DPoP specifications may also apply unless otherwise indicated. The following
 considerations should be reviewed by implementors and system/s architects of this specification.</p>
-   <h3 class="heading settled" data-level="8.1" id="security-tls"><span class="secno">8.1. </span><span class="content">TLS Requirements</span><a class="self-link" href="#security-tls"></a></h3>
+   <h3 class="heading settled" data-level="9.1" id="security-tls"><span class="secno">9.1. </span><span class="content">TLS Requirements</span><a class="self-link" href="#security-tls"></a></h3>
    <p>All TLS requirements outlined in <a href="https://tools.ietf.org/html/bcp195">[BCP195</a>] apply to this
 specification.</p>
    <p>All tokens, Client, and User credentials MUST only be transmitted over TLS.</p>
-   <h3 class="heading settled" data-level="8.2" id="security-client-ids"><span class="secno">8.2. </span><span class="content">Client IDs</span><a class="self-link" href="#security-client-ids"></a></h3>
+   <h3 class="heading settled" data-level="9.2" id="security-client-ids"><span class="secno">9.2. </span><span class="content">Client IDs</span><a class="self-link" href="#security-client-ids"></a></h3>
    <p>An RS SHOULD assign a fixed set of low trust policies to any client identified as anonymous.</p>
    <p>Implementors SHOULD expire Client IDs that are kept in server storage to mitigate the potential for
 a bad actor to fill server storage with unexpired or otherwise useless Client IDs.</p>
-   <h3 class="heading settled" data-level="8.3" id="security-client-secrets"><span class="secno">8.3. </span><span class="content">Client Secrets</span><a class="self-link" href="#security-client-secrets"></a></h3>
+   <h3 class="heading settled" data-level="9.3" id="security-client-secrets"><span class="secno">9.3. </span><span class="content">Client Secrets</span><a class="self-link" href="#security-client-secrets"></a></h3>
    <p>Client secrets SHOULD NOT be stored in browser local storage. Doing so will increase the risk of
 data leaks should an attacker gain access to Client credentials.</p>
-   <h3 class="heading settled" data-level="8.4" id="security-client-trust"><span class="secno">8.4. </span><span class="content">Client Trust</span><a class="self-link" href="#security-client-trust"></a></h3>
+   <h3 class="heading settled" data-level="9.4" id="security-client-trust"><span class="secno">9.4. </span><span class="content">Client Trust</span><a class="self-link" href="#security-client-trust"></a></h3>
    <p><em>This section is non-normative</em></p>
    <p>Clients are ephemeral, client registration is optional, and most Clients cannot keep secrets. These,
 among other factors, are what makes Client trust challenging.</p>
-   <h2 class="heading settled" data-level="9" id="privacy"><span class="secno">9. </span><span class="content">Privacy Considerations</span><a class="self-link" href="#privacy"></a></h2>
-   <h3 class="heading settled" data-level="9.1" id="privacy-token-reuse"><span class="secno">9.1. </span><span class="content">Access Token Reuse</span><a class="self-link" href="#privacy-token-reuse"></a></h3>
+   <h2 class="heading settled" data-level="10" id="privacy"><span class="secno">10. </span><span class="content">Privacy Considerations</span><a class="self-link" href="#privacy"></a></h2>
+   <h3 class="heading settled" data-level="10.1" id="privacy-token-reuse"><span class="secno">10.1. </span><span class="content">Access Token Reuse</span><a class="self-link" href="#privacy-token-reuse"></a></h3>
    <p><em>This section is non-normative</em></p>
    <p>With JWTs being extendable by design, there is potential for a privacy breach if Access Tokens get
 reused across multiple resource servers. It is not unimaginable that a custom claim is added to the
 Access Token on instantiation. This addition may unintentionally give other resource servers
 consuming the Access Token information about the user that they may not wish to share outside of the
 intended RS.</p>
-   <h2 class="heading settled" data-level="10" id="acknowledgments"><span class="secno">10. </span><span class="content">Acknowledgments</span><a class="self-link" href="#acknowledgments"></a></h2>
+   <h2 class="heading settled" data-level="11" id="acknowledgments"><span class="secno">11. </span><span class="content">Acknowledgments</span><a class="self-link" href="#acknowledgments"></a></h2>
    <p><em>This section is non-normative</em></p>
    <p>The Solid Community Group would like to thank the following individuals for reviewing and providing
 feedback on the specification (in alphabetical order):</p>
