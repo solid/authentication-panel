@@ -175,9 +175,8 @@ The agent Group document located at `https://alice.example.com/work-groups` can 
                      [ cert:key <https://candice.example/clefs/doc1#clef3> ].
 ```
 
-The Group resource can itself be access controlled to be only visible to members of
-the Group, though that requires adding members to the group to send out notifications
-to the members.
+The Group resource can itself be access controlled to be only visible to members of the Group. 
+Of course this requires adding members to the group to have as effect the sending of a notifications to the new member.
 
 ## Extending the Protocol with Credentials
 
