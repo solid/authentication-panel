@@ -48,7 +48,7 @@ If this document is cached and still valid, it will not require an extra request
 
 Another extension required by the [Solid use cases](https://solid.github.io/authorization-panel/wac-ucr/) is that the response  (2) MUST contain a link to an Access Control Document. 
 This is needed by Solid (Social Linked Data) as its central use case is building a decentralised social network. 
-Solid client need to following Linked Data around the Web to fetch resources across any number of Pods (Personal Online Data Store) represented as boxes in the diagram below.
+Solid client are those that follow Linked Data around the Web, fetching resources across any number of Pods (Personal Online Data Store) represented as boxes in the diagram below.
 
 ![TimBLs foaf profile](https://raw.githubusercontent.com/wiki/banana-rdf/banana-rdf/img/WebID-foafKnows.jpg)
 
