@@ -264,10 +264,31 @@ WebIDs are also useful for institutions wishing to be clearly identified when si
 
 ### WebID and KeyId documents are different
 
-When WebID and KeyId documents are different this allows the key to be used without tying it to a WebID, and for that key to be used to sign other credentials. It can also be useful in that the container where keys are placed can have less strict access control rules that the WebID profile.
+When WebID and KeyId documents are different this allows the key to be used without tying it to a WebID, and for that key to be used to sign other credentials. It can also be useful in that the container where keys are placed can have less strict access control rules that the WebID profile, giving various software agents access to them.
 
 ### Credentials
 
-Access Controlled Resource can describe in their Link header the class of agents that can access a resource by attribute. 
+Access Controlled Resource can describe in their Link header the class of agents that can access a resource by attribute. For example ISO could publish a description at `https://iso.org/ont/People`.
 
+```Turtle
+<#Over21> owl:equivalentClass [  a owl:Restriction;
+      owl:onProperty :hasAge ;
+      owl:someValuesFrom   
+          [ rdf:type   rdfs:Datatype ;
+            owl:onDatatype       xsd:integer ;
+            owl:withRestrictions (  [ xsd:minExclusive     21 ]   [ xsd:maxInclusive    150 ] )
+          ]
+       ] . 
+```
+
+This would allow resources to be protected with a rule such as
+
+```Turtle
+<#adultPermission> 
+          :accessToClass :AdultContent;
+          :agentClass iso:Over21 ;
+          :mode :Read .
+```
+
+The client after the response (2) in the above diagram can search for the relevant [Verifiable Credential](https://www.w3.org/TR/vc-data-model/) in its credential store (containing perhaps a Drivers Licence, Birth certificate or MI6 007 licence to kill), order these in a privacy lattice, and choose the one the more appropriate for the task at hand. The URL for that Credential can then be sent in the header (3). The verification process then needs to verify that the signature is correct, and that the credential identifies the user with the same key, and is signed by a legitimate Certificate Authority. (How to determine the legitimate Certificate Authority is outside the scope of this specification, and will require something like a [Web of Nations](https://co-operating.systems/2020/06/01/WoN.pdf)).
 
