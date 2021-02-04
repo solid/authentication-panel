@@ -188,7 +188,8 @@ of a key to prooving attributes based on a Credential.
 A Credential is a document describing certain properties of an agent.
 We can refer to such a document using a URL.
 
-If the Access Control Rule linked to in (2) specifies that only agents that can prove a certain property can access the resource, and the agent has such credentials, it can choose the right credentials depending on the user's policies on privacy or security. This may involve asking the user at that time or later, but in any case before engaging in (3) to confirm or make a choice.
+If the Access Control Rule linked to in (2) specifies that only agents that can prove a certain property can access the resource, and the agent has such credentials, it can choose the right credentials depending on the user's policies on privacy or security. 
+If the policies do not give a clear answer, the user agent will need to ask the user -- at that time or later, but in any case before engaging in the request (3) - to confirm authenticated access.
 
 Having selected a Credential, this can be passed in the response in (3) 
 to the server by adding a `Credential:` header with as value a relative or absolute URL enclosed in `<` and `>`. As before we reserve the option of enclosing a relative URL in `>` and `<` to refer to a client side resource if some form of P2P extension of
