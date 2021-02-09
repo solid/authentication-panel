@@ -2,8 +2,7 @@
 
 [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01)  (henceforth `HTTP-Sig`) is an IETF RFC Draft worked on by the HTTP WG, for signing and authenticating HTTP messages. The work is based on [draft-cavage-http-signature-12](https://tools.ietf.org/html/draft-cavage-http-signatures-12), which evolved and gained adoption since 2013, being tested by a [large number of implementations](https://github.com/w3c-dvcg/http-signatures/issues/1), and this is set to grow by being taken up by the IETF.
 
-HTTP Signature has the advantage of being very simple and being specified directly at the HTTP layer, bypassing problem of authentication at the TLS layer.  The protocol allows a client to authenticate by signing a number of HTTP headers with any one of its private keys. In order for the server to be able to verify this signature it needs to know the matching public key. This information must be transmitted by the client in the form of an opaque string known as a `keyId` (see [§2.1.1 keyId](https://tools.ietf.org/html/draft-cavage-http-signatures-11#section-2.1.1)). This string must enable the server to look up the key. How this is done is not specified by the protocol.
-
+HTTP Signature has the advantage of being very simple and being specified directly at the HTTP layer, bypassing problem of client authentication at the TLS layer. (Note: all communication here is assumed to run over TLS). The protocol allows a client to authenticate by signing a number of HTTP headers with any one of its private keys. In order for the server to be able to verify this signature it needs to know the matching public key. This information must be transmitted by the client in the form of an opaque string known as a `keyId` (see [§2.1.1 keyId](https://tools.ietf.org/html/draft-cavage-http-signatures-11#section-2.1.1)). This string must enable the server to look up the key. How this is done is not specified by the protocol.
 
 This `Http-Sig` protocol extension allows the `keyId` to be interpreted as a URL. The proposal here is to use an `https` URL identifier ending with a fragment for the `keyId`.
 This proposal extension is compatible with the keyId using other URI schemes such as [DID](https://www.w3.org/TR/did-core/)s. 
@@ -46,9 +45,10 @@ App                          Document                            Server
 The main protocol difference from `Http-Sig` is the request by the resource server for the `keyId document` in (4). 
 If this document is cached and still valid, it will not require an extra request on the Web.  
 
-Another extension required by the [Solid use cases](https://solid.github.io/authorization-panel/wac-ucr/) is that the response  (2) MUST contain a link to an Access Control Document. 
-This is needed by Solid (Social Linked Data) as its central use case is building a decentralised social network. 
-Solid client are those that follow Linked Data around the Web, fetching resources across any number of Pods (Personal Online Data Store) represented as boxes in the diagram below.
+Another extension required by the [Solid use cases](https://solid.github.io/authorization-panel/wac-ucr/) is that the response  (2) must contain a link to an Access Control Document.
+This is needed by Solid (Social Linked Data) clients as these are modelled on web browsers: they are not tied to reading/writing data from one domain but are able to start from any web server and are able to following links around the web. 
+As a result they cannot know a-priori when arriving on a resource what type of authenticaiton is needed there.
+We can illustrate this by the following diagram showing the topology of the data a solid client may need to read. Starting from Tim Berners-Lee's [WebID](https://www.w3.org/2005/Incubator/webid/spec/identity/), a client may need to follow the links spanning web servers (represented as boxes).
 
 ![TimBLs foaf profile](https://raw.githubusercontent.com/wiki/banana-rdf/banana-rdf/img/WebID-foafKnows.jpg)
 
