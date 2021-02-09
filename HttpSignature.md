@@ -47,7 +47,7 @@ If this document is cached and still valid, it will not require an extra request
 
 Another extension required by the [Solid use cases](https://solid.github.io/authorization-panel/wac-ucr/) is that the response  (2) must contain a link to an Access Control Document.
 This is needed by Solid (Social Linked Data) clients, as these are modeled on web browsers; they are not tied to reading/writing data from one domain, but are able to start from any web server, and are able to follow links around the web. 
-As a result they cannot know a-priori when arriving on a resource what type of authenticaiton is needed there.
+As a result, they cannot know in advance of arriving at a resource, what type of authentication will be needed there.
 We can illustrate this by the following diagram showing the topology of the data a solid client may need to read. Starting from Tim Berners-Lee's [WebID](https://www.w3.org/2005/Incubator/webid/spec/identity/), a client may need to follow the links spanning web servers (represented as boxes).
 
 ![TimBLs foaf profile](https://raw.githubusercontent.com/wiki/banana-rdf/banana-rdf/img/WebID-foafKnows.jpg)
