@@ -226,8 +226,8 @@ App                                   Server                Doc             Cred
 |                                        |                                     |
 |                             verify sig |                                     |
 |                                        |                                     |
-|                                        |-(6) -credential-------------------->|
-|                                        |<---------------(7) send credential--|
+|                                        |-(6) GET credential----------------->|
+|                                        |<-----------------(7) credential doc-|
 |                                        |
 |                       WAC verification |
 |                                        |
