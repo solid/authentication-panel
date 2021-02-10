@@ -316,4 +316,5 @@ This would allow resources to be protected with a rule such as
 A client after receiving the response (2) in the above sequence diagram can search for the relevant [Verifiable Credential](https://www.w3.org/TR/vc-data-model/) in its credential store (containing perhaps a Drivers Licence, Birth certificate or MI6 007 licence to kill), order these in a privacy lattice, and choose the one the more appropriate for the task at hand.
 The URL for that Credential can then be sent in the header (3).
 The verification process then needs to verify that the signature is correct, and that the credential identifies the user with the same key, and is signed by a legitimate Certificate Authority.
-(How to determine the legitimate Certificate Authority is outside the scope of this specification, and will require something like a [Web of Nations](https://co-operating.systems/2020/06/01/WoN.pdf)).
+How to determine which Certificate Authority are legitimate for which claims, is outside the scope of this specification. 
+This is known in the Self-Sovereign Identity space as a Governance Framework, and in the end will lead to a [Web of Nations](https://co-operating.systems/2020/06/01/WoN.pdf).
