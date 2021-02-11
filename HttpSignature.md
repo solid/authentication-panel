@@ -240,7 +240,7 @@ Steps (6) can be run in parallel with (4) to fetch the Credential document.
 This also can be cached.
 If the URL is relative it will be found on Resource Server.
 If the URL is remote it may need to be fetched.
-If the URL is enclosed in `>` and `<` and a P2P extension is available the server can request the credential from the client directly using the same connection opened in (3).
+If the URL is enclosed in `>` and `<` and a P2P extension is available, the server can request the credential from the client directly using the same connection opened in (3).
 
 ### Linking a WebKey to a WebID
 
