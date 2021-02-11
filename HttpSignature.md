@@ -73,7 +73,7 @@ It may also be possible to send the ACL rules directly in the body (Todo: resear
 
 ### The KeyId URL
 
-In order for it to be clear that the `keyId` is to be interpreted as a URL, the `keyId` field MUST enclose the URL with `<` and `>` characters.
+In order for it to be clear that the `keyId` is to be interpreted as a URL, the `keyId` field MUST enclose the URL with `'<'` and `'>'` characters.
 To take an example from [§A.3.2.1](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01#appendix-A.3.2) of `Http-Sig` this would allow the following use of relative URLs referring to a resource on the requested server
 
 ```HTTP
@@ -91,17 +91,14 @@ located elsewhere on the web, such as the requestor's [Freedom Box](https://free
 
 ```HTTP
 Signature-Input: sig1=(); keyId="<https://alice.freedombox/keys/test-key-a>"; created=1402170695
-Signature: sig1=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSzR9TYFV
-       vwUjeU6CTYUdbOByGMCee5q1eWWUOM8BIH04Si6VndEHjQVdHqshAtNJk2Quzs6WC
-       2DkV0vysOhBSvFZuLZvtCmXRQfYGTGhZqGwq/AAmFbt5WNLQtDrEe0ErveEKBfaz+
-       IJ35zhaj+dun71YZ82b/CRfO6fSSt8VXeJuvdqUuVPWqjgJD4n9mgZpZFGBaDdPiw
-       pfbVZHzcHrumFJeFHWXH64a+c5GN+TWlP8NPg2zFdEc/joMymBiRelq236WGm5VvV
-       9a22RW2/yLmaU/uwf9v40yGR/I1NRA==:
+Signature: sig1=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSz...==:
 ```
+
+It could also allow key based did URLs as described in [issue 217 of the Solid Spec](https://github.com/solid/specification/issues/217#issuecomment-777509084).
 
 The advantage of a URL is that it allows the client to use HTTP Methods such as `POST` or `PUT` to create keys, as well as `PUT`, `PATCH` and `DELETE` to edit them, solving the problem of key revocation.
 
-We also reserve the use of keyIds enclosed with `>` and `<` characters for
+We also reserve the use of keyIds enclosed with `'>'` and `'<'` characters for
 possible extensions of HTTP such as the [Peer-to-Peer Extension to HTTP/2 draft](https://tools.ietf.org/html/draft-benfield-http2-p2p-02) as discussed on the [ietf-http-wg mailing list](https://lists.w3.org/Archives/Public/ietf-http-wg/2021JanMar/0049.html).
 This would allow the client to let the server know that it can request the key by making an HTTP `GET` request on the given relative URL, reducing to a minimum the reliance on the network.
 With such a protocol available, the request could be signed as follows
@@ -237,10 +234,12 @@ App                                   Server                Doc             Cred
 Steps (4) and (5), where the server retrives a (cached)copy of the key, are as before. 
 
 Steps (6) can be run in parallel with (4) to fetch the Credential document.
-This also can be cached.
-If the URL is relative it will be found on Resource Server.
-If the URL is remote it may need to be fetched.
-If the URL is enclosed in `>` and `<` and a P2P extension is available, the server can request the credential from the client directly using the same connection opened in (3).
+This also can be cached. 
+If the `Credential` header URL
+* is enclosed in '<' and '>' then 
+  * if it is relative it can be fetched on the same server
+  * if is is an absolute URL it can be fetched by opening a new connection
+* is enclosed in `>` and `<` and P2P HTTP extension is enabled, the server can request the credential from the client directly using the same connection opened in (3).
 
 ### Linking a WebKey to a WebID
 
