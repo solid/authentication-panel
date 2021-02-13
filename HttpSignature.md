@@ -198,9 +198,10 @@ of a key to prooving attributes based on a Credential.
 ### Protocol Extension for Credentials
 
 A Credential is a document describing certain properties of an agent.
+It can be a [WebID](https://www.w3.org/2005/Incubator/webid/spec/) or a [Verifiable Credential](https://www.w3.org/TR/vc-data-model/).
 We can refer to such a document using a URL.
 
-If the Access Control Rule linked to in (2) specifies that only agents that can prove a certain property can access the resource, and the agent has such credentials, it can choose the right credentials depending on the user's policies on privacy or security. 
+If the Access Control Rule linked to in (2) specifies that only agents that can prove a certain property can access the resource, and the agent has such credentials in its [Universal Wallet](https://w3c-ccg.github.io/universal-wallet-interop-spec/), the agent can choose the right credentials depending on the user's policies on privacy or security. 
 If the policies do not give a clear answer, the user agent will need to ask the user -- at that time or later, but in any case before engaging in the request (3) - to confirm authenticated access.
 
 Having selected a Credential, this can be passed in the response in (3) 
