@@ -4,25 +4,23 @@
 The work is based on [draft-cavage-http-signature-12](https://tools.ietf.org/html/draft-cavage-http-signatures-12), which evolved and gained adoption since 2013, being tested by a [large number of implementations](https://github.com/w3c-dvcg/http-signatures/issues/1), and this is set to grow by being taken up by the IETF.
 
 HTTP Signature has the advantages of being very simple and being specified directly at the HTTP layer, bypassing the problem of client authentication at the TLS layer.
-(Note: all communication here is assumed to run over TLS.) The protocol allows a client to authenticate by signing any of several HTTP headers with any one of its private keys.
+(Note: all communication here is assumed to run over TLS.) 
+
+The protocol allows a client to authenticate by signing any of several HTTP headers with any one of its private keys.
 In order for the server to verify this signature, it needs to know the matching public key.
 This information must be transmitted by the client, in the form of an opaque string known as a `keyId` (see [§2.1.1 keyId](https://tools.ietf.org/html/draft-cavage-http-signatures-11#section-2.1.1)).
 This string must enable the server to look up the key; how this look-up is done is not specified by the protocol.
 
 This `Http-Sig` protocol extension allows the `keyId` to be interpreted as a URL.
-The proposal here is to use an `https` URL identifier ending with a fragment for the `keyId`.
-This proposal extension is compatible with the keyId using other URI schemes such as [DID](https://www.w3.org/TR/did-core/)s. 
+The main use case is to allow the use of an `https` URL identifier ending with a fragment for the `keyId`, but it would also allow other URI schemes such as [DID](https://www.w3.org/TR/did-core/)s. 
 
- In order for a server to discover the key, it can fetch the `keyId Document`, whose URL is given by the `keyId` URL without the fragment identifier (see [§3 of RFC 3986: Uniform Resource Identifier (URI): Generic Syntax](https://tools.ietf.org/html/rfc3986?#section-3)).  
+By allowing URLs to be used in the `keyId` field,  we make it possible for the server to discover the key by fetching the `keyId Document`, whose URL is given by the [resolved](https://tools.ietf.org/html/rfc3986#section-5) `keyId` URL without the fragment identifier (see [§3 of RFC 3986: Uniform Resource Identifier (URI): Generic Syntax](https://tools.ietf.org/html/rfc3986?#section-3)).  
 
 ## Extending `HTTP-Sig` with URLs
 
-Here we consider the minimum extension of `HTTP-Sig` with
-`keyId`s that are URLs.
-We point to the advantages of this
-in terms of enabling client creation, editing, and deleting of keys.
-We then show how this ties into the larger Access
-Control Protocol used by Solid.
+Here we consider the minimum extension of `HTTP-Sig` with `keyId`s that are URLs.
+We point to the advantages of this in terms of enabling client creation, editing and deleting of keys.
+We then show how this ties into the larger Access Control Protocol used by Solid.
 
 ### The Sequence Diagram
 
@@ -43,33 +41,44 @@ App                          Document                            Server
 |                                |                                   |
 |                                |<-----------------(4) GET keyId----| 
 |                                |-(5) return keyId doc------------->|
-|                                                        -verify sig |
-|                                                        -verify wACL|
+|                                                       - verify sig |
+|                                                       - verify ACL |
 |                                                                    |
 |<---------------------------------------------(6) answer resource---|
 ```                                                                   
 
-The main protocol difference from `Http-Sig` is the request by the resource server for the `keyId document` in (4). 
-If this document is cached and still valid, it will not require an extra request on the Web.  
+In (2) the Resource server responds to a request by sending a 401 or 402 response with the `WWW-Auth` Sig header.
+It should also add a `Link:` relation to an Access-Control resource which describes which resources can have access. 
+(Without such a Link the client would only be able to guess what key to send.)
+With  [HTTP/2 server Push](https://tools.ietf.org/html/rfc7540#section-8.2), the server could immediately push the content of the linked-to Access Control document to the client, assuming reasonably that the client would have connected with the right key had it allready known the content. 
+It may also be possible to send the ACL rules directly in the body (Todo: research) of the response.
 
-Another extension required by the [Solid use cases](https://solid.github.io/authorization-panel/wac-ucr/) is that the response  (2) must contain a link to an Access Control Document.
-This is needed by Solid (Social Linked Data) clients, as these are modeled on web browsers; they are not tied to reading/writing data from one domain, but are able to start from any web server, and are able to follow links around the web. 
+The Access Control rule could be as simple as stating that the user needs to be authenticated with a key,  but any number of more complicated use cases are possible, as described in the [Use Cases and Requirements Document](https://solid.github.io/authorization-panel/wac-ucr/).
+
+If the client can find a key that satisfies the Access Control Rules then it can use the private key to sign the headers in (3) as specified by [Signing HTTP Messages](https://w3c-ccg.github.io/did-method-key/) and pass a link to the key in the `keyId` field as a URL. 
+
+The main protocol difference from `Http-Sig` is the potential request by the resource server for the `keyId document` in (4) to get that key. 
+This may not necessarily lead to a new network connection being opened to the outside world in the following cases:
+ * The `keyId` URL is local to the resource server,
+ * The `keyId` URL is a [did:key](https://w3c-ccg.github.io/did-method-key/) URL, ie contains all the data of a public key,
+ * The `keyId` URL refers to an external resource, but the resource server has a fresh cached copy of it. 
+This can be the case of cached `https` URL documents but also for `did:...` documents stored on some form of blockchain which the server has access to offline.
+ * The `keyId` is a relative URL on the client, which the server can GET using the P2P extension to HTTP (more on that below).
+
+## Solid Use Case
+
+In order to understand why we may want keys that are not local to the resource server we need to make a small disgression and explain the principal Solid use case.
+We start by noticing that Solid (Social Linked Data) clients are modeled on web browsers. 
+They are not tied to reading/writing data from one domain, but are able to start from any web server, and are able to follow links around the web. 
 As a result, they cannot know in advance of arriving at a resource, what type of authentication will be needed there.
+Furthermore they may be quite keen to create cross site identities and link them up, as that can allow decentralised conversations to happen and for people to build reputations across web sites.
+
 We can illustrate this by the following diagram showing the topology of the data a solid client may need to read.
 Starting from Tim Berners-Lee's [WebID](https://www.w3.org/2005/Incubator/webid/spec/identity/), a client may need to follow the links spanning web servers (represented as boxes).
 
 ![TimBLs foaf profile](https://raw.githubusercontent.com/wiki/banana-rdf/banana-rdf/img/WebID-foafKnows.jpg)
 
 Starting from one resource, such as TimBL's WebID, a client should be able to follow links to other resources, some of which will be protected in various ways, requiring different forms of proof.
-
-As a result a client needs to know on reaching a resource what keys to show. 
-The [Web Access Control Spec](https://solid.github.io/web-access-control-spec/) 
-allows this to be done by requiring the Solid Server to add a `Link` header pointing 
-to the Access Control rules. 
-With  [HTTP/2 server Push](https://tools.ietf.org/html/rfc7540#section-8.2), the server could immediately push the content of the linked-to Access Control document to the client, assuming 
-reasonably that the client would have connected with the right key had it
-allready known the content. 
-It may also be possible to send the ACL rules directly in the body (Todo: research) of the response.
 
 ### The KeyId URL
 
@@ -96,22 +105,19 @@ Signature: sig1=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSz...==:
 
 It could also allow key based did URLs as described in [issue 217 of the Solid Spec](https://github.com/solid/specification/issues/217#issuecomment-777509084).
 
-The advantage of a URL is that it allows the client to use HTTP Methods such as `POST` or `PUT` to create keys, as well as `PUT`, `PATCH` and `DELETE` to edit them, solving the problem of key revocation.
+The advantage of `https` URL in particular is that it allows the client to use HTTP Methods such as `POST` or `PUT` to create keys, as well as `PUT`, `PATCH` and `DELETE` to edit them, solving the problem of key revocation.
 
-We also reserve the use of keyIds enclosed with `'>'` and `'<'` characters for
-possible extensions of HTTP such as the [Peer-to-Peer Extension to HTTP/2 draft](https://tools.ietf.org/html/draft-benfield-http2-p2p-02) as discussed on the [ietf-http-wg mailing list](https://lists.w3.org/Archives/Public/ietf-http-wg/2021JanMar/0049.html).
-This would allow the client to let the server know that it can request the key by making an HTTP `GET` request on the given relative URL, reducing to a minimum the reliance on the network.
-With such a protocol available, the request could be signed as follows
+We also reserve the use of keyIds enclosed with `'>'` and `'<'` characters for possible extensions of HTTP such as the [Peer-to-Peer Extension to HTTP/2 draft](https://tools.ietf.org/html/draft-benfield-http2-p2p-02) as discussed on the [ietf-http-wg mailing list](https://lists.w3.org/Archives/Public/ietf-http-wg/2021JanMar/0049.html).
+Here is an example of a header sent by a client to the server with such a URL:
 
 ```HTTP
 Signature-Input: sig1=(); keyId=">/keys/test-key-a<"; created=1402170695
 Signature: sig1=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSzR9TYFV
-       vwUjeU6CTYUdbOByGMCee5q1eWWUOM8BIH04Si6VndEHjQVdHqshAtNJk2Quzs6WC
-       2DkV0vysOhBSvFZuLZvtCmXRQfYGTGhZqGwq/AAmFbt5WNLQtDrEe0ErveEKBfaz+
-       IJ35zhaj+dun71YZ82b/CRfO6fSSt8VXeJuvdqUuVPWqjgJD4n9mgZpZFGBaDdPiw
-       pfbVZHzcHrumFJeFHWXH64a+c5GN+TWlP8NPg2zFdEc/joMymBiRelq236WGm5VvV
-       9a22RW2/yLmaU/uwf9v40yGR/I1NRA==:
 ```
+
+On receiving such a signed header, the server would know that it can request the key by making an HTTP `GET` request on the given relative URL on the client using the same connection but after switching client/server roles.
+This would reduce to a minimum the reliance on the network.
+
 
 
 ### The KeyId Document
@@ -137,11 +143,9 @@ If we were to use [the cert ontology](https://www.w3.org/ns/auth/cert#) (as used
 (Other ontologies that could be used:
   * [The Security Vocabulary](https://web-payments.org/vocabs/security)
   * Any other?)
-
 ### The Access Control Rules
 
-In order to understand a little bit better how the client can decide if it has
-the right key, we give a quick description of how Access Control Rules function.
+In order to understand a little bit better how the client can decide if it has the right key, we give a quick description of how Access Control Rules function.
 
 The [Access Control Rules](https://solid.github.io/web-access-control-spec/) linked to by a resource, can specify an agent by describing their relation to a public key.
 
@@ -158,8 +162,7 @@ The [Access Control Rules](https://solid.github.io/web-access-control-spec/) lin
                 [ cert:key <https://candice.example/clefs/doc1#clef3> ]
 ```            
 
-The keys can also be relative to the server of course, and in the future
-also `DID`s. 
+The keys can also be relative to the server of course (or `DID`s). 
 
 Instead of listing agents individually in the acl they can also 
 be listed as belonging to a group
@@ -201,7 +204,7 @@ If the Access Control Rule linked to in (2) specifies that only agents that can 
 If the policies do not give a clear answer, the user agent will need to ask the user -- at that time or later, but in any case before engaging in the request (3) - to confirm authenticated access.
 
 Having selected a Credential, this can be passed in the response in (3) 
-to the server by adding a `Credential:` header with as value a relative or absolute URL enclosed in `<` and `>`.
+to the server by adding a `Credential:` header with as value a relative or absolute URL enclosed in `<` and `>` refering to that credential.
 As before we reserve the option of enclosing a relative URL in `>` and `<` to refer to a client side resource if some form of P2P extension of
 HTTP is available (see [Peer-to-Peer Extension to HTTP/2 draft](https://tools.ietf.org/html/draft-benfield-http2-p2p-02)). 
 
@@ -239,7 +242,9 @@ If the `Credential` header URL
 * is enclosed in '<' and '>' then 
   * if it is relative it can be fetched on the same server
   * if is is an absolute URL it can be fetched by opening a new connection
-* is enclosed in `>` and `<` and P2P HTTP extension is enabled, the server can request the credential from the client directly using the same connection opened in (3).
+* is enclosed in `>` and `<` and P2P HTTP extension is enabled, the server can request the credential from the client directly using the same connection opened in (3) exactly as above.
+
+Note that if a client uses a P2P Connection to fetch a `>/cred1<` Credential and the client is authenticated with a `did:key:23dfs` then the server may be able to store that Credential at the `did:key:23dfs/cred1` URL in its cache. (todo: think it through)
 
 ### Linking a WebKey to a WebID
 
