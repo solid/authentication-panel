@@ -91,7 +91,7 @@ The advantage of `https` URL in particular to refer to keys, is that it allows t
 
 ## Solid Use Case
 
-In order to understand why we may want keys that are not local to the resource server we need to make a small disgression and explain the principal Solid use case.
+To explain why we may want keys that are not local to the resource server, we will make a small digression to explain the principal Solid use case.
 We start by noticing that Solid (Social Linked Data) clients are modeled on web browsers. 
 They are not tied to reading/writing data from one domain, but are able to start from any web server, and are able to follow links around the web. 
 As a result, they cannot know in advance of arriving at a resource, what type of authentication will be needed there.
