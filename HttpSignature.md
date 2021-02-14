@@ -11,7 +11,7 @@ In order for the server to verify this signature, it needs to know the matching 
 This information must be transmitted by the client, in the form of an opaque string known as a `keyId` (see [§2.1.1 keyId](https://tools.ietf.org/html/draft-cavage-http-signatures-11#section-2.1.1)).
 This string must enable the server to look up the key; how this look-up is done is not specified by the protocol.
 
-This `Http-Sig` protocol extension allows the `keyId` to be interpreted as a URL.
+This `HttpSig` protocol extension allows the `keyId` to be interpreted as a URL.
 The main use case is to allow the use of an `https` URL identifier ending with a fragment for the `keyId`, but it would also allow other URI schemes such as [DID](https://www.w3.org/TR/did-core/)s. 
 
 By allowing URLs to be used in the `keyId` field,  we make it possible for the server to discover the key by fetching the `keyId Document`, whose URL is given by the [resolved](https://tools.ietf.org/html/rfc3986#section-5) `keyId` URL without the fragment identifier (see [§3 of RFC 3986: Uniform Resource Identifier (URI): Generic Syntax](https://tools.ietf.org/html/rfc3986?#section-3)).  
@@ -23,7 +23,7 @@ We then show how this ties into the larger Access Control Protocol used by Solid
 
 ### The Sequence Diagram
 
-The minimal extension to `Http-Sig` can be illustrated by the following Sequence Diagram:
+The minimal extension to `HttpSig` can be illustrated by the following Sequence Diagram:
 
 ```text
 Client                          KeyID                            Resource
@@ -51,7 +51,7 @@ A message from a server can look like this:
 
 ```HTTP
 HTTP/1.1 401 Unauthorized
-WWW-Authenticate: Http-Sig
+WWW-Authenticate: HttpSig
 Link: </comments/.acl>; rel="acl"
 ```
 
@@ -69,7 +69,7 @@ It can then make the original request again:
 
 ```HTTP
 GET /comments/ HTTP/1.1
-Authorization: Http-Sig
+Authorization: HttpSig
 Signature-Input: sig1=(); keyId="</keys/test-key-a>"; created=1402170695
 Signature: sig1=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSzR9TYFV
        vwUjeU6CTYUdbOByGMCee5q1eWWUOM8BIH04Si6VndEHjQVdHqshAtNJk2Quzs6WC
@@ -79,7 +79,7 @@ Signature: sig1=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSzR9TYFV
        9a22RW2/yLmaU/uwf9v40yGR/I1NRA==:
 ```
 
-The main protocol difference from `Http-Sig` is the request by the resource server for the `keyId document` in (4) to get that key. 
+The main protocol difference from `HttpSig` is the request by the resource server for the `keyId document` in (4) to get that key. 
 This may not necessarily lead to a new network connection being opened to the outside world in the following cases:
  * The `keyId` URL is local to the resource server,
  * The `keyId` URL is a [did:key](https://w3c-ccg.github.io/did-method-key/) URL. This is a URL that contains in its name all the data of the public key.
@@ -107,7 +107,7 @@ Starting from one resource, such as TimBL's WebID, a client should be able to fo
 ### The KeyId URL
 
 In order for it to be clear that the `keyId` is to be interpreted as a URL, the `keyId` field MUST enclose the URL with `'<'` and `'>'` characters.
-To take an example from [§A.3.2.1](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01#appendix-A.3.2) of `Http-Sig` this would allow the following use of relative URLs referring to a resource on the requested server
+To take an example from [§A.3.2.1](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01#appendix-A.3.2) of `HttpSig` this would allow the following use of relative URLs referring to a resource on the requested server
 
 ```HTTP
 Authorization: HttpSig
@@ -231,7 +231,7 @@ Having selected a Credential, this can be passed in the response in (3) to the s
 
 ```HTTP
 GET /comments/c1 HTTP/1.1
-Authorization: Http-Sig cred="<https://alice.freedom/cred/BAEng>"
+Authorization: HttpSig cred="<https://alice.freedom/cred/BAEng>"
 Signature-Input: sig1=(); keyId="<https://alice.freedom/keys/alice-key-eng>"; created=1402170695
 Signature: sig1=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSzR9TYFV
        vwUjeU6CTYUdbOByGMCee5q1eWWUOM8BIH04Si6VndEHjQVdHqshAtNJk2Quzs6WC
