@@ -95,7 +95,7 @@ In order to understand why we may want keys that are not local to the resource s
 We start by noticing that Solid (Social Linked Data) clients are modeled on web browsers. 
 They are not tied to reading/writing data from one domain, but are able to start from any web server, and are able to follow links around the web. 
 As a result, they cannot know in advance of arriving at a resource, what type of authentication will be needed there.
-Furthermore their users may be quite keen to create cross site identities and link them up, as that can allow decentralised conversations to happen and for people to build reputations across web sites.
+Furthermore, their users may be quite keen to create cross-site identities and link them up, as that can allow decentralised conversations to happen, and thereby let people build reputations across web sites.
 
 We can illustrate this by the following diagram showing the topology of the data a solid client may need to read.
 Starting from Tim Berners-Lee's [WebID](https://www.w3.org/2005/Incubator/webid/spec/identity/), a client may need to follow the links spanning web servers (represented as boxes).
