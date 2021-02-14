@@ -58,7 +58,7 @@ Link: </comments/.acl>; rel="acl"
 It should also add a `Link:` relation to an Access-Control resource which describes which resources might be accessible. 
 This is described in [Web Access Control Spec](https://github.com/solid/web-access-control-spec/).
 (Without such a Link the client would only be able to guess what key to send.)
-Note: With  [HTTP/2 server Push](https://tools.ietf.org/html/rfc7540#section-8.2), the server could immediately push the content of the linked-to Access Control document to the client, assuming reasonably that the client would have connected with the right key had it known the rules. 
+Note: With [HTTP/2 server Push](https://tools.ietf.org/html/rfc7540#section-8.2), the server could immediately push the content of the linked-to Access Control document to the client, assuming reasonably that the client would have connected with the right key had it known the rules. 
 It may also be possible to send the ACL rules directly in the body (Todo: research) of the response.
 
 The Access Control rule could be as simple as stating that the user needs to be authenticated with a key,  but any number of more complicated use cases are possible, as described in the [Use Cases and Requirements Document](https://solid.github.io/authorization-panel/wac-ucr/).
@@ -95,7 +95,7 @@ To explain why we may want keys that are not local to the resource server, we wi
 We start by noticing that Solid (Social Linked Data) clients are modeled on web browsers. 
 They are not tied to reading/writing data from one domain, but are able to start from any web server, and are able to follow links around the web. 
 As a result, they cannot know in advance of arriving at a resource, what type of authentication will be needed there.
-Furthermore, their users may be quite keen to create cross-site identities and link them up, as that can allow decentralised conversations to happen, and thereby let people build reputations across web sites.
+Furthermore, their users may be quite keen to create cross-site identities and link them up, as that can allow decentralized conversations to happen, and thereby let people build reputations across web sites.
 
 We can illustrate this by the following diagram showing the topology of the data a solid client may need to read.
 Starting from Tim Berners-Lee's [WebID](https://www.w3.org/2005/Incubator/webid/spec/identity/), a client may need to follow the links spanning web servers (represented as boxes).
@@ -187,7 +187,7 @@ The [Access Control Rules](https://solid.github.io/web-access-control-spec/) lin
 
 The keys can also be relative to the server of course (or `DID`s). 
 
-Instead of listing agents individually in the acl they can also 
+Instead of listing agents individually in the ACL they can also 
 be listed as belonging to a group
 
 ```turtle
@@ -216,7 +216,7 @@ Of course this requires adding members to the group to have as effect the sendin
 ## Extending the Protocol with Credentials
 
 We now look at how the protocol can be extended beyond possession 
-of a key to prooving attributes based on a Credential.
+of a key to proving attributes based on a Credential.
 
 ### Protocol Extension for Credentials
 
@@ -227,7 +227,7 @@ We can refer to such a document using a URL.
 If the Access Control Rule linked to in (2) specifies that only agents that can prove a certain property can access the resource, and the agent has such credentials in its [Universal Wallet](https://w3c-ccg.github.io/universal-wallet-interop-spec/), the agent can choose the right credentials depending on the user's policies on privacy or security. 
 If the policies do not give a clear answer, the user agent will need to ask the user -- at that time or later, but in any case before engaging in the request (3) - to confirm authenticated access.
 
-Having selected a Credential, this can be passed in the response in (3) to the server by adding a `Authorization: HttpSig` header with as `cred` attribute value a relative or absolute URL enclosed in `<` and `>` refering to that credential.
+Having selected a Credential, this can be passed in the response in (3) to the server by adding a `Authorization: HttpSig` header with as `cred` attribute value a relative or absolute URL enclosed in `<` and `>` referring to that credential.
 
 ```HTTP
 GET /comments/c1 HTTP/1.1
@@ -271,7 +271,7 @@ App                                   Server                Doc             Cred
 |<-------------------(8) send content----|
 ```
 
-Steps (4) and (5), where the server retrives a (cached) copy of the key, are as before. 
+Steps (4) and (5), where the server retrieves a (cached) copy of the key, are as before. 
 
 Steps (6) can be run in parallel with (4) to fetch the Credential document.
 This also can be cached. 
@@ -311,7 +311,7 @@ By signing the HTTP header with the private key corresponding to the public key 
 This can be used for people or institutions that are happy to have public global identifiers to identify them.
 One advantage is that the keyId document being the same as the WebID Profile document, the verification step requests (4) and (6) get collapsed into one request.
 It also allows each individual user to maintain their profile and keys by hosting it on their server.
-This allows friends to link to it, creating a [friend of a friend](http://www.foaf-project.org) decentralised social network.
+This allows friends to link to it, creating a [friend of a friend](http://www.foaf-project.org) decentralized social network.
 A certain amount of anonymity can be regained by placing those servers behind Tor, using `.onion` URLs, and access controlling linked to documents that contain more personal information.
 
 WebIDs allow servers to protect resources by listing WebIDs as shown in the [Groups of Agents](https://solid.github.io/web-access-control-spec/#describing-agents) description of the Web Access Control Spec.
@@ -321,7 +321,7 @@ Authors of such ACLs can evaluate the trust they put in such a WebID by the posi
 
 Access Control Lists can be extended by rules giving access to friends of a friend, extended family networks, ... (this is still being worked on) 
 
-WebIDs are also useful for institutions wishing to be clearly identified when signing a [Verifiable Credential](https://www.w3.org/TR/vc-data-model/), such as a Birth Certificate or Drivers Licence Authority signing a claim, a University or School signing that a user has received a degree, ...
+WebIDs are also useful for institutions wishing to be clearly identified when signing a [Verifiable Credential](https://www.w3.org/TR/vc-data-model/), such as a Birth Certificate or Drivers License Authority signing a claim, a University or School signing that a user has received a degree, ...
 
 ### WebID and KeyId documents are different
 
@@ -331,7 +331,7 @@ In this case the WebID could link to the hash of the key, or some other proof th
 
 ### Credentials
 
-Resources can describe in thelinked-to `accessControl` document a class of agents, specified by attribute, who may access the resource in a given mode.
+Resources can describe in the linked-to `accessControl` document a class of agents, specified by attribute, who may access the resource in a given mode.
 For example ISO could publish a description at `https://iso.org/ont/People` describing the set of people over 21.
 
 ```Turtle
@@ -354,7 +354,7 @@ This would allow resources to be protected with a rule such as
           :mode :Read .
 ```
 
-A client after receiving the response (2) in the above sequence diagram can search for the relevant [Verifiable Credential](https://www.w3.org/TR/vc-data-model/) in its [Universal Wallet](https://w3c-ccg.github.io/universal-wallet-interop-spec/) (containing perhaps a Drivers Licence, Birth certificate or MI6 007 licence to kill), order these in a privacy lattice, and choose the one the more appropriate for the task at hand.
+A client after receiving the response (2) in the above sequence diagram can search for the relevant [Verifiable Credential](https://www.w3.org/TR/vc-data-model/) in its [Universal Wallet](https://w3c-ccg.github.io/universal-wallet-interop-spec/) (containing perhaps a Drivers License, Birth certificate or MI7 007 license to kill), order these in a privacy lattice, and choose the one the more appropriate for the task at hand.
 The URL for that Credential can then be sent in the header (3).
 The verification process then needs to verify that the signature is correct, and that the credential identifies the user with the same key, and is signed by a legitimate Certificate Authority.
 
