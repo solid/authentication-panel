@@ -60,7 +60,7 @@ If the client can find a key that satisfies the Access Control Rules then it can
 The main protocol difference from `Http-Sig` is the potential request by the resource server for the `keyId document` in (4) to get that key. 
 This may not necessarily lead to a new network connection being opened to the outside world in the following cases:
  * The `keyId` URL is local to the resource server,
- * The `keyId` URL is a [did:key](https://w3c-ccg.github.io/did-method-key/) URL, ie contains all the data of a public key,
+ * The `keyId` URL is a [did:key](https://w3c-ccg.github.io/did-method-key/) URL, i.e., it contains all the data of a public key,
  * The `keyId` URL refers to an external resource, but the resource server has a fresh cached copy of it. 
 This can be the case of cached `https` URL documents but also for `did:...` documents stored on some form of blockchain which the server has access to offline.
  * The `keyId` is a relative URL on the client, which the server can GET using the P2P extension to HTTP (more on that below).
