@@ -354,7 +354,7 @@ This would allow resources to be protected with a rule such as
           :mode :Read .
 ```
 
-A client after receiving the response (2) in the above sequence diagram can search for the relevant [Verifiable Credential](https://www.w3.org/TR/vc-data-model/) in its [Universal Wallet](https://w3c-ccg.github.io/universal-wallet-interop-spec/) (containing perhaps a Drivers License, Birth certificate or MI7 007 license to kill), order these in a privacy lattice, and choose the one the more appropriate for the task at hand.
+After receiving the response (2) in the above sequence diagram, a client can search for the relevant [Verifiable Credential](https://www.w3.org/TR/vc-data-model/) in its [Universal Wallet](https://w3c-ccg.github.io/universal-wallet-interop-spec/) (containing perhaps a Drivers License, Birth certificate, and MI7 007 license to kill), order these in a privacy lattice, and choose the one most appropriate for the task at hand.
 The URL for that Credential can then be sent in the header (3).
 The verification process then needs to verify that the signature is correct, and that the credential identifies the user with the same key, and is signed by a legitimate Certificate Authority.
 
