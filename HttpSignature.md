@@ -187,7 +187,7 @@ The [Access Control Rules](https://solid.github.io/web-access-control-spec/) lin
 
 The keys can also be relative to the server of course (or `DID`s). 
 
-Instead of listing agents individually in the ACL they can 
+Instead of listing agents individually in the ACL, they can 
 be listed as belonging to a group
 
 ```turtle
