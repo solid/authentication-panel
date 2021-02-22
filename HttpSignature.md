@@ -2,12 +2,12 @@
 
 ## Executive Summary
 
-HttpSig is a simple authentication protocol extending [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) RFC by defining 
+HttpSig is a simple but very efficient authentication protocol extending [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) RFC by defining 
  * a `WWW-Authenticate: HttpSig` header the server can return with a 401 or 402 to the client
  * a `Authorization: HttpSig` method the client can use in response with two optional attributes `webid` and `cert` both taking `https` or `DID` URLs.
- * a convention for how to encode URLs in the `keyId` attribute of [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01)'s `Signature-Input` header when usined with the `WWW-Authenticate: HttpSig` header
+ * a convention for how to encode URLs in the `keyId` attribute of [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01)'s `Signature-Input` header when used with the `WWW-Authenticate: HttpSig` header
  * the ability to use absolute or relative URLs in all places mentioned where URLs can be used
- * an opening to allow relative URLs passed by the client to the server to refer to resources on the client using P2P Extension to HTTP.
+ * allow relative URLs passed by the client to the server to refer to resources on the client using a [P2P Extension to HTTP](https://tools.ietf.org/html/draft-benfield-http2-p2p-02) which would allow authentication over a single HTTP connection.
 
 ## Signing HTTP Messages
 
