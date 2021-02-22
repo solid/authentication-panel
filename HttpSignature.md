@@ -1,12 +1,23 @@
-# HTTP-Sig Authentication for SoLiD
+# HTTPSig Authentication for SoLiD
 
-[Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01)  (henceforth `HTTP-Sig`) is an IETF RFC Draft worked on by the HTTP WG, for signing and authenticating HTTP messages.
+## Executive Summary
+
+HTTPSig is a simple authentication protocol extending [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) (henceforth `HTTP-Sig`) by defining 
+ * a `WWW-Authenticate: HTTPSig` header the server can return with a 401 or 402 to the client
+ * a `Authorization: HttpSig` method the client can use in response with two optional attributes `webid` and `cert` both taking `https` or `DID` URLs.
+ * a convention for how to encode URLs in the `keyId` attribute of `HTTP-Sig`'s `Signature-Input` header when usined with the `WWW-Authenticate: HTTPSig` header
+ * the ability to use absolute or relative URLs in all places mentioned where URLs can be used
+ * an opening to allow relative URLs passed by the client to the server to refer to resources on the client using P2P Extension to HTTP.
+
+## Signing HTTP Messages (HTTP-Sig)
+
+[HTTP-Sig](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) is an IETF RFC Draft worked on by the HTTP WG, for signing and authenticating HTTP messages.
 The work is based on [draft-cavage-http-signature-12](https://tools.ietf.org/html/draft-cavage-http-signatures-12), which evolved and gained adoption since 2013, being tested by a [large number of implementations](https://github.com/w3c-dvcg/http-signatures/issues/1), and this is set to grow by being taken up by the IETF.
 
-HTTP Signature has the advantages of being very simple and being specified directly at the HTTP layer, bypassing the problem of client authentication at the TLS layer.
+`HTTP-Sig` has the advantages of being very simple and being specified directly at the HTTP layer, bypassing the problem of client authentication at the TLS layer.
 (Note: all communication here is assumed to run over TLS.) 
 
-The protocol allows a client to authenticate by signing any of several HTTP headers with any one of its private keys.
+The `HTTP-Sig` protocol allows a client to authenticate by signing any of several HTTP headers with any one of its private keys.
 In order for the server to verify this signature, it needs to know the matching public key.
 This information must be transmitted by the client, in the form of an opaque string known as a `keyId` (see [§2.1.1 keyId](https://tools.ietf.org/html/draft-cavage-http-signatures-11#section-2.1.1)).
 This string must enable the server to look up the key; how this look-up is done is not specified by the protocol.
