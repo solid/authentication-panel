@@ -1,11 +1,11 @@
-# HTTPSig Authentication for SoLiD
+# HttpSig Authentication for SoLiD
 
 ## Executive Summary
 
-HTTPSig is a simple authentication protocol extending [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) (henceforth `HTTP-Sig`) by defining 
- * a `WWW-Authenticate: HTTPSig` header the server can return with a 401 or 402 to the client
+HttpSig is a simple authentication protocol extending [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) (henceforth `HTTP-Sig`) by defining 
+ * a `WWW-Authenticate: HttpSig` header the server can return with a 401 or 402 to the client
  * a `Authorization: HttpSig` method the client can use in response with two optional attributes `webid` and `cert` both taking `https` or `DID` URLs.
- * a convention for how to encode URLs in the `keyId` attribute of `HTTP-Sig`'s `Signature-Input` header when usined with the `WWW-Authenticate: HTTPSig` header
+ * a convention for how to encode URLs in the `keyId` attribute of `HTTP-Sig`'s `Signature-Input` header when usined with the `WWW-Authenticate: HttpSig` header
  * the ability to use absolute or relative URLs in all places mentioned where URLs can be used
  * an opening to allow relative URLs passed by the client to the server to refer to resources on the client using P2P Extension to HTTP.
 
@@ -34,14 +34,14 @@ We then show how this ties into the larger Access Control Protocol used by Solid
 
 ### The Sequence Diagram
 
-The minimal extension to `HttpSig` can be illustrated by the following Sequence Diagram:
+The minimal extension to `HTTP-Sig` can be illustrated by the following Sequence Diagram:
 
 ```text
 Client                          KeyID                            Resource
 App                          Document                            Server
 |                                |                                   |  
 |-(1) request URL -------------------------------------------------->| 
-|<==================(2) 40x + WWW-Auth Sig header + (Link) to ACL ===|
+|<============(2) 40x + WWW-Authenticate: HttpSig + (Link) to ACL ===|
 |                                |                                   |
 | (choose key)                   |                                   |
 |                                |                                   |
@@ -57,7 +57,7 @@ App                          Document                            Server
 |<---------------------------------------------(6) answer resource---|
 ```                                                                   
 
-In (2) the Resource server responds to a request by sending a 401 or 402 response with the `WWW-Authenticate: HttpSig` header. The `WWW-Authenticate` header is specified in §[4.1 of HTTP/1.1](https://www.rfc-editor.org/rfc/rfc7235#section-4.1).  The HttpSig challenge method needs to be defined here (todo) and registered as specified in the [Authentication Scheme Registry](https://www.rfc-editor.org/rfc/rfc7235#section-5.1).
+In (2) the Resource server responds to a request by sending a 401 or 402 response with the `WWW-Authenticate: HttpSig` header. The `WWW-Authenticate` header is specified in §[4.1 of HTTP/1.1](https://www.rfc-editor.org/rfc/rfc7235#section-4.1).  The `HttpSig` challenge method needs to be defined here (todo) and registered as specified in the [Authentication Scheme Registry](https://www.rfc-editor.org/rfc/rfc7235#section-5.1).
 A message from a server can look like this:
 
 ```HTTP
@@ -90,7 +90,7 @@ Signature: sig1=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSzR9TYFV
        9a22RW2/yLmaU/uwf9v40yGR/I1NRA==:
 ```
 
-The main protocol difference from `HttpSig` is the request by the resource server for the `keyId document` in (4) to get that key. 
+The main protocol difference from `HTTP-Sig` rfc is the request by the resource server for the `keyId document` in (4) to get that key. 
 This may not necessarily lead to a new network connection being opened to the outside world in the following cases:
  * The `keyId` URL is local to the resource server,
  * The `keyId` URL is a [did:key](https://w3c-ccg.github.io/did-method-key/) URL. This is a URL that contains in its name all the data of the public key.
@@ -118,7 +118,7 @@ Starting from one resource, such as TimBL's WebID, a client should be able to fo
 ### The KeyId URL
 
 In order for it to be clear that the `keyId` is to be interpreted as a URL, the `keyId` field MUST enclose the URL with `'<'` and `'>'` characters.
-To take an example from [§A.3.2.1](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01#appendix-A.3.2) of `HttpSig` this would allow the following use of relative URLs referring to a resource on the requested server
+To take an example from [§A.3.2.1](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01#appendix-A.3.2) of the `HTTP-Sig` rfc this would allow the following use of relative URLs referring to a resource on the requested server
 
 ```HTTP
 Authorization: HttpSig
