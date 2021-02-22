@@ -31,6 +31,9 @@ jobs:
       - name: generate html
         run: for bsdoc in proposals/**/*.bs; do bikeshed spec $bsdoc; done
 
+      - name: generate svg
+        run: for diagram in proposals/**/*.mmd; do docker run --rm -v "$PWD:/data" minlag/mermaid-cli -i /data/$diagram; done
+
       - name: deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
