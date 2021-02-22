@@ -2,39 +2,39 @@
 
 ## Executive Summary
 
-HttpSig is a simple authentication protocol extending [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) (henceforth `HTTP-Sig`) by defining 
+HttpSig is a simple authentication protocol extending [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) RFC by defining 
  * a `WWW-Authenticate: HttpSig` header the server can return with a 401 or 402 to the client
  * a `Authorization: HttpSig` method the client can use in response with two optional attributes `webid` and `cert` both taking `https` or `DID` URLs.
- * a convention for how to encode URLs in the `keyId` attribute of `HTTP-Sig`'s `Signature-Input` header when usined with the `WWW-Authenticate: HttpSig` header
+ * a convention for how to encode URLs in the `keyId` attribute of [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01)'s `Signature-Input` header when usined with the `WWW-Authenticate: HttpSig` header
  * the ability to use absolute or relative URLs in all places mentioned where URLs can be used
  * an opening to allow relative URLs passed by the client to the server to refer to resources on the client using P2P Extension to HTTP.
 
-## Signing HTTP Messages (HTTP-Sig)
+## Signing HTTP Messages
 
-[HTTP-Sig](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) is an IETF RFC Draft worked on by the HTTP WG, for signing and authenticating HTTP messages.
+[Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) is an IETF RFC Draft worked on by the HTTP WG, for signing HTTP messages.
 The work is based on [draft-cavage-http-signature-12](https://tools.ietf.org/html/draft-cavage-http-signatures-12), which evolved and gained adoption since 2013, being tested by a [large number of implementations](https://github.com/w3c-dvcg/http-signatures/issues/1), and this is set to grow by being taken up by the IETF.
 
-`HTTP-Sig` has the advantages of being very simple and being specified directly at the HTTP layer, bypassing the problem of client authentication at the TLS layer.
+[Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) has the advantages of being very simple and being specified directly at the HTTP layer, bypassing the problem of client authentication at the TLS layer.
 (Note: all communication here is assumed to run over TLS.) 
 
-The `HTTP-Sig` protocol allows a client to authenticate by signing any of several HTTP headers with any one of its private keys.
+The [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) protocol allows a client to authenticate by signing any of several HTTP headers with any one of its private keys.
 In order for the server to verify this signature, it needs to know the matching public key.
-This information must be transmitted by the client, in the form of an opaque string known as a `keyId` (see [§2.1.1 keyId](https://tools.ietf.org/html/draft-cavage-http-signatures-11#section-2.1.1)).
+The information about the key must be transmitted by the client to the server, in the form of an opaque string known as a `keyId` (see [§2.1.1 keyId](https://tools.ietf.org/html/draft-cavage-http-signatures-11#section-2.1.1)).
 This string must enable the server to look up the key; how this look-up is done is not specified by the protocol.
 
-This `HttpSig` protocol extension allows the `keyId` to be interpreted as a URL.
+The `HttpSig` protocol extension described in this document, allows the `keyId` to be interpreted as a URL.
 The main use case is to allow the use of an `https` URL identifier ending with a fragment for the `keyId`, but it would also allow other URI schemes such as [DID](https://www.w3.org/TR/did-core/)s. 
 
 By allowing URLs to be used in the `keyId` field,  we make it possible for the server to discover the key by fetching the `keyId Document`, whose URL is given by the [resolved](https://tools.ietf.org/html/rfc3986#section-5) `keyId` URL without the fragment identifier (see [§3 of RFC 3986: Uniform Resource Identifier (URI): Generic Syntax](https://tools.ietf.org/html/rfc3986?#section-3)).  
 
-## Extending `HTTP-Sig` with URLs
+## Extending `Signing HTTP Messages` with URLs
 
-Here we consider the minimum extension of `HTTP-Sig` with `keyId`s that are URLs.
+Here we consider the minimum extension of [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) with `keyId`s that are URLs.
 We then show how this ties into the larger Access Control Protocol used by Solid.
 
 ### The Sequence Diagram
 
-The minimal extension to `HTTP-Sig` can be illustrated by the following Sequence Diagram:
+The minimal extension to [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) can be illustrated by the following Sequence Diagram:
 
 ```text
 Client                          KeyID                            Resource
@@ -90,7 +90,7 @@ Signature: sig1=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSzR9TYFV
        9a22RW2/yLmaU/uwf9v40yGR/I1NRA==:
 ```
 
-The main protocol difference from `HTTP-Sig` rfc is the request by the resource server for the `keyId document` in (4) to get that key. 
+The main protocol difference from [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) rfc is the request by the resource server for the `keyId document` in (4) to get that key. 
 This may not necessarily lead to a new network connection being opened to the outside world in the following cases:
  * The `keyId` URL is local to the resource server,
  * The `keyId` URL is a [did:key](https://w3c-ccg.github.io/did-method-key/) URL. This is a URL that contains in its name all the data of the public key.
@@ -118,7 +118,7 @@ Starting from one resource, such as TimBL's WebID, a client should be able to fo
 ### The KeyId URL
 
 In order for it to be clear that the `keyId` is to be interpreted as a URL, the `keyId` field MUST enclose the URL with `'<'` and `'>'` characters.
-To take an example from [§A.3.2.1](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01#appendix-A.3.2) of the `HTTP-Sig` rfc this would allow the following use of relative URLs referring to a resource on the requested server
+To take an example from [§A.3.2.1](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01#appendix-A.3.2) of the [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) rfc this would allow the following use of relative URLs referring to a resource on the requested server
 
 ```HTTP
 Authorization: HttpSig
@@ -177,6 +177,8 @@ If we were to use [the cert ontology](https://www.w3.org/ns/auth/cert#) (as used
 (Other ontologies that could be used:
   * [The Security Vocabulary](https://web-payments.org/vocabs/security)
   * Any other?)
+
+
 ### The Access Control Rules
 
 In order to understand a little bit better how the client can decide if it has the right key, we give a quick description of how Access Control Rules function.
