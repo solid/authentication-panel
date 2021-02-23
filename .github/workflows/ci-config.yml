@@ -3,12 +3,12 @@
 name: verify proposals
 on:
   push:
-    # only concerned with changes in the master branch
-    branches: [ master ]
+    # only concerned with changes in the main branch
+    branches: [ main ]
     # only invoke when a bikeshed document is updated
     # paths: [ '*.bs' ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
