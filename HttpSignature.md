@@ -1,6 +1,6 @@
 # HttpSig Authentication for SoLiD
 
-## Executive Summary
+## Summary
 
 HttpSig is a simple but very efficient authentication protocol extending [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) RFC by defining 
  * a `WWW-Authenticate: HttpSig` header the server can return with a 401 or 402 to the client
