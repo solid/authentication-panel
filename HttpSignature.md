@@ -100,6 +100,9 @@ This can be the case of cached `https` URL documents but also for `did:...` docu
 
 The advantage of `https` URL in particular to refer to keys, is that it allows the client to use HTTP Methods such as `POST` or `PUT` to create keys, as well as `PUT`, `PATCH` and `DELETE` to edit them, solving the problem of key revocation.
 
+Whichever method is chosen by the client to refer to the key, the Resource's Guard on verifiying the signatures, would be able to check its Web Access Control Rules associated with the resource, to find out if the agent with the given key is allowed access (see [§The Access Control Rules](HttpSignature.md#the-access-control-rules) below).
+
+
 ## Solid Use Case
 
 To explain why we may want keys that are not local to the resource server, we will make a small digression to explain the principal Solid use case.
@@ -153,7 +156,6 @@ On receiving such a signed header, the server would know that it can request the
 This would reduce to a minimum the reliance on the network.
 
 
-
 ### The KeyId Document
 
 The `keyId` is a  URL that refers to a key.
@@ -163,7 +165,7 @@ The URL without the hash refers to the `keyId` document,
 which can be dereferenced, so in the above case it would be
   `https://bob.example/keys/2019-09-02`
 
-For the [Solid](https://solid-project.org/) use cases, the KeyId document would contain a description of the public key in an RDF format.
+For the [Solid](https://solid-project.org/) use cases, the KeyId document would contain a description of the public key in an RDF format. (We use [Turtle](https://www.w3.org/TR/turtle/) here for readability. Another popular format is [Json-Ld](https://json-ld.org).)
 If we were to use [the cert ontology](https://www.w3.org/ns/auth/cert#) (as used by [WebID-TLS](https://dvcs.w3.org/hg/WebID/raw-file/tip/spec/tls-respec.html)) then this document would need to contain triples such as
 
 ```Turtle 
@@ -181,9 +183,8 @@ If we were to use [the cert ontology](https://www.w3.org/ns/auth/cert#) (as used
 
 ### The Access Control Rules
 
-In order to understand a little bit better how the client can decide if it has the right key, we give a quick description of how Access Control Rules function.
-
-The [Access Control Rules](https://solid.github.io/web-access-control-spec/) linked to by a resource, can specify an agent by describing their relation to a public key.
+In order to understand how the client can decide if it has the right key, and how the server can find out which keys are acceptable, we illustrate this with a few examples using [Solid Web Access Control](https://solid.github.io/web-access-control-spec/) functions. 
+In the simplest case, a Web Access Control rule document linked to from the `Link:` header of the resource the client received a `401` from, can specify an agent by describing their relation to a public key.
 
 ```Turtle           
 @prefix  acl:  <http://www.w3.org/ns/auth/acl#>.
@@ -223,8 +224,7 @@ The agent Group document located at `https://alice.example.com/work-groups` can 
                      [ cert:key <https://candice.example/clefs/doc1#clef3> ].
 ```
 
-The Group resource can itself be access controlled to be only visible to members of the Group. 
-Of course this requires adding members to the group to have as effect the sending of a notifications to the new member.
+The Group resource can itself be access controlled to be only visible to members of the Group.
 
 ## Extending the Protocol with Credentials
 
@@ -345,7 +345,7 @@ In this case the WebID could link to the hash of the key, or some other proof th
 ### Credentials
 
 Resources can describe in the linked-to `accessControl` document a class of agents, specified by attribute, who may access the resource in a given mode.
-For example ISO could publish a description at `https://iso.org/ont/People` describing the set of people over 21.
+For example ISO could publish an [OWL](https://www.w3.org/TR/owl2-overview/) document at `https://iso.org/ont/People` describing the set of people over 21, using an example from the [OWL2-Primer](https://www.w3.org/TR/2012/REC-owl2-primer-20121211/#a_DatatypeRestriction).
 
 ```Turtle
 <#Over21> owl:equivalentClass [  a owl:Restriction;
@@ -353,7 +353,7 @@ For example ISO could publish a description at `https://iso.org/ont/People` desc
       owl:someValuesFrom   
           [ rdf:type   rdfs:Datatype ;
             owl:onDatatype       xsd:integer ;
-            owl:withRestrictions (  [ xsd:minExclusive     21 ]   [ xsd:maxInclusive    150 ] )
+            owl:withRestrictions (  [ xsd:minExclusive  21 ] )
           ]
        ] . 
 ```
