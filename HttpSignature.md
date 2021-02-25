@@ -372,7 +372,7 @@ This would allow resources to be protected with a rule such as
 After receiving the response (2) in the above sequence diagram, a client can search for the relevant [Verifiable Credential](https://www.w3.org/TR/vc-data-model/) in its [Universal Wallet](https://w3c-ccg.github.io/universal-wallet-interop-spec/) (containing perhaps a Drivers License, Birth certificate, and MI7 007 license to kill), order these in a privacy lattice, and choose the one most appropriate for the task at hand.
 The URL for that Credential can then be sent in the header (3).
 
-Here is an example that would work over an HTTP/2 connection enabled with a P2P extension. The client tells the server to find the certificate in its local store `/certs/YearOfBrith`. The server could then resolve that relative URL to `<did:key:z6MkiTBz1ymuepAQ4HEHYSF1H8quG5GLVVQR3djdX3mDooWp/certs/YearOfBirth>` and check its cache if a valid cert had been presented before.
+Here is an example that would work over an HTTP/2 connection enabled with a P2P extension. The client tells the server to find the certificate in its local store `/certs/YearOfBrith`. The server could then resolve that relative URL to `<did:key:z6MkiTBz1ymuepAQ4HEHYSF1H8quG5GLVVQR3djdX3mDooWp/certs/YearOfBirth>` and check its cache for a valid cert. If none present it would need to request it from the client on the same P2P connection at `/certs/YearOfBirth/`.
 
 ```HTTP
 GET /comments/c1 HTTP/2
@@ -380,7 +380,7 @@ Authorization: HttpSig cred=">/certs/YearOfBirth<" .
 Signature-Input: sig1=(); keyId="did:key:z6MkiTBz1ymuepAQ4HEHYSF1H8quG5GLVVQR3djdX3mDooWp"; created=1402170695
 ```
 
-The verification process then needs to verify that the signature is correct, and that the credential identifies the user with the same key, and is signed by a legitimate Certificate Authority entitled to make Claims about age.
+The Server Guard then needs to verify that the signature is correct, that the credential identifies the user with the same key, and that it is signed by a legitimate Certificate Authority entitled to make Claims about age.
 
 How to determine which Certificate Authority are legitimate for which claims, is outside the scope of this specification. 
 This is known in the Self-Sovereign Identity space as a Governance Framework, and will potentially require a [Web of Nations](https://co-operating.systems/2020/06/01/WoN.pdf).
