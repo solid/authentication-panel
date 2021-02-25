@@ -100,7 +100,7 @@ This can be the case of cached `https` URL documents but also for `did:...` docu
 
 The advantage of `https` URL in particular to refer to keys, is that it allows the client to use HTTP Methods such as `POST` or `PUT` to create keys, as well as `PUT`, `PATCH` and `DELETE` to edit them, solving the problem of key revocation.
 
-Whichever method is chosen by the client to refer to the key, the Resource's Guard on verifiying the signatures, would be able to check its Web Access Control Rules associated with the resource, to find out if the agent with the given key is allowed access (see [§The Access Control Rules](HttpSignature.md#the-access-control-rules) below).
+Whichever method is chosen by the client to refer to the key, the Resource's Guard, upon verifying the signatures, would be able to check its Web Access Control Rules associated with the resource, to find out if the agent with the given key is allowed access (see [The Access Control Rules](#the-access-control-rules) below).
 
 
 ## Solid Use Case
