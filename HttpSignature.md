@@ -165,7 +165,7 @@ The URL without the hash refers to the `keyId` document,
 which can be dereferenced, so in the above case it would be
   `https://bob.example/keys/2019-09-02`
 
-For the [Solid](https://solid-project.org/) use cases, the KeyId document would contain a description of the public key in an RDF format. (We use [Turtle](https://www.w3.org/TR/turtle/) here for readability. Another popular format is [Json-Ld](https://json-ld.org).)
+For the [Solid](https://solid-project.org/) use cases, the KeyId document would contain a description of the public key in an RDF format. (We use [Turtle](https://www.w3.org/TR/turtle/) here for readability. Another popular format is [JSON-LD](https://json-ld.org).)
 If we were to use [the cert ontology](https://www.w3.org/ns/auth/cert#) (as used by [WebID-TLS](https://dvcs.w3.org/hg/WebID/raw-file/tip/spec/tls-respec.html)) then this document would need to contain triples such as
 
 ```Turtle 
