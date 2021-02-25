@@ -98,7 +98,7 @@ This may not necessarily lead to a new network connection being opened to the ou
 This can be the case of cached `https` URL documents but also for `did:...` documents stored on some form of blockchain which the server has access to offline.
  * The `keyId` is a relative URL on the client, which the server can GET using the P2P extension to HTTP (more on that below).
 
-The advantage of `https` URL in particular to refer to keys, is that it allows the client to use HTTP Methods such as `POST` or `PUT` to create keys, as well as `PUT`, `PATCH` and `DELETE` to edit them, solving the problem of key revocation.
+One advantage of `https` URLs in particular to refer to keys, is that it allows the client to use HTTP Methods such as `POST` or `PUT` to create keys, as well as `PUT`, `PATCH` and `DELETE` to edit them, solving the problem of key revocation.
 
 Whichever method is chosen by the client to refer to the key, the Resource's Guard, upon verifying the signatures, would be able to check its Web Access Control Rules associated with the resource, to find out if the agent with the given key is allowed access (see [The Access Control Rules](#the-access-control-rules) below).
 
