@@ -183,7 +183,7 @@ If we were to use [the cert ontology](https://www.w3.org/ns/auth/cert#) (as used
 
 ### The Access Control Rules
 
-In order to understand how the client can decide if it has the right key, and how the server can find out which keys are acceptable, we illustrate this with a few examples using [Solid Web Access Control](https://solid.github.io/web-access-control-spec/) functions. 
+In order to understand how the client can decide if it has the right key, and how the server can find out which keys are acceptable, we illustrate this with a few examples using [Solid Web Access Control](https://solid.github.io/web-access-control-spec/). 
 In the simplest case, a Web Access Control rule document linked to from the `Link:` header of the resource the client received a `401` from, can specify an agent by describing their relation to a public key.
 
 ```Turtle           
@@ -196,7 +196,7 @@ In the simplest case, a Web Access Control rule document linked to from the `Lin
     acl:mode      acl:Read,
                   acl:Write;
     acl:agent   [ cert:key <https://bob.example/keys/2019-09-02#k1> ],
-                [ cert:key <https://candice.example/clefs/doc1#clef3> ]
+                [ cert:key <https://candice.example/clefs/doc1#clef3> ] .
 ```            
 
 The keys can also be relative to the server of course (or `DID`s). 
