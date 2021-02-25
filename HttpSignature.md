@@ -183,8 +183,9 @@ If we were to use [the cert ontology](https://www.w3.org/ns/auth/cert#) (as used
 
 ### The Access Control Rules
 
-In order to understand how the client can decide if it has the right key, and how the server can find out which keys are acceptable, we illustrate this with a few examples using [Solid Web Access Control](https://solid.github.io/web-access-control-spec/). 
-In the simplest case, a Web Access Control rule document linked to from the `Link:` header of the resource the client received a `401` from, can specify an agent by describing their relation to a public key.
+How can the client know which key to present? We illustrate this with a few examples building on [Solid Web Access Control](https://solid.github.io/web-access-control-spec/). 
+
+In the simplest case, a Web Access Control rule document linked to from the `Link:` header of the resource the client received a `401` from, can specify a set of agents by describing their relation to a public key.
 
 ```Turtle           
 @prefix  acl:  <http://www.w3.org/ns/auth/acl#>.
@@ -195,11 +196,10 @@ In the simplest case, a Web Access Control rule document linked to from the `Lin
     acl:accessTo  <https://alice.example/docs/shared-file1>;
     acl:mode      acl:Read,
                   acl:Write;
-    acl:agent   [ cert:key <https://bob.example/keys/2019-09-02#k1> ],
-                [ cert:key <https://candice.example/clefs/doc1#clef3> ] .
+    acl:agent   [ cert:key </2019-09-02#k1> ],
+                <did:key:z6MkiTBz1ymuepAQ4HEHYSF1H8quG5GLVVQR3djdX3mDooWp>,
+		[ cert:key <https://iama.star/love/me/key#i> ] .
 ```            
-
-The keys can also be relative to the server of course (or `DID`s). 
 
 Instead of listing agents individually in the ACL, they can 
 be listed as belonging to a group
@@ -220,11 +220,13 @@ The agent Group document located at `https://alice.example.com/work-groups` can 
 <#Accounting>
     a                vcard:Group;
     # Accounting group members:
-    vcard:hasMember  [ cert:key <https://bob.example/keys/2019-09-02#k1> ],
-                     [ cert:key <https://candice.example/clefs/doc1#clef3> ].
+    vcard:hasMember  [ cert:key </keys/2019-09-02#k1> ],
+		     [ cert:key <https://iama.star/love/me/key#i> ],
+                     <did:key:z6MkiTBz1ymuepAQ4HEHYSF1H8quG5GLVVQR3djdX3mDooWp> .
 ```
 
 The Group resource can itself be access controlled to be only visible to members of the Group.
+
 
 ## Extending the Protocol with Credentials
 
@@ -369,7 +371,16 @@ This would allow resources to be protected with a rule such as
 
 After receiving the response (2) in the above sequence diagram, a client can search for the relevant [Verifiable Credential](https://www.w3.org/TR/vc-data-model/) in its [Universal Wallet](https://w3c-ccg.github.io/universal-wallet-interop-spec/) (containing perhaps a Drivers License, Birth certificate, and MI7 007 license to kill), order these in a privacy lattice, and choose the one most appropriate for the task at hand.
 The URL for that Credential can then be sent in the header (3).
-The verification process then needs to verify that the signature is correct, and that the credential identifies the user with the same key, and is signed by a legitimate Certificate Authority.
+
+Here is an example that would work over an HTTP/2 connection enabled with a P2P extension. The client tells the server to find the certificate in its local store `/certs/YearOfBrith`. The server could then resolve that relative URL to `<did:key:z6MkiTBz1ymuepAQ4HEHYSF1H8quG5GLVVQR3djdX3mDooWp/certs/YearOfBirth>` and check its cache if a valid cert had been presented before.
+
+```HTTP
+GET /comments/c1 HTTP/2
+Authorization: HttpSig cred=">/certs/YearOfBirth<" .
+Signature-Input: sig1=(); keyId="did:key:z6MkiTBz1ymuepAQ4HEHYSF1H8quG5GLVVQR3djdX3mDooWp"; created=1402170695
+```
+
+The verification process then needs to verify that the signature is correct, and that the credential identifies the user with the same key, and is signed by a legitimate Certificate Authority entitled to make Claims about age.
 
 How to determine which Certificate Authority are legitimate for which claims, is outside the scope of this specification. 
 This is known in the Self-Sovereign Identity space as a Governance Framework, and will potentially require a [Web of Nations](https://co-operating.systems/2020/06/01/WoN.pdf).
