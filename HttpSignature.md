@@ -345,7 +345,7 @@ In this case the WebID could link to the hash of the key, or some other proof th
 ### Credentials
 
 Resources can describe in the linked-to `accessControl` document a class of agents, specified by attribute, who may access the resource in a given mode.
-For example ISO could publish an [OWL](https://www.w3.org/TR/owl2-overview/) document at `https://iso.org/ont/People` describing the set of people over 21, using an example from the [OWL2-Primer](https://www.w3.org/TR/2012/REC-owl2-primer-20121211/#a_DatatypeRestriction).
+For example, ISO could publish an [OWL](https://www.w3.org/TR/owl2-overview/) document at `https://iso.org/ont/People`, describing the set of people over 21, using an example from the [OWL2-Primer](https://www.w3.org/TR/2012/REC-owl2-primer-20121211/#a_DatatypeRestriction).
 
 ```Turtle
 <#Over21> owl:equivalentClass [  a owl:Restriction;
