@@ -372,7 +372,7 @@ This would allow resources to be protected with a rule such as
 After receiving the response (2) in the above sequence diagram, a client can search for the relevant [Verifiable Credential](https://www.w3.org/TR/vc-data-model/) in its [Universal Wallet](https://w3c-ccg.github.io/universal-wallet-interop-spec/) (containing perhaps a Drivers License, Birth certificate, and MI7 007 license to kill), order these in a privacy lattice, and choose the one most appropriate for the task at hand.
 The URL for that Credential can then be sent in the header (3).
 
-Here is an example that would work over an HTTP/2 connection enabled with a P2P extension. The client tells the server to find the certificate in its local store at `/certs/YearOfBirth`. The server could then resolve that relative URL to `<did:key:z6MkiTBz1ymuepAQ4HEHYSF1H8quG5GLVVQR3djdX3mDooWp/certs/YearOfBirth>` and check its cache for a valid cert. If none present it would need to request it from the client on the same P2P connection at `/certs/YearOfBirth/`.
+Here is an example that would work over an HTTP/2 connection enabled with a P2P extension. The client tells the server to find the certificate in its local store at `/certs/YearOfBirth`. The server could then resolve that relative URL to `<did:key:z6MkiTBz1ymuepAQ4HEHYSF1H8quG5GLVVQR3djdX3mDooWp/certs/YearOfBirth>` and check its cache for a valid cert. If none is present, it would need to request one from the client on the same P2P connection at `/certs/YearOfBirth/`.
 
 ```HTTP
 GET /comments/c1 HTTP/2
