@@ -66,7 +66,7 @@ WWW-Authenticate: HttpSig
 Link: </comments/.acl>; rel="acl"
 ```
 
-It should also add a `Link:` relation to an Access-Control resource which describes which resources might be accessible. 
+When a server wants to specify which keys a client can use to access resource, the server MUST include the HTTP `Link` header with a `rel` value of `acl`.
 This is described in [Web Access Control Spec](https://github.com/solid/web-access-control-spec/).
 (Without such a Link the client would only be able to guess what key to send.)
 Note: With [HTTP/2 server Push](https://tools.ietf.org/html/rfc7540#section-8.2), the server could immediately push the content of the linked-to Access Control document to the client, assuming reasonably that the client would have connected with the right key had it known the rules. 
