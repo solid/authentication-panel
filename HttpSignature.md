@@ -3,10 +3,10 @@
 ## Summary
 
 HttpSig is a simple but very efficient authentication protocol extending [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) RFC by defining &mdash;
- * a `WWW-Authenticate: HttpSig` header the server can return with a 401 or 402 to the client
- * a `Authorization: HttpSig` method the client can use in response with two optional attributes `webid` and `cert` both taking `https` or `DID` URLs.
- * a convention for how to encode URLs in the `keyId` attribute of [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01)'s `Signature-Input` header when used with the `WWW-Authenticate: HttpSig` header
- * the ability to use absolute or relative URLs in all places mentioned where URLs can be used
+ * a `WWW-Authenticate: HttpSig` header the server can return with a 401 or 402 to the client,
+ * a `Authorization: HttpSig` method the client can use in response with two optional attributes `webid` and `cert` the first one taking `https` URLs and the second taking `https` or `DID` URLs,
+ * a convention for how to encode URLs in the `keyId` attribute of the `Signature-Input` header defined in [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) when used with the `WWW-Authenticate: HttpSig` header,
+ * the ability to use absolute or relative URLs in both paces mentioned above, 
  * allow relative URLs passed by the client to the server to refer to resources on the client using a [P2P Extension to HTTP](https://tools.ietf.org/html/draft-benfield-http2-p2p-02) which would allow authentication over a single HTTP connection.
 
 ## Signing HTTP Messages
@@ -14,7 +14,7 @@ HttpSig is a simple but very efficient authentication protocol extending [Signin
 [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) is an IETF RFC Draft worked on by the HTTP WG, for signing HTTP messages.
 The work is based on [draft-cavage-http-signature-12](https://tools.ietf.org/html/draft-cavage-http-signatures-12), which evolved and gained adoption since 2013, being tested by a [large number of implementations](https://github.com/w3c-dvcg/http-signatures/issues/1), and this is set to grow by being taken up by the IETF.
 
-[Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) has the advantages of being very simple and being specified directly at the HTTP layer, bypassing the problem of client authentication at the TLS layer.
+[Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) has the advantages of being very simple and being specified directly at the HTTP layer, bypassing limitations of client authentication at the TLS layer, related to client certificate renegotiation, and the TLS layer occuring at lower layer of the communication stack.
 (Note: all communication here is assumed to run over TLS.) 
 
 The [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) protocol allows a client to authenticate by signing any of several HTTP headers with any one of its private keys.
@@ -70,7 +70,8 @@ When a server wants to specify which keys a client can use to access resource, t
 This is described in [Web Access Control Spec](https://github.com/solid/web-access-control-spec/).
 (Without such a Link the client would only be able to guess what key to send.)
 Note: With [HTTP/2 server Push](https://tools.ietf.org/html/rfc7540#section-8.2), the server could immediately push the content of the linked-to Access Control document to the client, assuming reasonably that the client would have connected with the right key had it known the rules. 
-It may also be possible to send the ACL rules directly in the body (Todo: research) of the response.
+It may also be possible to send the relevant ACL rules directly in the body of the response.
+(see discussion on [issue 29: Problem Details](https://github.com/solid/specification/issues/29) for example.)
 
 The Access Control rule could be as simple as stating that the user needs to be authenticated with a key,  but any number of more complicated use cases are possible, as described in the [Use Cases and Requirements Document](https://solid.github.io/authorization-panel/wac-ucr/).
 
@@ -176,9 +177,10 @@ If we were to use [the cert ontology](https://www.w3.org/ns/auth/cert#) (as used
      cert:exponent 65537 .
 ```
 
-(Other ontologies that could be used:
-  * [The Security Vocabulary](https://web-payments.org/vocabs/security)
-  * Any other?)
+Other ontologies that could be used:
+  * the Web Payments [Security Vocabulary](https://web-payments.org/vocabs/security),
+  * the [Web of Trust](http://xmlns.com/wot/0.1/) RDF Ontology,
+  * Any other?
 
 
 ### The Access Control Rules
