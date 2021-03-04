@@ -8,7 +8,7 @@
   <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
   <meta content="Bikeshed version b94c7e755, updated Fri Feb 19 16:28:59 2021 -0800" name="generator">
   <link href="https://solid.github.io/authentication-panel/solid-oidc/" rel="canonical">
-  <meta content="5b8564630b06a856aab37f345116a6a1e25f5493" name="document-revision">
+  <meta content="c147ff82c1072291a736df56111ecbb21e1206e8" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -334,7 +334,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Solid OIDC Primer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-03-01">1 March 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-03-04">4 March 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -490,8 +490,7 @@ determine her OP. To do so, a request should be made to Alice’s WebId:</p>
    <p>The OP URL is located at <code>:me -> solid:oidcIssuer</code></p>
    <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-3"><span class="content">3. Retrieves OP Configuration</span><a class="self-link" href="#authorization-code-pkce-flow-step-3"></a></h4>
    <p>Now that we have Alice’s OP’s URL, the RP must make a request to retrieve the OP’s
-configuration. This is always located at the OP’s hostname followed by <code>/.well-known
-openid-configuration</code></p>
+configuration. This is always located at the OP’s issuer URL followed by <code>/.well-known/openid-configuration</code></p>
 <pre class="language-http highlight">GET https://secureauth.example/.well-known/openid-configuration
 </pre>
    <p>The <a href="https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata">openid-configuration</a> describes everything the client will need to know to authorize with Alice’s specific OP.</p>
@@ -504,6 +503,7 @@ openid-configuration</code></p>
     <c- f>"registration_endpoint"</c-><c- p>:</c-> <c- u>"https://secureauth.example/register"</c-><c- p>,</c->
     <c- f>"end_session_endpoint"</c-><c- p>:</c-> <c- u>"https://secureauth.example/endsession"</c-><c- p>,</c->
     <c- f>"jwks_uri"</c-><c- p>:</c-> <c- u>"https://secureauth.example/jwks"</c-><c- p>,</c->
+    <c- f>"solid_oidc_supported"</c-><c- p>:</c-> <c- u>"https://solidproject.org/TR/solid-oidc"</c-><c- p>,</c->
     <c- f>"response_types_supported"</c-><c- p>:</c-> <c- p>[</c->
         <c- u>"code"</c->
     <c- p>],</c->
