@@ -149,8 +149,7 @@ The OP URL is located at `:me -> solid:oidcIssuer`
 <h4 id="authorization-code-pkce-flow-step-3" class="no-num">3. Retrieves OP Configuration</h4>
 
 Now that we have Alice's OP's URL, the RP must make a request to retrieve the OP's
-configuration. This is always located at the OP's hostname followed by `/.well-known
-openid-configuration`
+configuration. This is always located at the OP's issuer URL followed by `/.well-known/openid-configuration`
 
 ```http
 GET https://secureauth.example/.well-known/openid-configuration
@@ -169,6 +168,7 @@ Response Body:
     "registration_endpoint": "https://secureauth.example/register",
     "end_session_endpoint": "https://secureauth.example/endsession",
     "jwks_uri": "https://secureauth.example/jwks",
+    "solid_oidc_supported": "https://solidproject.org/TR/solid-oidc",
     "response_types_supported": [
         "code"
     ],
