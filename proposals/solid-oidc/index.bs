@@ -248,30 +248,29 @@ the IdP MUST return two tokens to the Client:
 
 ## DPoP-bound Access Token ## {#tokens-access}
 
-The DPoP-bound Access Token MUST be a valid JWT. See [[!RFC7519]].
+The DPoP-bound Access Token MUST be a valid JWT. See also: [[!RFC7519]].
 
-When requesting a DPoP-bound Access Token, the Client MUST send the IdP a DPoP proof JWT that is valid
-according to the [DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-5).
-The DPoP proof JWT is used to bind the access token to a public key. See [[!DPOP]].
+When requesting a DPoP-bound Access Token, the Client MUST send a DPoP proof JWT
+that is valid according to the [[DPOP#section-5]]. The DPoP proof JWT is used to
+bind the access token to a public key. See also: [[!DPOP]].
 
-The DPoP-bound Access Token payload MUST contain at least these claims:
-
-`webid` — REQUIRED. The WebID claim MUST be the user's WebID.
-
-`iss` — REQUIRED. The issuer claim MUST be a valid URL of the IdP instantiating this token.
-
-`aud` — REQUIRED. The audience claim MUST be the string `solid`. In the decentralized world of
-Solid OIDC, the principal of an access token is not a specific endpoint, but rather the Solid
-API; that is, any Solid server at any accessible address on the world wide web.
-
-`iat` — REQUIRED. The issued-at claim is the time at which the DPoP-bound Access Token was issued.
-
-`exp` — REQUIRED. The expiration claim is the time at which the DPoP-bound Access Token becomes invalid.
-
-`cnf` — REQUIRED. The confirmation claim is used to identify the DPoP Public Key bound to the Access
-Token. See [DPoP Public Key Confirmation](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-7).
-
-`client_id` - REQUIRED. The ClientID claim is used to identify the client. See also [section 5. Client Identifiers](#clientids).
+The DPoP-bound Access Token payload MUST contain these claims:
+ * `webid` — The WebID claim MUST be the user's WebID.
+ * `iss` — The issuer claim MUST be a valid URL of the IdP
+    instantiating this token.
+ * `aud` — The audience claim MUST either be the string `solid` or be
+    an array of values containing the string `solid`. In the decentralized world
+    of Solid OIDC, the principal of an access token is not a specific endpoint,
+    but rather the Solid API; that is, any Solid server at any accessible address
+    on the world wide web. See also: [[RFC7519#section-4.1.3]].
+ * `iat` — The issued-at claim is the time at which the DPoP-bound
+    Access Token was issued.
+ * `exp` — The expiration claim is the time at which the DPoP-bound
+    Access Token becomes invalid.
+ * `cnf` — The confirmation claim is used to identify the DPoP Public
+    Key bound to the Access Token. See also: [[DPOP#section-7]].
+ * `client_id` - The ClientID claim is used to identify the client. See also:
+    [section 5. Client Identifiers](#clientids).
 
 <div class="example">
     <p>An example DPoP-bound Access Token:
