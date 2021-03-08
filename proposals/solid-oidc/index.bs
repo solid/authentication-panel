@@ -258,8 +258,8 @@ The DPoP-bound Access Token payload MUST contain these claims:
  * `webid` — The WebID claim MUST be the user's WebID.
  * `iss` — The issuer claim MUST be a valid URL of the IdP
     instantiating this token.
- * `aud` — The audience claim MUST either be the string `solid` or be
-    an array of values containing the string `solid`. In the decentralized world
+ * `aud` — The audience claim MUST either be the string `solid` or be an array
+    of values, one of which is the string `solid`. In the decentralized world
     of Solid OIDC, the principal of an access token is not a specific endpoint,
     but rather the Solid API; that is, any Solid server at any accessible address
     on the world wide web. See also: [[RFC7519#section-4.1.3]].
