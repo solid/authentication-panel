@@ -22,7 +22,7 @@ to propose a project for the panel to undertake.
   * [Open Issues](https://github.com/solid/authentication-panel/issues?q=is%3Aissue+is%3Aopen+label%3ASolid-OIDC)
 * Primer - [Source](proposals/solid-oidc-primer/index.bs) - [Rendered](https://solid.github.io/authentication-panel/solid-oidc-primer/)
 
-### Http Signatures 
+### Http Signature 
 
 * Proposal Overview - [Text](proposals/HttpSignature.md)
 
