@@ -356,6 +356,15 @@ As this specification builds upon existing web standards, security consideration
 PKCE, and the DPoP specifications may also apply unless otherwise indicated. The following
 considerations should be reviewed by implementors and system/s architects of this specification.
 
+Some of the references with this specification point to documents with a
+Living Standard or Draft status, meaning their contents can still change over
+time. It is advised to monitor these documents, as such changes might have
+security implications.
+
+In addition to above considerations, implementors should consider the Security
+Considerations in context of the [Solid
+Protocol](https://solidproject.org/TR/).
+
 ## TLS Requirements ## {#security-tls}
 
 All TLS requirements outlined in [[BCP195](https://tools.ietf.org/html/bcp195)] apply to this
