@@ -309,7 +309,7 @@ jsonRegistration`. This is a JSON representation of an
 
 <h4 id="authorization-code-pkce-flow-step-8" class="no-num">8. Validate redirect url with WebID</h4>
 
-Check to be sure that the `redierct_uri` value provided in the auth request
+Check to be sure that the `redirect_uri` value provided in the auth request
 (`https://decentphotos.example/callback`) is listed in the `redirect_uris` array in the
 oidcRegistration. If it is not, the OP MUST reject the request with a `403`. In our case, it
 is, so we may continue.
