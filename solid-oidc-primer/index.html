@@ -8,7 +8,7 @@
   <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
   <meta content="Bikeshed version b94c7e755, updated Fri Feb 19 16:28:59 2021 -0800" name="generator">
   <link href="https://solid.github.io/authentication-panel/solid-oidc/" rel="canonical">
-  <meta content="f12e685697fca7e5c9d8b1c4bdc507db12022e38" name="document-revision">
+  <meta content="b952fa077e6db19aa787f3b1735ff0a3e7c080fa" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -334,7 +334,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Solid OIDC Primer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-03-15">15 March 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-03-18">18 March 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -629,7 +629,7 @@ fetch that app WebID to confirm its validity.</p>
    <p>Notice that the application WebID contains one required triple <code>?webid solid:oidcRegistration
 jsonRegistration</code>. This is a JSON representation of an <a href="https://tools.ietf.org/html/rfc7591#section-2">OIDC Client Registration</a>.</p>
    <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-8"><span class="content">8. Validate redirect url with WebID</span><a class="self-link" href="#authorization-code-pkce-flow-step-8"></a></h4>
-   <p>Check to be sure that the <code>redierct_uri</code> value provided in the auth request
+   <p>Check to be sure that the <code>redirect_uri</code> value provided in the auth request
 (<code>https://decentphotos.example/callback</code>) is listed in the <code>redirect_uris</code> array in the
 oidcRegistration. If it is not, the OP MUST reject the request with a <code>403</code>. In our case, it
 is, so we may continue.</p>
@@ -1197,9 +1197,9 @@ request was made. Using that information, the RS performs authorization.</p>
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
    <dt id="biblio-rfc6749">[RFC6749]
-   <dd>D. Hardt, Ed.. <a href="https://tools.ietf.org/html/rfc6749">The OAuth 2.0 Authorization Framework</a>. October 2012. Proposed Standard. URL: <a href="https://tools.ietf.org/html/rfc6749">https://tools.ietf.org/html/rfc6749</a>
+   <dd>D. Hardt, Ed.. <a href="https://datatracker.ietf.org/doc/html/rfc6749">The OAuth 2.0 Authorization Framework</a>. October 2012. Proposed Standard. URL: <a href="https://datatracker.ietf.org/doc/html/rfc6749">https://datatracker.ietf.org/doc/html/rfc6749</a>
    <dt id="biblio-rfc7636">[RFC7636]
-   <dd>N. Sakimura, Ed.; J. Bradley; N. Agarwal. <a href="https://tools.ietf.org/html/rfc7636">Proof Key for Code Exchange by OAuth Public Clients</a>. September 2015. Proposed Standard. URL: <a href="https://tools.ietf.org/html/rfc7636">https://tools.ietf.org/html/rfc7636</a>
+   <dd>N. Sakimura, Ed.; J. Bradley; N. Agarwal. <a href="https://datatracker.ietf.org/doc/html/rfc7636">Proof Key for Code Exchange by OAuth Public Clients</a>. September 2015. Proposed Standard. URL: <a href="https://datatracker.ietf.org/doc/html/rfc7636">https://datatracker.ietf.org/doc/html/rfc7636</a>
    <dt id="biblio-solid">[Solid]
    <dd><a href="https://solid.github.io/specification/">The Solid Ecosystem</a>. URL: <a href="https://solid.github.io/specification/">https://solid.github.io/specification/</a>
    <dt id="biblio-solidoidc">[SolidOIDC]
