@@ -218,7 +218,7 @@ The thing we care about here is the `authorization_endpoint` field. This will
 be the url we use when we're ready to send an authorization request to the OP.
 
 Note that we only support the `code` response type. The OIDC discovery
-specification recommends that Dynamic OpenID Providers MUST also support
+specification states that Dynamic OpenID Providers MUST also support
 `id_token` and `token id_token`. However, [implicit flows should not be used for
 security reasons](https://oauth.net/2/grant-types/implicit/). Therefore, we
 don't recommend enabling them. For the same reason, we do not support the
