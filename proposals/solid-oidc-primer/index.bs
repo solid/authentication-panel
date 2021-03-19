@@ -107,19 +107,20 @@ This page contains JavaScript that will help with the authentication process.
 
 <h4 id="authorization-code-pkce-flow-step-2" class="no-num">2. Alice selects her OP or WebID</h4>
 
-Before decentphotos can start displaying images, Alice needs to start the process of providing
-consent. To do so, she must either provide her WebID
+Before decentphotos can start displaying images, Alice needs to start the
+process of providing consent. To do so, she must either provide her WebID
 (`https://alice.coolpod.example/profile/card#me`) or the URL of her OP
-(`https://secureauth.example`) 
+(`https://secureauth.example`).
 
-While it is not the case with Alice, a user's Pod and OP can be hosted at the same domain. For
-example, Bob's Pod could be `bob.otherpod.example` with a WebID of
-`https://bob.otherpod.example/profile/card#me`, but his OP is at `https://solid.example`.
+While it is not the case with Alice, a user's Pod and OP can be hosted under the
+same domain. For example, Bob's Pod could be at `https://bob.solidpod.example.com`
+with a WebID of `https://bob.solidpod.example.com/profile/card#me` and an OP is
+at `https://solidpod.example.com/`.
 
 <h4 id="authorization-code-pkce-flow-step-2.1" class="no-num">2.1 Retrieve Profile (only needed if a WebID is provided)</h4>
 
-If Alice entered her WebID's URL rather than her OP's URL, a request should be made to
-determine her OP. To do so, a request should be made to Alice's WebId:
+If Alice entered her WebID's URL rather than her OP's URL, a request should be
+made to determine her OP. To do so, a request should be made to Alice's WebId:
 
 ```http
 GET https://alice.coolpod.example/profile/card#me
@@ -148,8 +149,9 @@ The OP URL is located at `:me -> solid:oidcIssuer`
 
 <h4 id="authorization-code-pkce-flow-step-3" class="no-num">3. Retrieves OP Configuration</h4>
 
-Now that we have Alice's OP's URL, the RP must make a request to retrieve the OP's
-configuration. This is always located at the OP's issuer URL followed by `/.well-known/openid-configuration`
+Now that we have Alice's OP's URL, the RP must make a request to retrieve the
+OP's configuration. This is always located at the OP's issuer URL followed by
+`/.well-known/openid-configuration`.
 
 ```http
 GET https://secureauth.example/.well-known/openid-configuration
@@ -212,22 +214,24 @@ Response Body:
 }
 ```
 
-The thing we care about here is the `authorization_endpoint` field. This will be the url we use
-when we're ready to send an authorization request to the OP.
+The thing we care about here is the `authorization_endpoint` field. This will
+be the url we use when we're ready to send an authorization request to the OP.
 
-Note that we only support the `code` response type. The OIDC discovery specification [recommends
-that Dynamic OpenID Providers MUST also support `id_token` and `token id_token`. However, [implicit
-flows should not be used for security reasons](https://oauth.net/2/grant-types/implicit/). Therefore,
-we don't recommend enabling them. For the same reason, we do not support the `implicit` grand type.
+Note that we only support the `code` response type. The OIDC discovery
+specification recommends that Dynamic OpenID Providers MUST also support
+`id_token` and `token id_token`. However, [implicit flows should not be used for
+security reasons](https://oauth.net/2/grant-types/implicit/). Therefore, we
+don't recommend enabling them. For the same reason, we do not support the
+`implicit` grant type.
 
 <h4 id="authorization-code-pkce-flow-step-4" class="no-num">4. Generates PKCE code challenge and code verifier</h4>
 
-To follow the [PKCE code flow](https://oauth.net/2/pkce/) we need to generate a code challenge
-and code verifier as instructed in the
-[Proof Key for Code Exchange spec](https://tools.ietf.org/html/rfc7636#section-4.1).
+To follow the [PKCE code flow](https://oauth.net/2/pkce/) we need to generate a
+code challenge and code verifier as instructed in the [Proof Key for Code
+Exchange spec](https://tools.ietf.org/html/rfc7636#section-4.1).
 
-We start by generating a code verifier. The can be done by creating a cryptographically random
-string. Let's say ours looks like this: `"JXPOuToEB7"`.
+We start by generating a code verifier. The can be done by creating a
+cryptographically random string. Let's say ours looks like this: `"JXPOuToEB7"`.
 
 Now using the code verifier, we construct a code challenge. This can be made by transforming
 the code verifier with Sha 256: `BASE64URL-ENCODE(SHA256(ASCII(code_verifier)))`. Here's our
@@ -261,7 +265,7 @@ That URL might look a little complex, but it's essentially a request to
     The url that the OP will redirect to once the user has logged in (`https://decentphotos.example/callback`).
 - `scope=openid%20profile%20offline_access`: a list of [OIDC scopes](https://auth0.com/docs/scopes/current/oidc-scopes) 
     (attributes of the RS to which this token should have access) separated by spaces (%20). 
-    - `open_id` is a scope that is needed to verify Alice's identity.
+    - `openid` is a scope that is needed to verify Alice's identity.
     - `profile` is required by the Solid OIDC specification to denote a WebID login.
     - `offline_access`: Is required to get a refresh token.
 - `client_id=https%3A%2F%2Fdecentphotos.example%2Fwebid%23this`: Usually the client id of a Solid 
