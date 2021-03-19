@@ -119,7 +119,7 @@ an OP at `https://solidpod.example.com/`, and a WebID of
 
 <h4 id="authorization-code-pkce-flow-step-2.1" class="no-num">2.1 Retrieve Profile (only needed if a WebID is provided)</h4>
 
-If Alice entered her WebID's URL rather than her OP's URL, a request should be
+If Alice enters her WebID's URL rather than her OP's URL, a request should be
 made to determine her OP. To do so, a request should be made to Alice's WebId:
 
 ```http
