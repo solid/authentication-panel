@@ -112,10 +112,10 @@ process of providing consent. To do so, she must either provide her WebID
 (`https://alice.coolpod.example/profile/card#me`) or the URL of her OP
 (`https://secureauth.example`).
 
-While it is not the case with Alice, a user's Pod and OP can be hosted under the
-same domain. For example, Bob's Pod could be at `https://bob.solidpod.example.com`
-with a WebID of `https://bob.solidpod.example.com/profile/card#me` and an OP is
-at `https://solidpod.example.com/`.
+Although it is not the case for Alice, a user's Pod and OP can be hosted under the
+same domain. For example, Bob could have a Pod at `https://bob.solidpod.example.com`,
+an OP at `https://solidpod.example.com/`, and a WebID of
+`https://bob.solidpod.example.com/profile/card#me`.
 
 <h4 id="authorization-code-pkce-flow-step-2.1" class="no-num">2.1 Retrieve Profile (only needed if a WebID is provided)</h4>
 
