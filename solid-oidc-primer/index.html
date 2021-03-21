@@ -8,7 +8,7 @@
   <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
   <meta content="Bikeshed version b94c7e755, updated Fri Feb 19 16:28:59 2021 -0800" name="generator">
   <link href="https://solid.github.io/authentication-panel/solid-oidc/" rel="canonical">
-  <meta content="b952fa077e6db19aa787f3b1735ff0a3e7c080fa" name="document-revision">
+  <meta content="1992a680661f8d87c090a13ebf4e1818949ee9ee" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -334,7 +334,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Solid OIDC Primer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-03-18">18 March 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-03-21">21 March 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -460,15 +460,16 @@ described here in the Solid OIDC context.</p>
 She navigates to <code>https://decentphotos.example</code> via her web browser which returns an HTML page.
 This page contains JavaScript that will help with the authentication process.</p>
    <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-2"><span class="content">2. Alice selects her OP or WebID</span><a class="self-link" href="#authorization-code-pkce-flow-step-2"></a></h4>
-   <p>Before decentphotos can start displaying images, Alice needs to start the process of providing
-consent. To do so, she must either provide her WebID
+   <p>Before decentphotos can start displaying images, Alice needs to start the
+process of providing consent. To do so, she must either provide her WebID
 (<code>https://alice.coolpod.example/profile/card#me</code>) or the URL of her OP
-(<code>https://secureauth.example</code>)</p>
-   <p>While it is not the case with Alice, a user’s Pod and OP can be hosted at the same domain. For
-example, Bob’s Pod could be <code>bob.otherpod.example</code> with a WebID of <code>https://bob.otherpod.example/profile/card#me</code>, but his OP is at <code>https://solid.example</code>.</p>
+(<code>https://secureauth.example</code>).</p>
+   <p>Although it is not the case for Alice, a user’s Pod and OP can be hosted under the
+same domain. For example, Bob could have a Pod at <code>https://bob.solidpod.example.com</code>,
+an OP at <code>https://solidpod.example.com/</code>, and a WebID of <code>https://bob.solidpod.example.com/profile/card#me</code>.</p>
    <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-2.1"><span class="content">2.1 Retrieve Profile (only needed if a WebID is provided)</span><a class="self-link" href="#authorization-code-pkce-flow-step-2.1"></a></h4>
-   <p>If Alice entered her WebID’s URL rather than her OP’s URL, a request should be made to
-determine her OP. To do so, a request should be made to Alice’s WebId:</p>
+   <p>If Alice enters her WebID’s URL rather than her OP’s URL, a request should be
+made to determine her OP. To do so, a request should be made to Alice’s WebId:</p>
 <pre class="language-http highlight">GET https://alice.coolpod.example/profile/card#me
 </pre>
    <p>It will return a body similar to this:</p>
@@ -489,8 +490,8 @@ determine her OP. To do so, a request should be made to Alice’s WebId:</p>
 </pre>
    <p>The OP URL is located at <code>:me -> solid:oidcIssuer</code></p>
    <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-3"><span class="content">3. Retrieves OP Configuration</span><a class="self-link" href="#authorization-code-pkce-flow-step-3"></a></h4>
-   <p>Now that we have Alice’s OP’s URL, the RP must make a request to retrieve the OP’s
-configuration. This is always located at the OP’s issuer URL followed by <code>/.well-known/openid-configuration</code></p>
+   <p>Now that we have Alice’s OP’s URL, the RP must make a request to retrieve the
+OP’s configuration. This is always located at the OP’s issuer URL followed by <code>/.well-known/openid-configuration</code>.</p>
 <pre class="language-http highlight">GET https://secureauth.example/.well-known/openid-configuration
 </pre>
    <p>The <a href="https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata">openid-configuration</a> describes everything the client will need to know to authorize with Alice’s specific OP.</p>
@@ -546,17 +547,18 @@ configuration. This is always located at the OP’s issuer URL followed by <code
     <c- f>"require_request_uri_registration"</c-><c- p>:</c-> <c- kc>false</c->
 <c- p>}</c->
 </pre>
-   <p>The thing we care about here is the <code>authorization_endpoint</code> field. This will be the url we use
-when we’re ready to send an authorization request to the OP.</p>
-   <p>Note that we only support the <code>code</code> response type. The OIDC discovery specification [recommends
-that Dynamic OpenID Providers MUST also support <code>id_token</code> and <code>token id_token</code>. However, <a href="https://oauth.net/2/grant-types/implicit/">implicit
-flows should not be used for security reasons</a>. Therefore,
-we don’t recommend enabling them. For the same reason, we do not support the <code>implicit</code> grand type.</p>
+   <p>The thing we care about here is the <code>authorization_endpoint</code> field. This will
+be the url we use when we’re ready to send an authorization request to the OP.</p>
+   <p>Note that we only support the <code>code</code> response type. The OIDC discovery
+specification states that Dynamic OpenID Providers MUST also support <code>id_token</code> and <code>token id_token</code>. However, <a href="https://oauth.net/2/grant-types/implicit/">implicit flows should not be used for
+security reasons</a>. Therefore, we
+don’t recommend enabling them. For the same reason, we do not support the <code>implicit</code> grant type.</p>
    <h4 class="no-num heading settled" id="authorization-code-pkce-flow-step-4"><span class="content">4. Generates PKCE code challenge and code verifier</span><a class="self-link" href="#authorization-code-pkce-flow-step-4"></a></h4>
-   <p>To follow the <a href="https://oauth.net/2/pkce/">PKCE code flow</a> we need to generate a code challenge
-and code verifier as instructed in the <a href="https://tools.ietf.org/html/rfc7636#section-4.1">Proof Key for Code Exchange spec</a>.</p>
-   <p>We start by generating a code verifier. The can be done by creating a cryptographically random
-string. Let’s say ours looks like this: <code>"JXPOuToEB7"</code>.</p>
+   <p>To follow the <a href="https://oauth.net/2/pkce/">PKCE code flow</a> we need to generate a
+code challenge and code verifier as instructed in the <a href="https://tools.ietf.org/html/rfc7636#section-4.1">Proof Key for Code
+Exchange spec</a>.</p>
+   <p>We start by generating a code verifier. The can be done by creating a
+cryptographically random string. Let’s say ours looks like this: <code>"JXPOuToEB7"</code>.</p>
    <p>Now using the code verifier, we construct a code challenge. This can be made by transforming
 the code verifier with Sha 256: <code>BASE64URL-ENCODE(SHA256(ASCII(code_verifier)))</code>. Here’s our
 code challenge: <code>"HSi9dwlvRpNHCDm-L8GOdM16qcb0tLHPZqQSvaWXTI0"</code></p>
@@ -585,7 +587,7 @@ The url that the OP will redirect to once the user has logged in (<code>https://
      <p><code>scope=openid%20profile%20offline_access</code>: a list of <a href="https://auth0.com/docs/scopes/current/oidc-scopes">OIDC scopes</a> (attributes of the RS to which this token should have access) separated by spaces (%20).</p>
      <ul>
       <li data-md>
-       <p><code>open_id</code> is a scope that is needed to verify Alice’s identity.</p>
+       <p><code>openid</code> is a scope that is needed to verify Alice’s identity.</p>
       <li data-md>
        <p><code>profile</code> is required by the Solid OIDC specification to denote a WebID login.</p>
       <li data-md>
