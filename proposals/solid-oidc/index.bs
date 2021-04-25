@@ -181,9 +181,9 @@ SHOULD use a WebID as their Client ID.
 
 ## WebID ## {#clientids-webid}
 
-The WebID itself MUST resolve to an RDF document that MUST include a single `solid:oidcRegistration`
-property. That property MUST be a JSON serialization of an OIDC client registration, per the definition
-of client registration metadata from [[!RFC7591]] section 2.
+The WebID itself MUST resolve to an RDF document. That document SHOULD be available as JSON-LD with an `@context`
+that includes `https://www.w3.org/ns/solid/oidc.jsonld` but which otherwise produces a JSON serialization of an OIDC
+client registration, per the definition of client registration metadata from [[!RFC7591]] section 2.
 
 Issue: [Related Issue](https://github.com/solid/authentication-panel/issues/75)
 Solid-OIDC client description in WebID document
@@ -196,27 +196,108 @@ list.
 
 NOTE: the method by which the IdP resolves the WebID to an RDF document, is defined in
 [WebID 1.0](https://www.w3.org/2005/Incubator/webid/spec/identity/#processing-the-webid-profile).
-This example uses [Turtle](https://www.w3.org/TR/turtle/):
+This example uses [JSON-LD  ](https://www.w3.org/TR/json-ld11/):
 
 <div class='example'>
     <p>https://app.example/webid#id
 
     <pre>
-        @prefix solid: <http://www.w3.org/ns/solid/terms#> .
+        {
+          "@context": "https://www.w3.org/ns/solid/oidc.jsonld",
 
-        <#id> solid:oidcRegistration """{
-            "client_id" : "https://app.example/webid#id",
-            "redirect_uris" : ["https://app.example/callback"],
-            "client_name" : "Solid Application Name",
-            "client_uri" : "https://app.example/",
-            "logo_uri" : "https://app.example/logo.png",
-            "tos_uri" : "https://app.example/tos.html",
-            "scope" : "openid profile offline_access",
-            "grant_types" : ["refresh_token","authorization_code"],
-            "response_types" : ["code"],
-            "default_max_age" : 60000,
-            "require_auth_time" : true
-            }""" .
+          "client_id": "https://app.example/webid#id",
+          "client_name": "Solid Application Name",
+          "redirect_uris": ["https://app.example/callback"],
+          "client_uri": "https://app.example/",
+          "logo_uri" : "https://app.example/logo.png",
+          "tos_uri" : "https://app.example/tos.html",
+          "scope" : "openid profile offline_access",
+          "grant_types" : ["refresh_token","authorization_code"],
+          "response_types" : ["code"],
+          "default_max_age" : 3600,
+          "require_auth_time" : true
+        }
+    </pre>
+</div>
+
+### JSON-LD context
+
+This specification defines a JSON-LD context for use with OIDC client identifiers. This context is
+available at `https://www.w3.org/ns/solid/oidc.jsonld`. Client identifier documents that reference
+this JSON-LD context MUST use the HTTPS scheme.
+
+NOTE: the `oidc` vocabulary that is part of this context uses the HTTP scheme.
+
+The JSON-LD context is defined as:
+
+<div class='example'>
+    <pre>
+        {
+          "@context": {
+            "oidc": "http://www.w3.org/ns/solid/oidc#",
+            "xsd": "http://www.w3.org/2001/XMLSchema#",
+            "client_id": {
+              "@id": "@id",
+              "@type": "@id"
+            },
+            "client_uri": {
+              "@id": "oidc:client_uri",
+              "@type": "@id"
+            },
+            "logo_uri": {
+              "@id": "oidc:logo_uri",
+              "@type": "@id"
+            },
+            "policy_uri": {
+              "@id": "oidc:policy_uri",
+              "@type": "@id"
+            },
+            "tos_uri": {
+              "@id": "oidc:tos_uri",
+              "@type": "@id"
+            },
+            "redirect_uris": {
+              "@id": "oidc:redirect_uris",
+              "@type": "@id",
+              "@container": [
+                "@id",
+                "@set"
+              ]
+            },
+            "require_auth_time": {
+              "@id": "oidc:require_auth_time",
+              "@type": "xsd:boolean"
+            },
+            "default_max_age": {
+              "@id": "oidc:default_max_age",
+              "@type": "xsd:integer"
+            },
+            "application_type": {
+              "@id": "oidc:application_type"
+            },
+            "client_name": {
+              "@id": "oidc:client_name"
+            },
+            "client_secret": {
+              "@id": "oidc:client_secret"
+            },
+            "contacts": {
+              "@id": "oidc:contacts"
+            },
+            "grant_types": {
+              "@id": "oidc:grant_types"
+            },
+            "response_types": {
+              "@id": "oidc:response_types"
+            },
+            "scope": {
+              "@id": "oidc:scope"
+            },
+            "token_endpoint_auth_method": {
+              "@id": "oidc:token_endpoint_auth_method"
+            }
+          }
+        }
     </pre>
 </div>
 
