@@ -143,7 +143,7 @@ or if the client preferred the [Turtle 1.1](https://www.w3.org/TR/turtle/) equiv
 ```Turtle
 @prefix security <https://w3id.org/security#> .
 
-</keys#hs>
+</keys/alice#>
      security:controller </people/alice#i> ;
      security:publicKeyJwk """{
                 "alg":"PS512",
@@ -154,8 +154,8 @@ or if the client preferred the [Turtle 1.1](https://www.w3.org/TR/turtle/) equiv
       }"""^^rdfs:JSON .
 ```
 
-Since the keyid URL is relative the server, it will not need to make a new network connection to the outside world.
-Indeed the following are situations where a new network connection won't be needed:
+Since the `keyid` URL is relative, the server will not need to make a new network connection to the outside world.
+Indeed, the following is a partial list of situations where a new network connection will not be needed:
  * The `keyId` URL is local to the resource server.
  * The `keyId` URL is a [did:key](https://w3c-ccg.github.io/did-method-key/) or did:jwt URL (see [issue 157](https://github.com/solid/authentication-panel/issues/157)). These are URIs that contains in their name all the data of the public key. Since the signing string always contains the `@signature-params` field, this data cannot be altered.
  * The `keyId` URL refers to an external resource, but the resource server has a fresh cached copy of it.
@@ -185,7 +185,7 @@ Starting from one resource, such as TimBL's WebID, a client should be able to fo
 ### The KeyId URL
 
 In order for it to be clear that the `keyId` is to be interpreted as a URL, the `keyId` field MUST enclose the URL with `'<'` and `'>'` characters.
-To take an example from [§A.3.2.1](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01#appendix-A.3.2) of the [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) rfc this would allow the following use of relative URLs referring to a resource on the requested server
+To take an example from [§A.3.2.1](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04#appendix-A.3.2) of the "Signing HTTP Messages" RFC, this would allow the following use of relative URLs referring to a resource on the requested server
 
 ```HTTP
 Authorization: HttpSig
