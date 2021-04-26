@@ -110,16 +110,16 @@ Signature: sig1=:FJPdb4jzc1lTd/B4UU1q2AOvT/FhSt57hkPWpndLAJoD5d7u01YVff+4WDp2OK\
     bS7mkseoEH5ZTN0tV1G0SiJ42OE8os1IaUQjYsEsmcgTZMs/HRX680w==:
 ```
 
-Notes that:
+Notes:
  * we have encoded the header using [RFC8792](https://tools.ietf.org/html/rfc8792) Single Slash Encoding to fit the longer lines on a page,
  * the public and private keys are the same as those named `test-key-rsa-pss` given in [Appendix B.1.2 of Message Signatures](https://www.ietf.org/archive/id/draft-ietf-httpbis-message-signatures-04.html#name-example-keys),
- * the HttpSig Authorization message requires the `keyid` to be a relative or absolute URI,
- * in this case the `keyId` is a relative URL, pointing therefore to a resource on Alice's own pod, which can be edited using methods described by [LDP](https://www.w3.org/TR/ldp/).
+ * the HttpSig Authorization message interprets any `keyid` to be a relative or absolute URI,
+ * in this case the `keyid` is a relative URL, pointing to a resource on Alice's own pod, which can be edited using methods described by [LDP](https://www.w3.org/TR/ldp/).
 
 
-The main protocol extension from [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) rfc is that requiring the `keyid` to be a URL, allows the resource server to know how to retrieve the `keyId document` in (4).
+The main protocol extension from [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) RFC is that of requiring the `keyid` to be a URL, allowing the resource server to know how to retrieve the `keyid` document in (4).
 
-In our example the POD `alice.name` would retrieve the resource `</keys/alice>` which could return the following [JSON-LD 1.1](https://json-ld.org/) document
+In our example the Resource Guard on the POD `alice.name` would retrieve the resource `</keys/alice>`, which returns the following [JSON-LD 1.1](https://json-ld.org/) document:
 
 ```JSON
 {
@@ -154,7 +154,9 @@ or if the client preferred the [Turtle 1.1](https://www.w3.org/TR/turtle/) equiv
       }"""^^rdfs:JSON .
 ```
 
-Since the `keyid` URL is relative, the server will not need to make a new network connection to the outside world.
+(See [issue 156: Ontology for `keyid` document](https://github.com/solid/authentication-panel/issues/156))
+
+Since the `keyid` URL, in our example, is relative, the server will not need to make a new network connection to the outside world.
 Indeed, the following is a partial list of situations where a new network connection will not be needed:
  * The `keyId` URL is local to the resource server.
  * The `keyId` URL is a [did:key](https://w3c-ccg.github.io/did-method-key/) or did:jwt URL (see [issue 157](https://github.com/solid/authentication-panel/issues/157)). These are URIs that contains in their name all the data of the public key. Since the signing string always contains the `@signature-params` field, this data cannot be altered.
