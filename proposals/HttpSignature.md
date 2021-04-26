@@ -2,104 +2,167 @@
 
 ## Summary
 
-HttpSig is a simple but very efficient authentication protocol extending [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) RFC by defining &mdash;
+HttpSig is a simple but very efficient authentication protocol extending [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) RFC by defining &mdash;
  * a `WWW-Authenticate: HttpSig` header the server can return with a 401 or 402 to the client,
  * a `Authorization: HttpSig` method the client can use in response with two optional attributes `webid` and `cert` the first one taking `https` URLs and the second taking `https` or `DID` URLs,
- * a convention for how to encode URLs in the `keyId` attribute of the `Signature-Input` header defined in [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) when used with the `WWW-Authenticate: HttpSig` header,
- * the ability to use absolute or relative URLs in both paces mentioned above, 
+ * a convention for how to encode URLs in the `keyId` attribute of the `Signature-Input` header defined in [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) when used with the `WWW-Authenticate: HttpSig` header,
+ * the ability to use absolute or relative URLs in both paces mentioned above,
  * allow relative URLs passed by the client to the server to refer to resources on the client using a [P2P Extension to HTTP](https://tools.ietf.org/html/draft-benfield-http2-p2p-02) which would allow authentication over a single HTTP connection.
 
 ## Signing HTTP Messages
 
-[Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) is an IETF RFC Draft worked on by the HTTP WG, for signing HTTP messages.
+[Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) is an IETF RFC Draft worked on by the HTTP WG, for signing HTTP messages.
 The work is based on [draft-cavage-http-signature-12](https://tools.ietf.org/html/draft-cavage-http-signatures-12), which evolved and gained adoption since 2013, being tested by a [large number of implementations](https://github.com/w3c-dvcg/http-signatures/issues/1), and this is set to grow by being taken up by the IETF.
 
-[Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) has the advantages of being very simple and being specified directly at the HTTP layer, bypassing limitations of client authentication at the TLS layer, related to client certificate renegotiation, and the TLS layer occuring at lower layer of the communication stack.
-(Note: all communication here is assumed to run over TLS.) 
+[Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) has the advantages of being very simple and being specified directly at the HTTP layer, bypassing limitations of client authentication at the TLS layer, related to client certificate renegotiation, and the TLS layer occuring at lower layer of the communication stack.
+(Note: all communication here is assumed to run over TLS.)
 
-The [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) protocol allows a client to authenticate by signing any of several HTTP headers with any one of its private keys.
+The [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) protocol allows a client to authenticate by signing any of several HTTP headers with any one of its private keys.
 In order for the server to verify this signature, it needs to know the matching public key.
 The information about the key must be transmitted by the client to the server, in the form of an opaque string known as a `keyId` (see [§2.1.1 keyId](https://tools.ietf.org/html/draft-cavage-http-signatures-11#section-2.1.1)).
 This string must enable the server to look up the key; how this look-up is done is not specified by the protocol.
 
 The `HttpSig` protocol extension described in this document, allows the `keyId` to be interpreted as a URL.
-The main use case is to allow the use of an `https` URL identifier ending with a fragment for the `keyId`, but it would also allow other URI schemes such as [DID](https://www.w3.org/TR/did-core/)s. 
+The main use case is to allow the use of an `https` URL identifier ending with a fragment for the `keyId`, but it would also allow other URI schemes such as [DID](https://www.w3.org/TR/did-core/)s.
 
-By allowing URLs to be used in the `keyId` field,  we make it possible for the server to discover the key by fetching the `keyId Document`, whose URL is given by the [resolved](https://tools.ietf.org/html/rfc3986#section-5) `keyId` URL without the fragment identifier (see [§3 of RFC 3986: Uniform Resource Identifier (URI): Generic Syntax](https://tools.ietf.org/html/rfc3986?#section-3)).  
+By allowing URLs to be used in the `keyId` field,  we make it possible for the server to discover the key by fetching the `keyId Document`, whose URL is given by the [resolved](https://tools.ietf.org/html/rfc3986#section-5) `keyId` URL without the fragment identifier (see [§3 of RFC 3986: Uniform Resource Identifier (URI): Generic Syntax](https://tools.ietf.org/html/rfc3986?#section-3)).
 
 ## Extending `Signing HTTP Messages` with URLs
 
-Here we consider the minimum extension of [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) with `keyId`s that are URLs.
+Here we consider the minimum extension of [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) with `keyId`s that are URLs.
 We then show how this ties into the larger Access Control Protocol used by Solid.
 
 ### The Sequence Diagram
 
-The minimal extension to [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) can be illustrated by the following Sequence Diagram:
+The minimal extension to [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) can be illustrated by the following Sequence Diagram:
 
 ```text
 Client                          KeyID                            Resource
 App                          Document                            Server
-|                                |                                   |  
-|-(1) request URL -------------------------------------------------->| 
+|                                |                                   |
+|-(1) request URL -------------------------------------------------->|
 |<============(2) 40x + WWW-Authenticate: HttpSig + (Link) to ACL ===|
 |                                |                                   |
 | (choose key)                   |                                   |
 |                                |                                   |
 |-(3)- sign headers+keyId------------------------------------------->|
 |                                |                       initial auth|
-|                                |                       verification| 
+|                                |                       verification|
 |                                |                                   |
-|                                |<-----------------(4) GET keyId----| 
+|                                |<-----------------(4) GET keyId----|
 |                                |-(5) return keyId doc------------->|
 |                                                       - verify sig |
 |                                                       - verify ACL |
 |                                                                    |
 |<---------------------------------------------(6) answer resource---|
-```                                                                   
-
-In (2) the Resource server responds to a request by sending a 401 or 402 response with the `WWW-Authenticate: HttpSig` header. The `WWW-Authenticate` header is specified in §[4.1 of HTTP/1.1](https://www.rfc-editor.org/rfc/rfc7235#section-4.1).  The `HttpSig` challenge method needs to be defined here (todo) and registered as specified in the [Authentication Scheme Registry](https://www.rfc-editor.org/rfc/rfc7235#section-5.1).
-A message from a server can look like this:
-
-```HTTP
-HTTP/1.1 401 Unauthorized
-WWW-Authenticate: HttpSig
-Link: </comments/.acl>; rel="acl"
 ```
 
-When a server wants to specify which keys a client can use to access resource, the server MUST include the HTTP `Link` header with a `rel` value of `acl`.
-This is described in [Web Access Control Spec](https://github.com/solid/web-access-control-spec/).
-(Without such a Link the client would only be able to guess what key to send.)
-Note: With [HTTP/2 server Push](https://tools.ietf.org/html/rfc7540#section-8.2), the server could immediately push the content of the linked-to Access Control document to the client, assuming reasonably that the client would have connected with the right key had it known the rules. 
-It may also be possible to send the relevant ACL rules directly in the body of the response.
-(see discussion on [issue 29: Problem Details](https://github.com/solid/specification/issues/29) for example.)
+In (2) the Resource server responds to a request by sending a 401 or 402 response with the `WWW-Authenticate: HttpSig` header. The `WWW-Authenticate` header is specified in §[4.1 of HTTP/1.1](https://www.rfc-editor.org/rfc/rfc7235#section-4.1).  The `HttpSig` challenge method needs to be defined here (todo) and registered as specified in the [Authentication Scheme Registry](https://www.rfc-editor.org/rfc/rfc7235#section-5.1).
 
-The Access Control rule could be as simple as stating that the user needs to be authenticated with a key,  but any number of more complicated use cases are possible, as described in the [Use Cases and Requirements Document](https://solid.github.io/authorization-panel/wac-ucr/).
-
-If the client can find a key that satisfies the Access Control Rules then it can use the private key to sign the headers in (3) as specified by [Signing HTTP Messages](https://w3c-ccg.github.io/did-method-key/) and pass a link to the key in the `keyId` field as a URL. 
-
-It can then make the original request again:
+We illustrate this with the following example. Alice makes a request to a resource `</comments/>` on her Personal Online Data Store (POD) at `<https://alice.name>`:
 
 ```HTTP
 GET /comments/ HTTP/1.1
-Authorization: HttpSig
-Signature-Input: sig1=(); keyId="</keys/test-key-a>"; created=1402170695
-Signature: sig1=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSzR9TYFV
-       vwUjeU6CTYUdbOByGMCee5q1eWWUOM8BIH04Si6VndEHjQVdHqshAtNJk2Quzs6WC
-       2DkV0vysOhBSvFZuLZvtCmXRQfYGTGhZqGwq/AAmFbt5WNLQtDrEe0ErveEKBfaz+
-       IJ35zhaj+dun71YZ82b/CRfO6fSSt8VXeJuvdqUuVPWqjgJD4n9mgZpZFGBaDdPiw
-       pfbVZHzcHrumFJeFHWXH64a+c5GN+TWlP8NPg2zFdEc/joMymBiRelq236WGm5VvV
-       9a22RW2/yLmaU/uwf9v40yGR/I1NRA==:
+Accept: text/turtle, application/ld+json;q=0.9, */*;q=0.8
 ```
 
-The main protocol difference from [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) rfc is the request by the resource server for the `keyId document` in (4) to get that key. 
-This may not necessarily lead to a new network connection being opened to the outside world in the following cases:
- * The `keyId` URL is local to the resource server,
- * The `keyId` URL is a [did:key](https://w3c-ccg.github.io/did-method-key/) URL. This is a URL that contains in its name all the data of the public key.
- * The `keyId` URL refers to an external resource, but the resource server has a fresh cached copy of it. 
+The response from the server in (2) is the following:
+
+```HTTP
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: HttpSig realm="/comments/"
+Host: alice.name
+Date: Thu, 01 Apr 2021 00:01:03 GMT
+Link: <http://www.w3.org/ns/ldp#BasicContainer>; rel=type
+Link: <http://www.w3.org/ns/ldp#Resource>; rel=type
+Link: </comments/.acl>; rel=acl
+```
+
+The `Link` header with a `rel` value of `acl` works as described in [Web Access Control Spec](https://github.com/solid/web-access-control-spec/), and allows clients connecting to a resource to know what credentials they need to present to gain access to the resource.  Without such a Link the client would only be able to guess what key to send. This could lead to a serious loss of privacy for the client, if it had to try each of its credentials on every resource (see [Minimial Credential Disclosure Use Case](https://solid.github.io/authorization-panel/authorization-ucr/#uc-minimalcredentials)). Either that, or it would lead to the client not accessing resources it had the right to access. Presenting the rules for access avoids clients having to choose between such unappealing extreemes.
+
+Note: With [HTTP/2 server Push](https://tools.ietf.org/html/rfc7540#section-8.2), the server could immediately push the content of the linked-to Access Control document to the client, assuming reasonably that the client would have connected with the right key had it known the rules.
+It may also be possible to send the relevant ACL rules directly in the body of the response (see discussion on [issue 167](https://github.com/solid/authentication-panel/issues/167)).
+
+The Access Control rule could be as simple as stating that the user needs to be authenticated with a key, but any number of more complicated use cases are possible, as described in the [Use Cases and Requirements Document](https://solid.github.io/authorization-panel/wac-ucr/).
+
+If the client can find a key that satisfies the Access Control Rules, then it can use the corresponding private key to sign the headers in (3) as specified by [Signing HTTP Messages](https://w3c-ccg.github.io/did-method-key/) and pass a link to the key in the `keyid` field as a URL.
+
+Assuming that Alice's client after parsing the Access Control Rules, found that `</keys/alice#>` satisfies the stated requirements. If allowed by Alice via policy or direct interaction, the client could create a signing string for the `@request-target` pseudo-header with that key. The generated signing string would be, after single slash encoding from RFC8792:
+
+```text
+"@request-target": get /comments/
+"@signature-params": ("@request-target");keyid="/keys/alice#";\
+    created=1617265800;expires=1617320700
+```
+
+After signing the above string with the private key of `</keys/alice#>`, and naming that signature `sig1`, the new HTTP request header would look as follows:
+
+```HTTP
+GET /comments/ HTTP/1.1
+Authorization: HttpSig key=sig1
+Accept: text/turtle, application/ld+json;q=0.9, */*;q=0.8
+Signature-Input: sig1=("@request-target");keyid="/keys/alice#";\
+    created=1617265800;expires=1617320700
+Signature: sig1=:FJPdb4jzc1lTd/B4UU1q2AOvT/FhSt57hkPWpndLAJoD5d7u01YVff+4WDp2OK\
+    h4L+SiZYpwEAotPCskZlUl/RCcM/MKgrqIYgbExXPV9uRBlLdw02rF9vAEHOvR7Z4iiVFQt0LsO\
+    HcnR7SQeS9cPynU8gnhB1IuXOxCbxI0xHUJKmX+LxrfKZYfzna+zS/43BWhV2lmB6laDjTVjnIH\
+    kTH8bFBRHMh+1+ae9ukvfWSvU70AvW5wnCLAjYOWmIcRExBUYhMQpt9/CjeOkcnw50lVmKigHzA\
+    bS7mkseoEH5ZTN0tV1G0SiJ42OE8os1IaUQjYsEsmcgTZMs/HRX680w==:
+```
+
+Notes that:
+ * we have encoded the header using [RFC8792](https://tools.ietf.org/html/rfc8792) Single Slash Encoding to fit the longer lines on a page,
+ * the public and private keys are the same as those named `test-key-rsa-pss` given in [Appendix B.1.2 of Message Signatures](https://www.ietf.org/archive/id/draft-ietf-httpbis-message-signatures-04.html#name-example-keys),
+ * the HttpSig Authorization message requires the `keyid` to be a relative or absolute URI,
+ * in this case the `keyId` is a relative URL, pointing therefore to a resource on Alice's own pod, which can be edited using methods described by [LDP](https://www.w3.org/TR/ldp/).
+
+
+The main protocol extension from [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) rfc is that requiring the `keyid` to be a URL, allows the resource server to know how to retrieve the `keyId document` in (4).
+
+In our example the POD `alice.name` would retrieve the resource `</keys/alice>` which could return the following [JSON-LD 1.1](https://json-ld.org/) document
+
+```JSON
+{
+"@context": [
+    "https://w3id.org/security/v1",
+    { "ex": "http://example.org/vocab#" }
+  ],
+  "id": "#",
+  "controller": "/people/alice#i",
+  "publicKeyJwk": { "kty":"RSA",
+  "e":"AQAB",
+  "n":"hAKYdtoeoy8zcAcR874L8cnZxKzAGwd7v36APp7Pv6Q2jdsPBRrwWEBnez6d0UDKDwGbc6nxfEXAy5mbhgajzrw3MOEt8uA5txSKobBpKDeBLOsdJKFqMGmXCQvEG7YemcxDTRPxAleIAgYYRjTSd_QBwVW9OwNFhekro3RtlinV0a75jfZgkne_YiktSvLG34lw2zqXBDTC5NHROUqGTlML4PlNZS5Ri2U4aCNx2rUPRcKIlE0PuKxI4T-HIaFpv8-rdV6eUgOrB2xeI1dSFFn_nnv5OoZJEIB-VmuKn3DCUcCZSFlQPSXSfBDiUGhwOw76WuSSsf1D4b_vLoJ10w"
+     "alg":"PS512",
+    "kid":"2021-04-01-laptop"
+  }
+}
+```
+
+or if the client preferred the [Turtle 1.1](https://www.w3.org/TR/turtle/) equivalent representation
+
+```Turtle
+@prefix security <https://w3id.org/security#> .
+
+</keys#hs>
+     security:controller </people/alice#i> ;
+     security:publicKeyJwk """{
+                "alg":"PS512",
+                "e":"AQAB",
+                "kid":"2021-04-01-laptop",
+                "kty":"RSA",
+                "n":hAKYdtoeoy8zcAcR874L8cnZxKzAGwd7v36APp7Pv6Q2jdsPBRrwWEBnez6d0UDKDwGbc6nxfEXAy5mbhgajzrw3MOEt8uA5txSKobBpKDeBLOsdJKFqMGmXCQvEG7YemcxDTRPxAleIAgYYRjTSd_QBwVW9OwNFhekro3RtlinV0a75jfZgkne_YiktSvLG34lw2zqXBDTC5NHROUqGTlML4PlNZS5Ri2U4aCNx2rUPRcKIlE0PuKxI4T-HIaFpv8-rdV6eUgOrB2xeI1dSFFn_nnv5OoZJEIB-VmuKn3DCUcCZSFlQPSXSfBDiUGhwOw76WuSSsf1D4b_vLoJ10w"
+      }"""^^rdfs:JSON .
+```
+
+Since the keyid URL is relative the server, it will not need to make a new network connection to the outside world.
+Indeed the following are situations where a new network connection won't be needed:
+ * The `keyId` URL is local to the resource server.
+ * The `keyId` URL is a [did:key](https://w3c-ccg.github.io/did-method-key/) or did:jwt URL (see [issue 157](https://github.com/solid/authentication-panel/issues/157)). These are URIs that contains in their name all the data of the public key. Since the signing string always contains the `@signature-params` field, this data cannot be altered.
+ * The `keyId` URL refers to an external resource, but the resource server has a fresh cached copy of it.
 This can be the case of cached `https` URL documents but also for `did:...` documents stored on some form of blockchain which the server has access to offline.
  * The `keyId` is a relative URL on the client, which the server can GET using the P2P extension to HTTP (more on that below).
 
-One advantage of `https` URLs in particular to refer to keys, is that it allows the client to use HTTP Methods such as `POST` or `PUT` to create keys, as well as `PUT`, `PATCH` and `DELETE` to edit them, solving the problem of key revocation.
+One advantage of using `https` URLs to refer to keys, is that they allow the client to use HTTP Methods such as `POST` or `PUT` to create keys, as well as `PUT`, `PATCH` and `DELETE` to edit them, helping address the problem of key revocation.
 
 Whichever method is chosen by the client to refer to the key, the Resource's Guard, upon verifying the signatures, would be able to check its Web Access Control Rules associated with the resource, to find out if the agent with the given key is allowed access (see [The Access Control Rules](#the-access-control-rules) below).
 
@@ -107,8 +170,8 @@ Whichever method is chosen by the client to refer to the key, the Resource's Gua
 ## Solid Use Case
 
 To explain why we may want keys that are not local to the resource server, we will make a small digression to explain the principal Solid use case.
-We start by noticing that Solid (Social Linked Data) clients are modeled on web browsers. 
-They are not tied to reading/writing data from one domain, but are able to start from any web server, and are able to follow links around the web. 
+We start by noticing that Solid (Social Linked Data) clients are modeled on web browsers.
+They are not tied to reading/writing data from one domain, but are able to start from any web server, and are able to follow links around the web.
 As a result, they cannot know in advance of arriving at a resource, what type of authentication will be needed there.
 Furthermore, their users may be quite keen to create cross-site identities and link them up, as that can allow decentralized conversations to happen, and thereby let people build reputations across web sites.
 
@@ -122,7 +185,7 @@ Starting from one resource, such as TimBL's WebID, a client should be able to fo
 ### The KeyId URL
 
 In order for it to be clear that the `keyId` is to be interpreted as a URL, the `keyId` field MUST enclose the URL with `'<'` and `'>'` characters.
-To take an example from [§A.3.2.1](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01#appendix-A.3.2) of the [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01) rfc this would allow the following use of relative URLs referring to a resource on the requested server
+To take an example from [§A.3.2.1](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-01#appendix-A.3.2) of the [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) rfc this would allow the following use of relative URLs referring to a resource on the requested server
 
 ```HTTP
 Authorization: HttpSig
@@ -135,7 +198,7 @@ Signature: sig1=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSzR9TYFV
        9a22RW2/yLmaU/uwf9v40yGR/I1NRA==:
 ```
 
-But it would also allow for absolute URLs referring to KeyId documents 
+But it would also allow for absolute URLs referring to KeyId documents
 located elsewhere on the web, such as the requestor's [Freedom Box](https://freedombox.org):
 
 ```HTTP
@@ -160,8 +223,8 @@ This would reduce to a minimum the reliance on the network.
 ### The KeyId Document
 
 The `keyId` is a  URL that refers to a key.
-An example key would be: 
-  `https://bob.example/keys/2019-09-02#k1` 
+An example key would be:
+  `https://bob.example/keys/2019-09-02#k1`
 The URL without the hash refers to the `keyId` document,
 which can be dereferenced, so in the above case it would be
   `https://bob.example/keys/2019-09-02`
@@ -169,7 +232,7 @@ which can be dereferenced, so in the above case it would be
 For the [Solid](https://solid-project.org/) use cases, the KeyId document would contain a description of the public key in an RDF format. (We use [Turtle](https://www.w3.org/TR/turtle/) here for readability. Another popular format is [JSON-LD](https://json-ld.org).)
 If we were to use [the cert ontology](https://www.w3.org/ns/auth/cert#) (as used by [WebID-TLS](https://dvcs.w3.org/hg/WebID/raw-file/tip/spec/tls-respec.html)) then this document would need to contain triples such as
 
-```Turtle 
+```Turtle
 @prefix cert: <http://www.w3.org/ns/auth/cert#> .
 
 <#k1>  a cert:RSAPublicKey;
@@ -185,11 +248,11 @@ Other ontologies that could be used:
 
 ### The Access Control Rules
 
-How can the client know which key to present? We illustrate this with a few examples building on [Solid Web Access Control](https://solid.github.io/web-access-control-spec/). 
+How can the client know which key to present? We illustrate this with a few examples building on [Solid Web Access Control](https://solid.github.io/web-access-control-spec/).
 
 In the simplest case, a Web Access Control rule document linked to from the `Link:` header of the resource the client received a `401` from, can specify a set of agents by describing their relation to a public key.
 
-```Turtle           
+```Turtle
 @prefix  acl:  <http://www.w3.org/ns/auth/acl#>.
 @prefix cert: <http://www.w3.org/ns/auth/cert#> .
 
@@ -201,9 +264,9 @@ In the simplest case, a Web Access Control rule document linked to from the `Lin
     acl:agent   [ cert:key </2019-09-02#k1> ],
                 <did:key:z6MkiTBz1ymuepAQ4HEHYSF1H8quG5GLVVQR3djdX3mDooWp>,
 		[ cert:key <https://iama.star/love/me/key#i> ] .
-```            
+```
 
-Instead of listing agents individually in the ACL, they can 
+Instead of listing agents individually in the ACL, they can
 be listed as belonging to a group
 
 ```turtle
@@ -211,12 +274,12 @@ be listed as belonging to a group
     a             acl:Authorization;
     acl:accessTo  <https://alice.example/docs/shared-file1>;
     acl:mode      acl:Read,
-                  acl:Write, 
+                  acl:Write,
                   acl:Control;
-    acl:agentGroup <https://alice.example.com/work-groups#Accounting> .   
-```             
+    acl:agentGroup <https://alice.example.com/work-groups#Accounting> .
+```
 
-The agent Group document located at `https://alice.example.com/work-groups` can describe the users in various ways including by `keyId` as in this example 
+The agent Group document located at `https://alice.example.com/work-groups` can describe the users in various ways including by `keyId` as in this example
 
 ```turtle
 <#Accounting>
@@ -232,7 +295,7 @@ The Group resource can itself be access controlled to be only visible to members
 
 ## Extending the Protocol with Credentials
 
-We now look at how the protocol can be extended beyond possession 
+We now look at how the protocol can be extended beyond possession
 of a key to proving attributes based on a Credential.
 
 ### Protocol Extension for Credentials
@@ -241,7 +304,7 @@ A Credential is a document describing certain properties of an agent.
 It can be a [WebID](https://www.w3.org/2005/Incubator/webid/spec/) or a [Verifiable Credential](https://www.w3.org/TR/vc-data-model/).
 We can refer to such a document using a URL.
 
-If the Access Control Rule linked to in (2) specifies that only agents that can prove a certain property can access the resource, and the agent has such credentials in its [Universal Wallet](https://w3c-ccg.github.io/universal-wallet-interop-spec/), the agent can choose the right credentials depending on the user's policies on privacy or security. 
+If the Access Control Rule linked to in (2) specifies that only agents that can prove a certain property can access the resource, and the agent has such credentials in its [Universal Wallet](https://w3c-ccg.github.io/universal-wallet-interop-spec/), the agent can choose the right credentials depending on the user's policies on privacy or security.
 If the policies do not give a clear answer, the user agent will need to ask the user -- at that time or later, but in any case before engaging in the request (3) - to confirm authenticated access.
 
 Having selected a Credential, this can be passed in the response in (3) to the server by adding a `Authorization: HttpSig` header with as `cred` attribute value a relative or absolute URL enclosed in `<` and `>` referring to that credential.
@@ -258,7 +321,7 @@ Signature: sig1=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSzR9TYFV
        9a22RW2/yLmaU/uwf9v40yGR/I1NRA==:
 ```
 
-As before we reserve the option of enclosing a relative URL in `>` and `<` to refer to a client side resource, accessible to the server using a P2P extension of HTTP (see [Peer-to-Peer Extension to HTTP/2 draft](https://tools.ietf.org/html/draft-benfield-http2-p2p-02)). 
+As before we reserve the option of enclosing a relative URL in `>` and `<` to refer to a client side resource, accessible to the server using a P2P extension of HTTP (see [Peer-to-Peer Extension to HTTP/2 draft](https://tools.ietf.org/html/draft-benfield-http2-p2p-02)).
 (Todo: how else can one pass the Credential?).
 
 
@@ -288,12 +351,12 @@ App                                   Server                Doc             Cred
 |<-------------------(8) send content----|
 ```
 
-Steps (4) and (5), where the server retrieves a (cached) copy of the key, are as before. 
+Steps (4) and (5), where the server retrieves a (cached) copy of the key, are as before.
 
 Steps (6) can be run in parallel with (4) to fetch the Credential document.
-This also can be cached. 
+This also can be cached.
 If the `Credential` header URL
-* is enclosed in '<' and '>' then 
+* is enclosed in '<' and '>' then
   * if it is relative it can be fetched on the same server
   * if is is an absolute URL it can be fetched by opening a new connection
 * is enclosed in `>` and `<` and P2P HTTP extension is enabled, the server can request the credential from the client directly using the same connection opened in (3) exactly as above.
@@ -306,9 +369,9 @@ We start by illustrating this with a very simple example: that of authentication
 Here we consider a [WebID Document](https://www.w3.org/2005/Incubator/webid/spec/identity/#publishing-the-webid-profile-document) profile document to be a minimal credential - minimal in so far as it does not even need to be signed.
 The signature comes from the TLS handshake required to fetch an `https` signed document placed at the location of the URL.
 
-### WebID and KeyId documents are the same 
+### WebID and KeyId documents are the same
 
-The simplest deployment is for the WebID document to be the same as the KeyId document. 
+The simplest deployment is for the WebID document to be the same as the KeyId document.
 For example Alice's `WebID` and `keyID` documents
 could be `https://alice.example/card` and return
 a representation with the following triples:
@@ -321,7 +384,7 @@ a representation with the following triples:
 <#key1> a cert:RSAPublicKey;
         cert:modulus "00cb25da76..."^^xsd:hexBinary;
         cert:exponent 65537 .
-```                                         
+```
 
 By signing the HTTP header with the private key corresponding to the public key published at `<https://alice.example/card#key1>` the client proves that it is the referrent of `<https://alice.example/card#me>` according to the description of the WebID Profile Document.
 
@@ -336,7 +399,7 @@ Because the keys are controlled by the users, they can update them regularly, es
 
 Authors of such ACLs can evaluate the trust they put in such a WebID by the position it has in their Web of Trust (i.e. which other people they trust link to it).
 
-Access Control Lists can be extended by rules giving access to friends of a friend, extended family networks, ... (this is still being worked on) 
+Access Control Lists can be extended by rules giving access to friends of a friend, extended family networks, ... (this is still being worked on)
 
 WebIDs are also useful for institutions wishing to be clearly identified when signing a [Verifiable Credential](https://www.w3.org/TR/vc-data-model/), such as a Birth Certificate or Drivers License Authority signing a claim, a University or School signing that a user has received a degree, ...
 
@@ -354,18 +417,18 @@ For example, ISO could publish an [OWL](https://www.w3.org/TR/owl2-overview/) do
 ```Turtle
 <#Over21> owl:equivalentClass [  a owl:Restriction;
       owl:onProperty :hasAge ;
-      owl:someValuesFrom   
+      owl:someValuesFrom
           [ rdf:type   rdfs:Datatype ;
             owl:onDatatype       xsd:integer ;
             owl:withRestrictions (  [ xsd:minExclusive  21 ] )
           ]
-       ] . 
+       ] .
 ```
 
 This would allow resources to be protected with a rule such as
 
 ```Turtle
-<#adultPermission> 
+<#adultPermission>
           :accessToClass :AdultContent;
           :agentClass iso:Over21 ;
           :mode :Read .
@@ -384,5 +447,5 @@ Signature-Input: sig1=(); keyId="did:key:z6MkiTBz1ymuepAQ4HEHYSF1H8quG5GLVVQR3dj
 
 The Server Guard then needs to verify that the signature is correct, that the credential identifies the user with the same key, and that it is signed by a legitimate Certificate Authority entitled to make Claims about age.
 
-How to determine which Certificate Authority are legitimate for which claims, is outside the scope of this specification. 
+How to determine which Certificate Authority are legitimate for which claims, is outside the scope of this specification.
 This is known in the Self-Sovereign Identity space as a Governance Framework, and will potentially require a [Web of Nations](https://co-operating.systems/2020/06/01/WoN.pdf).
