@@ -204,7 +204,7 @@ When used with `HttpSig` all  `keyid`  parameters are to be interpreted as URLs.
 To take an example from [§A.3.2.1](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04#appendix-A.3.2) of the "Signing HTTP Messages" RFC, this would allow the following use of relative URLs referring to a resource on the requested server
 
 ```HTTP
-Authorization: HttpSig key=sig2
+Authorization: HttpSig proof=sig2
 Signature-Input: sig2=(); keyid="/keys/test-key-a"; created=1402170695
 Signature: sig2=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSzR9TYFV
        vwUjeU6CTYUdbOByGMCee5q1eWWUOM8BIH04Si6VndEHjQVdHqshAtNJk2Quzs6WC
@@ -228,7 +228,7 @@ In order to allow relative URLs to refer to resources on the client, as made pos
 Here is an example of a header sent by a client to the server with such a URL:
 
 ```HTTP
-Authorization: HttpSig key=sig3, clientUrl=true
+Authorization: HttpSig proof=sig3, clientUrl=true
 Signature-Input: sig3=(); keyid="/keys/test-key-a"; created=1402170695
 Signature: sig3=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSzR9TYFV
 ```
@@ -316,7 +316,7 @@ Having selected a Credential, this can be passed in the response in (3) to the s
 
 ```HTTP
 GET /comments/c1 HTTP/1.1
-Authorization: HttpSig key=sig1, cred="<https://alice.freedom/cred/BAEng>"
+Authorization: HttpSig proof=sig1, cred="<https://alice.freedom/cred/BAEng>"
 Signature-Input: sig1=(); keyid="<https://alice.freedom/keys/alice-key-eng>"; created=1402170695
 Signature: sig1=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSzR9TYFV
        vwUjeU6CTYUdbOByGMCee5q1eWWUOM8BIH04Si6VndEHjQVdHqshAtNJk2Quzs6WC
