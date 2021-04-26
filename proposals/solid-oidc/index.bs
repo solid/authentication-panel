@@ -182,7 +182,7 @@ SHOULD use a WebID as their Client ID.
 ## WebID ## {#clientids-webid}
 
 The WebID itself MUST resolve to an RDF document. That document SHOULD be available as JSON-LD with an `@context`
-that includes `https://www.w3.org/ns/solid/oidc.jsonld` but which otherwise produces a JSON serialization of an OIDC
+that includes `https://www.w3.org/ns/solid/oidc-context.jsonld` but which otherwise produces a JSON serialization of an OIDC
 client registration, per the definition of client registration metadata from [[!RFC7591]] section 2.
 
 Issue: [Related Issue](https://github.com/solid/authentication-panel/issues/75)
@@ -203,7 +203,7 @@ This example uses [JSON-LD  ](https://www.w3.org/TR/json-ld11/):
 
     <pre>
         {
-          "@context": "https://www.w3.org/ns/solid/oidc.jsonld",
+          "@context": "https://www.w3.org/ns/solid/oidc-context.jsonld",
 
           "client_id": "https://app.example/webid#id",
           "client_name": "Solid Application Name",
