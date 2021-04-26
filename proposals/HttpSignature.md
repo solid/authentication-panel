@@ -185,9 +185,9 @@ Starting from Tim Berners-Lee's [WebID](https://www.w3.org/2005/Incubator/webid/
 
 Starting from one resource, such as TimBL's WebID, a client should be able to follow links to other resources, some of which will be protected in various ways, requiring different forms of proof.
 
-### The keyid URL
+### The `keyid` URL
 
-When used with `HttpSig` all `keyid` parameters are to be interpreted as URLs.
+When used with `HttpSig` all  `keyid`  parameters are to be interpreted as URLs.
 To take an example from [§A.3.2.1](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04#appendix-A.3.2) of the "Signing HTTP Messages" RFC, this would allow the following use of relative URLs referring to a resource on the requested server
 
 ```HTTP
@@ -201,7 +201,7 @@ Signature: sig2=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSzR9TYFV
        9a22RW2/yLmaU/uwf9v40yGR/I1NRA==:
 ```
 
-But it would also allow for absolute URLs referring to keyid documents
+But it would also allow for absolute URLs referring to `keyid` documents
 located elsewhere on the web, such as the requestor's [Freedom Box](https://freedombox.org):
 
 ```HTTP
@@ -224,7 +224,7 @@ On receiving such a signed header, the server would know that it can request the
 This would reduce to a minimum the reliance on the network.
 
 
-### The keyid Document
+### The `keyid` Document
 
 The `keyid` is a  URL that refers to a key.
 An example key would be:
@@ -234,8 +234,8 @@ which can be dereferenced, so in the above case it would be
   `https://bob.example/keys/2019-09-02`
 
 For the [Solid](https://solid-project.org/) use cases, the `keyid` document must contain a description of the public key in an RDF format.
-Following discussion in [issue 156: Ontology for keyid document](https://w3id.org/security/v1) and in order to maximise interoperability with the Web Credentials community, the document has to use the [security-vocab](https://w3c-ccg.github.io/security-vocab/#challenge).
-The server must present both [Turtle](https://www.w3.org/TR/turtle/) and  [JSON-LD](https://json-ld.org) formats. This embeds a JSON Literal for the key literal as specified by [RFC 7517: JSON Web Key (JWK)](https://tools.ietf.org/html/rfc7517) into the RDF. An example of this was given above with Alice's keyid document.
+Following discussion in [issue 156: Ontology for `keyid` document](https://w3id.org/security/v1) and in order to maximise interoperability with the Web Credentials community, the document has to use the [security-vocab](https://w3c-ccg.github.io/security-vocab/#challenge).
+The server must present both [Turtle](https://www.w3.org/TR/turtle/) and  [JSON-LD](https://json-ld.org) formats. This embeds a JSON Literal for the key literal as specified by [RFC 7517: JSON Web Key (JWK)](https://tools.ietf.org/html/rfc7517) into the RDF. An example of this was given above with Alice's `keyid` document.
 
 
 ### The Access Control Rules
@@ -361,9 +361,9 @@ We start by illustrating this with a very simple example: that of authentication
 Here we consider a [WebID Document](https://www.w3.org/2005/Incubator/webid/spec/identity/#publishing-the-webid-profile-document) profile document to be a minimal credential - minimal in so far as it does not even need to be signed.
 The signature comes from the TLS handshake required to fetch an `https` signed document placed at the location of the URL.
 
-### WebID and keyid documents are the same
+### WebID and `keyid` documents are the same
 
-The simplest deployment is for the WebID document to be the same as the keyid document.
+The simplest deployment is for the WebID document to be the same as the `keyid` document.
 For example Alice's `WebID` and `keyid` documents
 could be `https://alice.example/card` and return
 a representation with the following triples:
@@ -381,7 +381,7 @@ a representation with the following triples:
 By signing the HTTP header with the private key corresponding to the public key published at `<https://alice.example/card#key1>` the client proves that it is the referrent of `<https://alice.example/card#me>` according to the description of the WebID Profile Document.
 
 This can be used for people or institutions that are happy to have public global identifiers to identify them.
-One advantage is that the keyid document being the same as the WebID Profile document, the verification step requests (4) and (6) get collapsed into one request.
+One advantage is that the `keyid` document being the same as the WebID Profile document, the verification step requests (4) and (6) get collapsed into one request.
 It also allows each individual user to maintain their profile and keys by hosting it on their server.
 This allows friends to link to it, creating a [friend of a friend](http://www.foaf-project.org) decentralized social network.
 A certain amount of anonymity can be regained by placing those servers behind Tor, using `.onion` URLs, and access controlling linked to documents that contain more personal information.
@@ -395,9 +395,9 @@ Access Control Lists can be extended by rules giving access to friends of a frie
 
 WebIDs are also useful for institutions wishing to be clearly identified when signing a [Verifiable Credential](https://www.w3.org/TR/vc-data-model/), such as a Birth Certificate or Drivers License Authority signing a claim, a University or School signing that a user has received a degree, ...
 
-### WebID and keyid documents are different
+### WebID and `keyid` documents are different
 
-When WebID and keyid documents are different this allows the key to be used without tying it to a WebID, and for that key to be used to sign other credentials.
+When WebID and `keyid` documents are different this allows the key to be used without tying it to a WebID, and for that key to be used to sign other credentials.
 It can also be useful in that the container where keys are placed can have less strict access control rules that the WebID profile, giving various software agents access to them.
 In this case the WebID could link to the hash of the key, or some other proof that does not require it linking to the key.
 
