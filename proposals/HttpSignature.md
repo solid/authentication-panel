@@ -85,31 +85,42 @@ The `Link` header with a `rel` value of `acl` works as described in [Web Access 
 Note: With [HTTP/2 server Push](https://tools.ietf.org/html/rfc7540#section-8.2), the server could immediately push the content of the linked-to Access Control document to the client, assuming reasonably that the client would have connected with the key had it known the rules.
 It may also be possible to send the relevant ACL rules directly in the body of the response (see discussion on [issue 167](https://github.com/solid/authentication-panel/issues/167)).
 
-The Access Control rule could be as simple as stating that the user needs to be authenticated with a key. Any number of more complicated use cases are possible, as described in the [Use Cases and Requirements Document](https://solid.github.io/authorization-panel/wac-ucr/).
+The Access Control rule could be as simple as stating that access will be granted only to requests authenticate using one of a set of keys. More complicated use cases are possible, as described in the [Use Cases and Requirements Document](https://solid.github.io/authorization-panel/wac-ucr/).
 
 If the client can find a key that satisfies the Access Control Rules, then it can use the corresponding private key to sign the headers in (3) as specified by [Signing HTTP Messages](https://w3c-ccg.github.io/did-method-key/) and pass a link to the key in the `keyid` field as a URL.
 
-Assume that Alice's client, after parsing the Access Control Rules found that `/keys/alice#` satisfies the stated requirements. If the client is allowed to use that key, it can create a signing string for the `@request-target` pseudo-header. The generated signing string would be, after single slash encoding from RFC8792:
+Assume that Alice's client, after parsing the Access Control Rules found that `https://alice.name/keys/alice#` satisfies the stated requirements. If Alice allows the client to use that key, the app can create a signing string for the `@request-target` pseudo-header and `authorization` header. The `authorization` header is mandatory (is it really?) to avoid a man in the middle attack that could change the `Authorization` header to point to a different signature.
 
-```text
-"@request-target": get /comments/
-"@signature-params": ("@request-target");keyid="/keys/alice#";\
-    created=1617265800;expires=1617320700
-```
-
-After signing the above string with the private key of `</keys/alice#>`, and naming that signature `sig1`, the new HTTP request header can look as follows:
+First Alice's client builds a pre-signed request, containing an `Authorization` header as shown here:
 
 ```HTTP
 GET /comments/ HTTP/1.1
-Authorization: HttpSig key=sig1
+Authorization: HttpSig proof=sig1
 Accept: text/turtle, application/ld+json;q=0.9, */*;q=0.8
-Signature-Input: sig1=("@request-target");keyid="/keys/alice#";\
+```
+
+This request is used to generate a signing string on the `@request-target` and `authorization` headers:
+
+```text
+"@request-target": get /comments/
+"authorization": HttpSig proof=sig1
+"@signature-params": ("@request-target" "authorization");keyid="/keys/alice#";\
+   created=1617265800;expires=1617320700
+```
+
+After signing the above string with the private key of `</keys/alice#>` and naming that signature `sig1`, the new HTTP request header looks as follows:
+
+```HTTP
+GET /comments/ HTTP/1.1
+Authorization: HttpSig proof=sig1
+Accept: text/turtle, application/ld+json;q=0.9, */*;q=0.8
+Signature-Input: sig1=("@request-target" "authorization");keyid="/keys/alice#";\
     created=1617265800;expires=1617320700
-Signature: sig1=:FJPdb4jzc1lTd/B4UU1q2AOvT/FhSt57hkPWpndLAJoD5d7u01YVff+4WDp2OK\
-    h4L+SiZYpwEAotPCskZlUl/RCcM/MKgrqIYgbExXPV9uRBlLdw02rF9vAEHOvR7Z4iiVFQt0LsO\
-    HcnR7SQeS9cPynU8gnhB1IuXOxCbxI0xHUJKmX+LxrfKZYfzna+zS/43BWhV2lmB6laDjTVjnIH\
-    kTH8bFBRHMh+1+ae9ukvfWSvU70AvW5wnCLAjYOWmIcRExBUYhMQpt9/CjeOkcnw50lVmKigHzA\
-    bS7mkseoEH5ZTN0tV1G0SiJ42OE8os1IaUQjYsEsmcgTZMs/HRX680w==:
+Signature: sig1=:jnwCuSDVKd8royZnKgm0GBQzLcad4ynATDIrkNkQGHGY6Dd0ftc0MKX88fZwek\
+    KevNW4N5eky+idEqOsvj+wpxc7xXN7KwnAT0SzGjyj+3CxnVN26er72l1zWDRBxo7IN3raKi0wE\
+    Oxv7mW2Ms9/VQ4gChyTK+n2zUz+nuly/6cKlJDwqsbb6MDFq88p6OYjx3AFwqlgJvQ5U1RCkZzI\
+    1X6P98pE0oY8Z8xu5dtyCwVBVyLXkAdeVlCABA3jdZB/qorSmbEgoQBXVvLsNaVAkAnIGY6sEFv\
+    j0FZ/90URJSeraJLrHmOhOIwL5T11mIdhmlqLCk4werRFfbfRBTBQ9g==:
 ```
 
 Notes:
@@ -120,9 +131,9 @@ Notes:
 * in the example above, the `keyid` is a relative URL pointing to a resource on Alice's POD.
 
 
-The main protocol extension from [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) RFC is that of requiring the `keyid` to be a URL, allowing the resource server to know how to retrieve the `keyid` document in (4).
+The main protocol extension from [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) RFC is that of requiring the `keyid` to be a URL, allowing the resource server to retrieve the `keyid` document in (4).
 
-In our example, the Resource Guard on the POD `alice.name` retrieves the resource `</keys/alice>`, and received the following [JSON-LD 1.1](https://json-ld.org/) document:
+In our example, the Resource Guard on the POD `alice.name` retrieves the resource `</keys/alice>` receiving the following [JSON-LD 1.1](https://json-ld.org/) document:
 
 ```JSON
 {
@@ -141,7 +152,7 @@ In our example, the Resource Guard on the POD `alice.name` retrieves the resourc
 }
 ```
 
-The server could also return a [Turtle 1.1](https://www.w3.org/TR/turtle/) equivalent representation:
+The server could also return an equivalent [Turtle 1.1](https://www.w3.org/TR/turtle/) representation:
 
 ```Turtle
 @prefix security <https://w3id.org/security#> .
@@ -149,11 +160,11 @@ The server could also return a [Turtle 1.1](https://www.w3.org/TR/turtle/) equiv
 </keys/alice#>
      security:controller </people/alice#i> ;
      security:publicKeyJwk """{
-                "alg":"PS512",
-                "e":"AQAB",
-                "kid":"2021-04-01-laptop",
-                "kty":"RSA",
-                "n":hAKYdtoeoy8zcAcR874L8cnZxKzAGwd7v36APp7Pv6Q2jdsPBRrwWEBnez6d0UDKDwGbc6nxfEXAy5mbhgajzrw3MOEt8uA5txSKobBpKDeBLOsdJKFqMGmXCQvEG7YemcxDTRPxAleIAgYYRjTSd_QBwVW9OwNFhekro3RtlinV0a75jfZgkne_YiktSvLG34lw2zqXBDTC5NHROUqGTlML4PlNZS5Ri2U4aCNx2rUPRcKIlE0PuKxI4T-HIaFpv8-rdV6eUgOrB2xeI1dSFFn_nnv5OoZJEIB-VmuKn3DCUcCZSFlQPSXSfBDiUGhwOw76WuSSsf1D4b_vLoJ10w"
+            "alg":"PS512",
+            "e":"AQAB",
+            "kid":"2021-04-01-laptop",
+            "kty":"RSA",
+            "n":hAKYdtoeoy8zcAcR874L8cnZxKzAGwd7v36APp7Pv6Q2jdsPBRrwWEBnez6d0UDKDwGbc6nxfEXAy5mbhgajzrw3MOEt8uA5txSKobBpKDeBLOsdJKFqMGmXCQvEG7YemcxDTRPxAleIAgYYRjTSd_QBwVW9OwNFhekro3RtlinV0a75jfZgkne_YiktSvLG34lw2zqXBDTC5NHROUqGTlML4PlNZS5Ri2U4aCNx2rUPRcKIlE0PuKxI4T-HIaFpv8-rdV6eUgOrB2xeI1dSFFn_nnv5OoZJEIB-VmuKn3DCUcCZSFlQPSXSfBDiUGhwOw76WuSSsf1D4b_vLoJ10w"
       }"""^^rdfs:JSON .
 ```
 
@@ -169,16 +180,16 @@ Indeed, here is a list of contexts in which a connection to the internet will no
 
 One advantage of using `https` URLs to refer to keys, is that they allow the client to use HTTP Methods such as `POST` or `PUT` to create keys, as well as `PUT`, `PATCH` and `DELETE` to edit them, helping address the problem of key revocation.
 
-Whichever `keyid` scheme is used, the Resource's Guard will be able to check the Web Access Control Rules for the resource, to find if access can be granted (see [The Access Control Rules](#the-access-control-rules) below).
+Whichever `keyid` scheme is used, the Resource's Guard will be able to check the linked-to Web Access Control Rules, and so discover if access can be granted to a user identified with that key (see [The Access Control Rules](#the-access-control-rules) below).
 
 
 ## Solid Use Case
 
-To explain why we may want keys that are not local to the resource server, we will make a small digression to explain the principal Solid use case.
+The Solid Use Case will help us justify why we may want identifiers whose visibility is not necessarily tied to just one resource server.
 We start by noticing that Solid (Social Linked Data) clients are modeled on web browsers.
-They are not tied to reading/writing data from one domain, but are able to start from any web server, and are able to follow links around the web.
-As a result, they cannot know in advance of arriving at a resource, what type of authentication will be needed there.
-Furthermore, their users may be quite keen to create cross-site identities and link them up, as that can allow decentralized conversations to happen, and thereby let people build reputations across web sites.
+Solid clients are not tied to reading or writing data from one domain: just as web browsers they can  start from a resource located on any server and following links from there arrive anywhere else on the web.
+As a result, Solid Apps cannot know in advance of arriving at a resource, what type of authentication will be needed there.
+Furthermore, Solid App users will be keen to create cross-site identities and link them up, in order to join decentralized conversations. This is an important part of building reputations across web sites.
 
 We can illustrate this by the following diagram showing the topology of the data a solid client may need to read.
 Starting from Tim Berners-Lee's [WebID](https://www.w3.org/2005/Incubator/webid/spec/identity/), a client may need to follow the links spanning web servers (represented as boxes).
@@ -305,7 +316,7 @@ Having selected a Credential, this can be passed in the response in (3) to the s
 
 ```HTTP
 GET /comments/c1 HTTP/1.1
-Authorization: HttpSig cred="<https://alice.freedom/cred/BAEng>"
+Authorization: HttpSig key=sig1, cred="<https://alice.freedom/cred/BAEng>"
 Signature-Input: sig1=(); keyid="<https://alice.freedom/keys/alice-key-eng>"; created=1402170695
 Signature: sig1=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSzR9TYFV
        vwUjeU6CTYUdbOByGMCee5q1eWWUOM8BIH04Si6VndEHjQVdHqshAtNJk2Quzs6WC
