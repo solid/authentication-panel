@@ -196,7 +196,7 @@ list.
 
 NOTE: the method by which the IdP resolves the WebID to an RDF document, is defined in
 [WebID 1.0](https://www.w3.org/2005/Incubator/webid/spec/identity/#processing-the-webid-profile).
-This example uses [JSON-LD  ](https://www.w3.org/TR/json-ld11/):
+This example uses [JSON-LD](https://www.w3.org/TR/json-ld11/):
 
 <div class='example'>
     <p>https://app.example/webid#id
