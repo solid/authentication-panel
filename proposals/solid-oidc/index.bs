@@ -223,7 +223,7 @@ This example uses [JSON-LD  ](https://www.w3.org/TR/json-ld11/):
 ### JSON-LD context
 
 This specification defines a JSON-LD context for use with OIDC client identifiers. This context is
-available at `https://www.w3.org/ns/solid/oidc.jsonld`. Client identifier documents that reference
+available at `https://www.w3.org/ns/solid/oidc-context.jsonld`. Client identifier documents that reference
 this JSON-LD context MUST use the HTTPS scheme.
 
 NOTE: the `oidc` vocabulary that is part of this context uses the HTTP scheme.
