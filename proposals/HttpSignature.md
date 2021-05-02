@@ -185,11 +185,12 @@ Whichever `keyid` scheme is used, the Resource's Guard will be able to check the
 
 ## Solid Use Case
 
-The Solid Use Case will help us justify why we may want identifiers whose visibility is not necessarily tied to just one resource server.
+The Solid Use Case will help us justify why we need ant identifiers whose visibility is not necessarily tied to just one resource server.
 We start by noticing that Solid (Social Linked Data) clients are modeled on web browsers.
-Solid clients are not tied to reading or writing data from one domain: just as web browsers they can  start from a resource located on any server and following links from there arrive anywhere else on the web.
-As a result, Solid Apps cannot know in advance of arriving at a resource, what type of authentication will be needed there.
-Furthermore, Solid App users will be keen to create cross-site identities and link them up, in order to join decentralized conversations. This is an important part of building reputations across web sites.
+Solid clients are not tied to reading or writing data from one domain: just as web browsers, they can  start from a resource located on any server and following links from there arrive anywhere else on the web.
+As a result, Solid Apps cannot know in advance of making a request on a resource, whether authentication will be needed or what credentials will need to be presented.
+
+Furthermore, many Solid App users will be keen to create cross-site identities and link them up, in order to join decentralized conversations and build reputations across websites.
 
 We can illustrate this by the following diagram showing the topology of the data a solid client may need to read.
 Starting from Tim Berners-Lee's [WebID](https://www.w3.org/2005/Incubator/webid/spec/identity/), a client may need to follow the links spanning web servers (represented as boxes).
@@ -201,7 +202,7 @@ Starting from one resource, such as TimBL's WebID, a client should be able to fo
 ### The `keyid` URL
 
 When used with `HttpSig` all  `keyid`  parameters are to be interpreted as URLs.
-To take an example from [§A.3.2.1](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04#appendix-A.3.2) of the "Signing HTTP Messages" RFC, this would allow the following use of relative URLs referring to a resource on the requested server
+To take an example from [§A.3.2.1](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04#appendix-A.3.2) of the *Message Signing* RFC, this would allow the following use of relative URLs referring to a resource on the requested server
 
 ```HTTP
 Authorization: HttpSig proof=sig2
@@ -222,7 +223,7 @@ Signature-Input: sig1=(); keyid="https://alice.freedombox/keys/test-key-a"; crea
 Signature: sig1=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSz...==:
 ```
 
-It also allows key based did URLs as described in [issue 217 of the Solid Spec](https://github.com/solid/specification/issues/217#issuecomment-777509084).
+It also allows key-based did URLs as described in [issue 217 of the Solid Spec](https://github.com/solid/specification/issues/217#issuecomment-777509084).
 
 In order to allow relative URLs to refer to resources on the client, as made possible by the [Peer-to-Peer Extension to HTTP/2 draft](https://tools.ietf.org/html/draft-benfield-http2-p2p-02) (see discussed on the [ietf-http-wg mailing list](https://lists.w3.org/Archives/Public/ietf-http-wg/2021JanMar/0049.html)) the `Authorization` header can be enhanced with a `clientUrl` parameter.
 Here is an example of a header sent by a client to the server with such a URL:
@@ -326,7 +327,7 @@ Signature: sig1=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSzR9TYFV
        9a22RW2/yLmaU/uwf9v40yGR/I1NRA==:
 ```
 
-As before we reserve the option of enclosing a relative URL in `>` and `<` to refer to a client side resource, accessible to the server using a P2P extension of HTTP (see [Peer-to-Peer Extension to HTTP/2 draft](https://tools.ietf.org/html/draft-benfield-http2-p2p-02)).
+As before, we reserve the option of enclosing a relative URL in `>` and `<` to refer to a client side resource, accessible to the server using a P2P extension of HTTP (see [Peer-to-Peer Extension to HTTP/2 draft](https://tools.ietf.org/html/draft-benfield-http2-p2p-02)).
 (Todo: how else can one pass the Credential?).
 
 
