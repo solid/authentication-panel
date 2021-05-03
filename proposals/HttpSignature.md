@@ -327,7 +327,7 @@ Signature: sig1=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSzR9TYFV
        9a22RW2/yLmaU/uwf9v40yGR/I1NRA==:
 ```
 
-As before, we reserve the option of enclosing a relative URL in `>` and `<` to refer to a client side resource, accessible to the server using a P2P extension of HTTP (see [Peer-to-Peer Extension to HTTP/2 draft](https://tools.ietf.org/html/draft-benfield-http2-p2p-02)).
+As before, we reserve the option to enclose a relative URL in `>` and `<` to refer to a client side resource, accessible by the server using a P2P extension of HTTP (see [Peer-to-Peer Extension to HTTP/2 draft](https://tools.ietf.org/html/draft-benfield-http2-p2p-02)).
 (Todo: how else can one pass the Credential?).
 
 
