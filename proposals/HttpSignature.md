@@ -185,7 +185,7 @@ Whichever `keyid` scheme is used, the Resource's Guard will be able to check the
 
 ## Solid Use Case
 
-The Solid Use Case will help us justify why we need ant identifiers whose visibility is not necessarily tied to just one resource server.
+The Solid Use Case will help us justify why we need identifiers whose visibility is not necessarily tied to just one resource server.
 We start by noticing that Solid (Social Linked Data) clients are modeled on web browsers.
 Solid clients are not tied to reading or writing data from one domain: just as web browsers, they can  start from a resource located on any server and following links from there arrive anywhere else on the web.
 As a result, Solid Apps cannot know in advance of making a request on a resource, whether authentication will be needed or what credentials will need to be presented.
