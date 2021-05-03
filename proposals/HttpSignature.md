@@ -223,7 +223,7 @@ Signature-Input: sig1=(); keyid="https://alice.freedombox/keys/test-key-a"; crea
 Signature: sig1=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSz...==:
 ```
 
-It also allows key-based did URLs as described in [issue 217 of the Solid Spec](https://github.com/solid/specification/issues/217#issuecomment-777509084).
+It also allows key-based DID URLs as described in [issue 217 of the Solid Spec](https://github.com/solid/specification/issues/217#issuecomment-777509084).
 
 In order to allow relative URLs to refer to resources on the client, as made possible by the [Peer-to-Peer Extension to HTTP/2 draft](https://tools.ietf.org/html/draft-benfield-http2-p2p-02) (see discussed on the [ietf-http-wg mailing list](https://lists.w3.org/Archives/Public/ietf-http-wg/2021JanMar/0049.html)) the `Authorization` header can be enhanced with a `clientUrl` parameter.
 Here is an example of a header sent by a client to the server with such a URL:
