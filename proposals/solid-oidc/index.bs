@@ -182,7 +182,7 @@ SHOULD use a WebID as their Client ID.
 ## WebID ## {#clientids-webid}
 
 A client's WebID resource MUST be serialized as an `application/ld+json` document when
-the request includes an Accept header, unless content negotiation requires a different
+the request includes an `Accept` header, unless content negotiation requires a different
 outcome.
 
 The serialized JSON form of a client WebID SHOULD use the normative JSON-LD `@context`
