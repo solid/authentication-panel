@@ -85,7 +85,7 @@ The `Link` header with a `rel` value of `acl` works as described in [Web Access 
 Note: With [HTTP/2 server Push](https://tools.ietf.org/html/rfc7540#section-8.2), the server could immediately push the content of the linked-to Access Control document to the client, assuming reasonably that the client would have connected with the key had it known the rules.
 It may also be possible to send the relevant ACL rules directly in the body of the response (see discussion on [issue 167](https://github.com/solid/authentication-panel/issues/167)).
 
-The Access Control rule could be as simple as stating that access will be granted only to requests authenticate using one of a set of keys. More complicated use cases are possible, as described in the [Use Cases and Requirements Document](https://solid.github.io/authorization-panel/wac-ucr/).
+The Access Control rule could be as simple as stating that access will be granted only to requests authenticate using one of a set of keys. More complicated use cases are possible, as described in the [Use Cases and Requirements Document](https://solid.github.io/authorization-panel/authorization-ucr/).
 
 If the client can find a key that satisfies the Access Control Rules, then it can use the corresponding private key to sign the headers in (3) as specified by [Signing HTTP Messages](https://w3c-ccg.github.io/did-method-key/) and pass a link to the key in the `keyid` field as a URL.
 
