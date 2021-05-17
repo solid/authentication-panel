@@ -181,9 +181,16 @@ SHOULD use a WebID as their Client ID.
 
 ## WebID ## {#clientids-webid}
 
-The WebID itself MUST resolve to an RDF document. That document SHOULD be available as JSON-LD with an `@context`
-that includes `https://www.w3.org/ns/solid/oidc-context.jsonld` but which otherwise produces a JSON serialization of an OIDC
-client registration, per the definition of client registration metadata from [[!RFC7591]] section 2.
+A client's WebID resource MUST be serialized as an `application/ld+json` document when
+the request includes an Accept header, unless content negotiation requires a different
+outcome.
+
+The serialized JSON form of a client WebID SHOULD use the normative JSON-LD `@context`
+provided at `https://www.w3.org/ns/solid/oidc-context.jsonld` such that the resulting
+document produces a JSON serialization of an OIDC client registration, per the
+definition of client registration metadata from [[!RFC7591]] section 2.
+Client WebID documents MAY augment the normative context with additional `@context`
+definitions but MUST NOT override or change the terms defined by the normative context.
 
 Issue: [Related Issue](https://github.com/solid/authentication-panel/issues/75)
 Solid-OIDC client description in WebID document
