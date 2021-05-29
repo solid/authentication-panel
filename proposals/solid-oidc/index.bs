@@ -189,8 +189,6 @@ The serialized JSON form of a client WebID SHOULD use the normative JSON-LD `@co
 provided at `https://www.w3.org/ns/solid/oidc-context.jsonld` such that the resulting
 document produces a JSON serialization of an OIDC client registration, per the
 definition of client registration metadata from [[!RFC7591]] section 2.
-Client WebID documents MAY augment the normative context with additional `@context`
-definitions but MUST NOT override or change the terms defined by the normative context.
 
 Issue: [Related Issue](https://github.com/solid/authentication-panel/issues/75)
 Solid-OIDC client description in WebID document
@@ -241,6 +239,8 @@ The JSON-LD context is defined as:
     <pre>
         {
           "@context": {
+            "@version": "1.1",
+            "@protected": true,
             "oidc": "http://www.w3.org/ns/solid/oidc#",
             "xsd": "http://www.w3.org/2001/XMLSchema#",
             "client_id": {
