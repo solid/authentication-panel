@@ -6,9 +6,9 @@
   <meta content="w3c/ED" name="w3c-status">
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
-  <meta content="Bikeshed version 5c7bc9381, updated Wed May 12 18:18:08 2021 -0700" name="generator">
+  <meta content="Bikeshed version 800b43329, updated Tue May 25 14:13:32 2021 -0700" name="generator">
   <link href="https://solid.github.io/specification/solid-oidc/" rel="canonical">
-  <meta content="1381fbd6703b8493190fdebe25499a579c1ce669" name="document-revision">
+  <meta content="07d2c3355fc39fecf2169b1923a7bcb0ae56f542" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -396,7 +396,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref allcaps" id="title">SOLID-OIDC</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-05-17">17 May 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-06-07">7 June 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -413,7 +413,7 @@ dfn > a.self-link::before      { content: "#"; }
     </dl>
    </div>
    <div data-fill-with="warning"></div>
-   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2021 <a href="https://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="https://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="https://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="https://www.keio.ac.jp/">Keio</a>, <a href="https://ev.buaa.edu.cn/">Beihang</a>). W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document" rel="license">permissive document license</a> rules apply. </p>
+   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2021 <a href="https://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="https://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="https://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="https://www.keio.ac.jp/">Keio</a>, <a href="https://ev.buaa.edu.cn/">Beihang</a>). W3C <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document" rel="license">permissive document license</a> rules apply. </p>
    <hr title="Separator for header">
   </div>
   <div class="p-summary" data-fill-with="abstract">
@@ -607,33 +607,114 @@ Authorization Code.</p>
    <p>OAuth and OIDC require the Client application to identify itself to the IdP and RS by presenting a <a href="https://tools.ietf.org/html/rfc6749#section-2.2">client identifier</a> (Client ID). Solid applications
 SHOULD use a WebID as their Client ID.</p>
    <h3 class="heading settled" data-level="5.1" id="clientids-webid"><span class="secno">5.1. </span><span class="content">WebID</span><a class="self-link" href="#clientids-webid"></a></h3>
-   <p>The WebID itself MUST resolve to an RDF document that MUST include a single <code>solid:oidcRegistration</code> property. That property MUST be a JSON serialization of an OIDC client registration, per the definition
-of client registration metadata from <a data-link-type="biblio" href="#biblio-rfc7591">[RFC7591]</a> section 2.</p>
+   <p>A client’s WebID resource MUST be serialized as an <code>application/ld+json</code> document
+unless content negotiation requires a different outcome.</p>
+   <p>The serialized JSON form of a client WebID SHOULD use the normative JSON-LD <code>@context</code> provided at <code>https://www.w3.org/ns/solid/oidc-context.jsonld</code> such that the resulting
+document produces a JSON serialization of an OIDC client registration, per the
+definition of client registration metadata from <a data-link-type="biblio" href="#biblio-rfc7591">[RFC7591]</a> section 2.</p>
    <p class="issue" id="issue-0446db61"><a class="self-link" href="#issue-0446db61"></a> <a href="https://github.com/solid/authentication-panel/issues/75">Related Issue</a> Solid-OIDC client description in WebID document</p>
    <p>Also, the IdP MUST dereference the Client’s WebID document and match any Client-supplied parameters,
 with the values in the Client’s WebID document.</p>
    <p>Further, the <code>redirect_uri</code> provided by the Client MUST be included in the registration <code>redirect_uris</code> list.</p>
    <p class="note" role="note"><span>NOTE:</span> the method by which the IdP resolves the WebID to an RDF document, is defined in <a href="https://www.w3.org/2005/Incubator/webid/spec/identity/#processing-the-webid-profile">WebID 1.0</a>.
-This example uses <a href="https://www.w3.org/TR/turtle/">Turtle</a>:</p>
-   <div class="example" id="example-11ef367c">
-    <a class="self-link" href="#example-11ef367c"></a> 
+This example uses <a href="https://www.w3.org/TR/json-ld11/">JSON-LD </a>:</p>
+   <div class="example" id="example-63768537">
+    <a class="self-link" href="#example-63768537"></a> 
     <p>https://app.example/webid#id </p>
-<pre>@prefix solid: <httpU0003A ns solid termsU00023 www.w3.org> .
+<pre>{
+  "@context": "https://www.w3.org/ns/solid/oidc-context.jsonld",
 
-&lt;#id> solid:oidcRegistration """{
-    "client_id" : "https://app.example/webid#id",
-    "redirect_uris" : ["https://app.example/callback"],
-    "client_name" : "Solid Application Name",
-    "client_uri" : "https://app.example/",
-    "logo_uri" : "https://app.example/logo.png",
-    "tos_uri" : "https://app.example/tos.html",
-    "scope" : "openid profile offline_access",
-    "grant_types" : ["refresh_token","authorization_code"],
-    "response_types" : ["code"],
-    "default_max_age" : 60000,
-    "require_auth_time" : true
-    }""" .
-</httpU0003A></pre>
+  "client_id": "https://app.example/webid#id",
+  "client_name": "Solid Application Name",
+  "redirect_uris": ["https://app.example/callback"],
+  "client_uri": "https://app.example/",
+  "logo_uri" : "https://app.example/logo.png",
+  "tos_uri" : "https://app.example/tos.html",
+  "scope" : "openid profile offline_access",
+  "grant_types" : ["refresh_token","authorization_code"],
+  "response_types" : ["code"],
+  "default_max_age" : 3600,
+  "require_auth_time" : true
+}
+</pre>
+   </div>
+   <h4 class="heading settled" data-level="5.1.1" id="jsonld-context"><span class="secno">5.1.1. </span><span class="content">JSON-LD context # {#jsonld-context}</span><a class="self-link" href="#jsonld-context"></a></h4>
+   <p>This specification defines a JSON-LD context for use with OIDC client identifiers. This context is
+available at <code>https://www.w3.org/ns/solid/oidc-context.jsonld</code>. Client identifier documents that reference
+this JSON-LD context MUST use the HTTPS scheme.</p>
+   <p class="note" role="note"><span>NOTE:</span> the <code>oidc</code> vocabulary that is part of this context uses the HTTP scheme.</p>
+   <p>The JSON-LD context is defined as:</p>
+   <div class="example" id="example-44f8a2ed">
+    <a class="self-link" href="#example-44f8a2ed"></a> 
+<pre>{
+  "@context": {
+    "@version": "1.1",
+    "@protected": true,
+    "oidc": "http://www.w3.org/ns/solid/oidc#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "client_id": {
+      "@id": "@id",
+      "@type": "@id"
+    },
+    "client_uri": {
+      "@id": "oidc:client_uri",
+      "@type": "@id"
+    },
+    "logo_uri": {
+      "@id": "oidc:logo_uri",
+      "@type": "@id"
+    },
+    "policy_uri": {
+      "@id": "oidc:policy_uri",
+      "@type": "@id"
+    },
+    "tos_uri": {
+      "@id": "oidc:tos_uri",
+      "@type": "@id"
+    },
+    "redirect_uris": {
+      "@id": "oidc:redirect_uris",
+      "@type": "@id",
+      "@container": [
+        "@id",
+        "@set"
+      ]
+    },
+    "require_auth_time": {
+      "@id": "oidc:require_auth_time",
+      "@type": "xsd:boolean"
+    },
+    "default_max_age": {
+      "@id": "oidc:default_max_age",
+      "@type": "xsd:integer"
+    },
+    "application_type": {
+      "@id": "oidc:application_type"
+    },
+    "client_name": {
+      "@id": "oidc:client_name"
+    },
+    "client_secret": {
+      "@id": "oidc:client_secret"
+    },
+    "contacts": {
+      "@id": "oidc:contacts"
+    },
+    "grant_types": {
+      "@id": "oidc:grant_types"
+    },
+    "response_types": {
+      "@id": "oidc:response_types"
+    },
+    "scope": {
+      "@id": "oidc:scope"
+    },
+    "token_endpoint_auth_method": {
+      "@id": "oidc:token_endpoint_auth_method"
+    }
+  }
+}
+</pre>
    </div>
    <h3 class="heading settled" data-level="5.2" id="clientids-public-webid"><span class="secno">5.2. </span><span class="content">The Public WebID</span><a class="self-link" href="#clientids-public-webid"></a></h3>
    <p>Ephemeral Clients MAY use the identifier <code>http://www.w3.org/ns/solid/terms#PublicOidcClient</code>. If the
