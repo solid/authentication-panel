@@ -8,7 +8,7 @@
   <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
   <meta content="Bikeshed version 800b43329, updated Tue May 25 14:13:32 2021 -0700" name="generator">
   <link href="https://solid.github.io/specification/solid-oidc/" rel="canonical">
-  <meta content="07d2c3355fc39fecf2169b1923a7bcb0ae56f542" name="document-revision">
+  <meta content="33244238db37e5244b79daa323287e112c804632" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -396,7 +396,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref allcaps" id="title">SOLID-OIDC</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-06-07">7 June 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-06-08">8 June 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -638,17 +638,17 @@ This example uses <a href="https://www.w3.org/TR/json-ld11/">JSON-LD </a>:</p>
 }
 </pre>
    </div>
-   <h4 class="heading settled" data-level="5.1.1" id="jsonld-context"><span class="secno">5.1.1. </span><span class="content">JSON-LD context # {#jsonld-context}</span><a class="self-link" href="#jsonld-context"></a></h4>
+   <h4 class="heading settled" data-level="5.1.1" id="jsonld-context"><span class="secno">5.1.1. </span><span class="content">JSON-LD context ## {#jsonld-context}</span><a class="self-link" href="#jsonld-context"></a></h4>
    <p>This specification defines a JSON-LD context for use with OIDC client identifiers. This context is
 available at <code>https://www.w3.org/ns/solid/oidc-context.jsonld</code>. Client identifier documents that reference
 this JSON-LD context MUST use the HTTPS scheme.</p>
    <p class="note" role="note"><span>NOTE:</span> the <code>oidc</code> vocabulary that is part of this context uses the HTTP scheme.</p>
    <p>The JSON-LD context is defined as:</p>
-   <div class="example" id="example-44f8a2ed">
-    <a class="self-link" href="#example-44f8a2ed"></a> 
+   <div class="example" id="example-f06d2853">
+    <a class="self-link" href="#example-f06d2853"></a> 
 <pre>{
   "@context": {
-    "@version": "1.1",
+    "@version": 1.1,
     "@protected": true,
     "oidc": "http://www.w3.org/ns/solid/oidc#",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
@@ -693,9 +693,6 @@ this JSON-LD context MUST use the HTTPS scheme.</p>
     },
     "client_name": {
       "@id": "oidc:client_name"
-    },
-    "client_secret": {
-      "@id": "oidc:client_secret"
     },
     "contacts": {
       "@id": "oidc:contacts"
