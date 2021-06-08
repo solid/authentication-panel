@@ -224,7 +224,7 @@ This example uses [JSON-LD ](https://www.w3.org/TR/json-ld11/):
     </pre>
 </div>
 
-### JSON-LD context # {#jsonld-context}
+### JSON-LD context ## {#jsonld-context}
 
 This specification defines a JSON-LD context for use with OIDC client identifiers. This context is
 available at `https://www.w3.org/ns/solid/oidc-context.jsonld`. Client identifier documents that reference
@@ -238,7 +238,7 @@ The JSON-LD context is defined as:
     <pre>
         {
           "@context": {
-            "@version": "1.1",
+            "@version": 1.1,
             "@protected": true,
             "oidc": "http://www.w3.org/ns/solid/oidc#",
             "xsd": "http://www.w3.org/2001/XMLSchema#",
@@ -283,9 +283,6 @@ The JSON-LD context is defined as:
             },
             "client_name": {
               "@id": "oidc:client_name"
-            },
-            "client_secret": {
-              "@id": "oidc:client_secret"
             },
             "contacts": {
               "@id": "oidc:contacts"
