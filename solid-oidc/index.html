@@ -6,9 +6,9 @@
   <meta content="w3c/ED" name="w3c-status">
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
-  <meta content="Bikeshed version 21183bac3, updated Tue Jun 15 10:19:19 2021 -0700" name="generator">
+  <meta content="Bikeshed version 3d6a6fcbb, updated Wed Jun 16 16:19:39 2021 -0700" name="generator">
   <link href="https://solid.github.io/specification/solid-oidc/" rel="canonical">
-  <meta content="9130036d8572497a0beae4a941d7526b138dbb8b" name="document-revision">
+  <meta content="817440379a49b87d5a4c6908476ffc1dc5ec239a" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -396,7 +396,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref allcaps" id="title">SOLID-OIDC</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-06-16">16 June 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-06-28">28 June 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -552,7 +552,7 @@ same entity as an Authorization Server.</p>
     <dt><em>JSON Web Key (JWK)</em> as defined by <a data-link-type="biblio" href="#biblio-rfc7517">[RFC7517]</a> 
     <dd> A JSON object that represents a cryptographic key. The members of the object represent properties of
     the key, including its value. 
-    <dt><em>Demonstration of Proof-of-Possession at the Application Layer (DPoP)</em> as defined in the <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04">DPoP Internet-Draft</a> 
+    <dt><em>Demonstration of Proof-of-Possession at the Application Layer (DPoP)</em> as defined in the <a href="https://tools.ietf.org/html/draft-ietf-oauth-dpop-03">DPoP Internet-Draft</a> 
     <dd> A mechanism for sender-constraining OAuth tokens via a proof-of-possession mechanism on the
     application level. 
     <dt><em>DPoP Proof</em> as defined by <a data-link-type="biblio" href="#biblio-dpop">[DPOP]</a> 
@@ -741,7 +741,7 @@ See also <a data-link-type="biblio" href="#biblio-openidconnectdynamicclientregi
    <h3 class="heading settled" data-level="6.1" id="tokens-access"><span class="secno">6.1. </span><span class="content">DPoP-bound Access Token</span><a class="self-link" href="#tokens-access"></a></h3>
    <p>The DPoP-bound Access Token MUST be a valid JWT. See also: <a data-link-type="biblio" href="#biblio-rfc7519">[RFC7519]</a>.</p>
    <p>When requesting a DPoP-bound Access Token, the Client MUST send a DPoP proof JWT
-that is valid according to the <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-5">OAuth 2.0 Demonstration of Proof-of-Possession at the Application Layer (DPoP) §section-5</a>. The DPoP proof JWT is used to
+that is valid according to the <a href="https://tools.ietf.org/html/draft-ietf-oauth-dpop-03#section-5">OAuth 2.0 Demonstration of Proof-of-Possession at the Application Layer (DPoP) §section-5</a>. The DPoP proof JWT is used to
 bind the access token to a public key. See also: <a data-link-type="biblio" href="#biblio-dpop">[DPOP]</a>.</p>
    <p>The DPoP-bound Access Token payload MUST contain these claims:</p>
    <ul>
@@ -764,7 +764,7 @@ Access Token was issued.</p>
 Access Token becomes invalid.</p>
     <li data-md>
      <p><code>cnf</code> — The confirmation claim is used to identify the DPoP Public
-Key bound to the Access Token. See also: <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-7">OAuth 2.0 Demonstration of Proof-of-Possession at the Application Layer (DPoP) §section-7</a>.</p>
+Key bound to the Access Token. See also: <a href="https://tools.ietf.org/html/draft-ietf-oauth-dpop-03#section-7">OAuth 2.0 Demonstration of Proof-of-Possession at the Application Layer (DPoP) §section-7</a>.</p>
     <li data-md>
      <p><code>client_id</code> - The ClientID claim is used to identify the client. See also: <a href="#clientids">section 5. Client Identifiers</a>.</p>
    </ul>
@@ -802,10 +802,10 @@ Key bound to the Access Token. See also: <a href="https://tools.ietf.org/html/dr
    </div>
    <h2 class="heading settled" data-level="7" id="resource"><span class="secno">7. </span><span class="content">Resource Access</span><a class="self-link" href="#resource"></a></h2>
    <h3 class="heading settled" data-level="7.1" id="resource-dpop-validation"><span class="secno">7.1. </span><span class="content">DPoP Proof Validation</span><a class="self-link" href="#resource-dpop-validation"></a></h3>
-   <p>A DPoP Proof that is valid according to <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-4.2">DPoP Internet-Draft, Section 4.2</a>,
+   <p>A DPoP Proof that is valid according to <a href="https://tools.ietf.org/html/draft-ietf-oauth-dpop-03#section-4.3">DPoP Internet-Draft, Section 4.3</a>,
 MUST be present when a DPoP-bound Access Token is used.</p>
    <h3 class="heading settled" data-level="7.2" id="resource-access-validation"><span class="secno">7.2. </span><span class="content">Access Token Validation</span><a class="self-link" href="#resource-access-validation"></a></h3>
-   <p>The DPoP-bound Access Token MUST be validated according to <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-7">DPoP Internet-Draft, Section 7</a>,
+   <p>The DPoP-bound Access Token MUST be validated according to <a href="https://tools.ietf.org/html/draft-ietf-oauth-dpop-03#section-6">DPoP Internet-Draft, Section 6</a>,
 but the RS MAY perform additional verification in order to determine whether to grant access to the
 requested resource.</p>
    <p>The user’s WebID in the <code>webid</code> claim MUST be dereferenced and checked against the <code>iss</code> claim in the
@@ -915,7 +915,7 @@ Verborgh, Ricky White, Paul Worrall, Dmitri Zagidulin.</p>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
   <dl>
    <dt id="biblio-dpop">[DPOP]
-   <dd>D. Fett; et al. <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04">OAuth 2.0 Demonstration of Proof-of-Possession at the Application Layer (DPoP)</a>. URL: <a href="https://tools.ietf.org/html/draft-fett-oauth-dpop-04">https://tools.ietf.org/html/draft-fett-oauth-dpop-04</a>
+   <dd>D. Fett; et al. <a href="https://tools.ietf.org/html/draft-ietf-oauth-dpop-03">OAuth 2.0 Demonstration of Proof-of-Possession at the Application Layer (DPoP)</a>. URL: <a href="https://tools.ietf.org/html/draft-ietf-oauth-dpop-03">https://tools.ietf.org/html/draft-ietf-oauth-dpop-03</a>
    <dt id="biblio-openiddiscovery">[OpenID.Discovery]
    <dd>N. Sakimura; et al. <a href="https://openid.net/specs/openid-connect-discovery-1_0.html">OpenID Connect Discovery 1.0</a>. URL: <a href="https://openid.net/specs/openid-connect-discovery-1_0.html">https://openid.net/specs/openid-connect-discovery-1_0.html</a>
    <dt id="biblio-openidconnectdynamicclientregistration">[OpenIDConnectDynamicClientRegistration]

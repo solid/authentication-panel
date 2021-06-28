@@ -111,7 +111,7 @@ This specification also uses the following terms:
     the key, including its value.
 
 <dt>*Demonstration of Proof-of-Possession at the Application Layer (DPoP)* as defined in the
-[DPoP Internet-Draft](https://tools.ietf.org/html/draft-fett-oauth-dpop-04)
+[DPoP Internet-Draft](https://tools.ietf.org/html/draft-ietf-oauth-dpop-03)
 <dd>
     A mechanism for sender-constraining OAuth tokens via a proof-of-possession mechanism on the
     application level.
@@ -397,13 +397,13 @@ The user's WebID MUST be present in the ID Token as the `webid` claim.
 ## DPoP Proof Validation ## {#resource-dpop-validation}
 
 A DPoP Proof that is valid according to
-[DPoP Internet-Draft, Section 4.2](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-4.2),
+[DPoP Internet-Draft, Section 4.3](https://tools.ietf.org/html/draft-ietf-oauth-dpop-03#section-4.3),
 MUST be present when a DPoP-bound Access Token is used.
 
 ## Access Token Validation ## {#resource-access-validation}
 
 The DPoP-bound Access Token MUST be validated according to
-[DPoP Internet-Draft, Section 7](https://tools.ietf.org/html/draft-fett-oauth-dpop-04#section-7),
+[DPoP Internet-Draft, Section 6](https://tools.ietf.org/html/draft-ietf-oauth-dpop-03#section-6),
 but the RS MAY perform additional verification in order to determine whether to grant access to the
 requested resource.
 
@@ -508,7 +508,7 @@ Verborgh, Ricky White, Paul Worrall, Dmitri Zagidulin.
             "M. Jones",
             "D. Waite"
         ],
-        "href": "https://tools.ietf.org/html/draft-fett-oauth-dpop-04",
+        "href": "https://tools.ietf.org/html/draft-ietf-oauth-dpop-03",
         "title": "OAuth 2.0 Demonstration of Proof-of-Possession at the Application Layer (DPoP)",
         "publisher": "IETF"
     },
