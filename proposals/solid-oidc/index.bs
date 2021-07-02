@@ -413,8 +413,8 @@ the WebID document for the existence of a statement matching `?webid <http://www
 where `?webid` and `?iss` are the values of the `webid` and `iss` claims respectively.
 This prevents a malicious identity provider from issuing valid Access Tokens for arbitrary WebIDs.
 
-Unless the RS acquires IdP keys through some other means, or the IdP chooses to reject tokens issued by this IdP,
-the IdP MUST follow OpenID Connect Discovery 1.0 [[!OpenID.Discovery]] to find an IdP's signing keys (JWK).
+Unless the RS acquires IdP keys through some other means, or the RS chooses to reject tokens issued by this IdP,
+the RS MUST follow OpenID Connect Discovery 1.0 [[!OpenID.Discovery]] to find an IdP's signing keys (JWK).
 
 # Solid-OIDC Conformance Discovery # {#discovery}
 
