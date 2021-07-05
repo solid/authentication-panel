@@ -43,8 +43,11 @@ Client                          keyid                            Resource
 App                          Document                            Server
 |                                |                                   |
 |-(1) request URL -------------------------------------------------->|
-|<============(2) 40x + WWW-Authenticate: HttpSig + (Link) to ACL ===|
+|<-----------(1a) 40x + WWW-Authenticate: HttpSig + (Link) to ACR  --|
 |                                |                                   |
+|                                |                                   |
+|-(2) request Access Control Resource (ACR)------------------------->|
+|<-------------------------------------(2a) 200 with ACR content ----|
 | (choose key)                   |                                   |
 |                                |                                   |
 |-(3)- sign headers+keyid------------------------------------------->|
@@ -52,14 +55,19 @@ App                          Document                            Server
 |                                |                       verification|
 |                                |                                   |
 |                                |<-----------------(4) GET keyid----|
-|                                |-(5) return keyid doc------------->|
+|                                |-(4a) return keyid doc------------>|
 |                                                       - verify sig |
 |                                                       - verify ACL |
 |                                                                    |
-|<---------------------------------------------(6) answer resource---|
+|<--------------------------------------------(3a) answer resource---|
 ```
 
-In (2) the Resource server responds to a request (1), by sending a 401 or 402 response with the `WWW-Authenticate: HttpSig` header. The `WWW-Authenticate` header is specified in §[4.1 of HTTP/1.1](https://www.rfc-editor.org/rfc/rfc7235#section-4.1).  The `HttpSig` challenge method needs to be defined here (todo) and registered as specified in the [Authentication Scheme Registry](https://www.rfc-editor.org/rfc/rfc7235#section-5.1).
+Note that the core extension to "Signing HTTP Messages" occurs in exchange 2 and 3. 
+1 and 2 are just preparatory moves that set up the context. 
+
+#### 1. Setting up the context
+
+In (1a) the Resource server answers a request (1), by sending a 401 or 402 response with the `WWW-Authenticate: HttpSig` header. The `WWW-Authenticate` header is specified in §[4.1 of HTTP/1.1](https://www.rfc-editor.org/rfc/rfc7235#section-4.1).  The `HttpSig` challenge method needs to be defined here (todo) and registered as specified in the [Authentication Scheme Registry](https://www.rfc-editor.org/rfc/rfc7235#section-5.1).
 
 We illustrate this with the following example. Alice makes a request to a resource `</comments/>` on her Personal Online Data Store (POD) at `<https://alice.name>`:
 
@@ -80,16 +88,22 @@ Link: <http://www.w3.org/ns/ldp#Resource>; rel=type
 Link: </comments/.acl>; rel=acl
 ```
 
-The `Link` header with a `rel` value of `acl` works as described in [Web Access Control Spec](https://github.com/solid/web-access-control-spec/), and allows clients connecting to a resource, to know what credentials they need to gain access to the resource.  Without such a `Link` the client would only be able to guess what key to send. This leads to the following dilemna: either the client looses privacy by randomly having to present its credentials, allowing the server to correlate those identies, or the client has to resign itself to not accessing resources it is actually entitled to. Presenting the access rules avoids clients having to choose between such unappealing extremes.
+The `Link` header with a `rel` value of `acl` works as described in the [Web Access Control Spec](https://github.com/solid/web-access-control-spec/). 
+It is what allows clients making a request on a resource to find out what credentials they need to gain the access they were denied.
+Without such a `Link` the client would only be able to guess what key to send,
+leading to the following dilemma: either the client loses privacy by randomly having to present its credentials, allowing the server to correlate those identities, or the client has to resign itself to not accessing resources it is actually entitled to. Presenting the access rules avoids clients having to choose between such unappealing extremes.
+We illustrate a client discovering this information in request 2 and answer 2a.  
 
 Note: With [HTTP/2 server Push](https://tools.ietf.org/html/rfc7540#section-8.2), the server could immediately push the content of the linked-to Access Control document to the client, assuming reasonably that the client would have connected with the key had it known the rules.
 It may also be possible to send the relevant ACL rules directly in the body of the response (see discussion on [issue 167](https://github.com/solid/authentication-panel/issues/167)).
 
 The Access Control rule could be as simple as stating that access will be granted only to requests authenticate using one of a set of keys. More complicated use cases are possible, as described in the [Use Cases and Requirements Document](https://solid.github.io/authorization-panel/authorization-ucr/).
 
+#### 2. Authentication extension
+
 If the client can find a key that satisfies the Access Control Rules, then it can use the corresponding private key to sign the headers in (3) as specified by [Signing HTTP Messages](https://w3c-ccg.github.io/did-method-key/) and pass a link to the key in the `keyid` field as a URL.
 
-Assume that Alice's client, after parsing the Access Control Rules found that `https://alice.name/keys/alice#` satisfies the stated requirements. If Alice allows the client to use that key, the app can create a signing string for the `@request-target` pseudo-header and `authorization` header. The `authorization` header is mandatory (is it really?) to avoid a man in the middle attack that could change the `Authorization` header to point to a different signature.
+Assume that Alice's client, after parsing the Access Control Rules found that `https://alice.name/keys/alice#` satisfies the stated requirements. If Alice allows the client to use that key, the app can create a signing string for the `@request-target` pseudo-header and `authorization` header. The `authorization` header is mandatory to avoid a man in the middle attack (is it really?) that could change the `Authorization` header to point to a different signature.
 
 First Alice's client builds a pre-signed request, containing an `Authorization` header as shown here:
 
@@ -332,35 +346,39 @@ As before, we reserve the option to enclose a relative URL in `>` and `<` to ref
 
 
 ```text
-Client                                Resource              keyid           Age
-App                                   Server                Doc             Credential
-|                                        |                    |                |
-|-(1) request URL ---------------------->|                    |                |
-|<=======(2) 401 + WWW-Auth Sig header===|                    |                |
-|                                        |                    |                |
-| (select cert and key)                  |                    |                |
-|                                        |                    |                |
-|-(3) add Cred hdr+sign+keyid----------->|                    |                |
-|                           initial auth |                    |                |
-|                           verification |                    |                |
-|                                        |                    |                |
-|                                        |-(4) GET keyid----->|                |
-|                                        |<-----(5) keyid doc-|                |
-|                                        |                                     |
-|                             verify sig |                                     |
-|                                        |                                     |
-|                                        |-(6) GET credential----------------->|
-|                                        |<-----------------(7) credential doc-|
-|                                        |
-|                       WAC verification |
-|                                        |
-|<-------------------(8) send content----|
+Client                               Resource                  keyid   Credential 
+App                                   Server                    Doc         Doc
+|                                       |                        |           |
+|-(1) request URL --------------------->|                        |           |
+|<-------------(2) 401 + WWW-Auth Sig   |                        |           |
+|                  + Link acl header  --|                        |           |
+|                                       |                        |           |
+|-(2) request ACR --------------------->|                        |           |
+|<-------------------(2a) 200 ACR doc --|                        |           |
+|                                       |                        |           |
+| (select cert and key)                 |                        |           |
+|                                       |                        |           |
+|-(3) HTTP Sig header------------------>|                        |           |
+|                          initial auth |                        |           |
+|                          verification |                        |           |
+|                                       |                        |           |
+|                                       |-(4) GET keyid--------->|           |
+|                                       |<--------(4a) keyid doc-|           |
+|                                       |                                    |
+|                            verify sig |                                    |
+|                                       |                                    |
+|                                       |-(5) GET credential---------------->|
+|                                       |<---------------(5a) credential Doc-|
+|                                       |
+|                      WAC verification |
+|                                       |
+|<-----------------(3a) send content----|
 ```
 
-Steps (4) and (5), where the server retrieves a (cached) copy of the key, are as before.
+Exchange 4, where the server retrieves a (cached) copy of the key, are as before.
 
-Steps (6) can be run in parallel with (4) to fetch the Credential document.
-This also can be cached.
+Exchange 5  to fetch the Credential document can run in parallel with 4.
+And the result sent in 5a can also can be cached.
 If the `Credential` header URL
 * is enclosed in '<' and '>' then
   * if it is relative it can be fetched on the same server
@@ -395,7 +413,7 @@ a representation with the following triples:
 By signing the HTTP header with the private key corresponding to the public key published at `<https://alice.example/card#key1>` the client proves that it is the referrent of `<https://alice.example/card#me>` according to the description of the WebID Profile Document.
 
 This can be used for people or institutions that are happy to have public global identifiers to identify them.
-One advantage is that the `keyid` document being the same as the WebID Profile document, the verification step requests (4) and (6) get collapsed into one request.
+One advantage is that the `keyid` document being the same as the WebID Profile document, the verification step requests (4) and (5) get collapsed into one request.
 It also allows each individual user to maintain their profile and keys by hosting it on their server.
 This allows friends to link to it, creating a [friend of a friend](http://www.foaf-project.org) decentralized social network.
 A certain amount of anonymity can be regained by placing those servers behind Tor, using `.onion` URLs, and access controlling linked to documents that contain more personal information.
