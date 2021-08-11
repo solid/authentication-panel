@@ -169,7 +169,7 @@ In our example, the Resource Guard on the POD `alice.name` retrieves the resourc
 The server could also return an equivalent [Turtle 1.1](https://www.w3.org/TR/turtle/) representation:
 
 ```Turtle
-@prefix security <https://w3id.org/security#> .
+@prefix security: <https://w3id.org/security#> .
 
 </keys/alice#>
      security:controller </people/alice#i> ;
