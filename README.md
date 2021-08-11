@@ -18,11 +18,13 @@ to propose a project for the panel to undertake.
 
 ### Solid OIDC
 
-* Specification - [Source](proposals/solid-oidc/index.bs) - [Rendered](https://solid.github.io/authentication-panel/solid-oidc/)
-  * [Open Issues](https://github.com/solid/authentication-panel/issues?q=is%3Aissue+is%3Aopen+label%3ASolid-OIDC)
-* Primer - [Source](proposals/solid-oidc-primer/index.bs) - [Rendered](https://solid.github.io/authentication-panel/solid-oidc-primer/)
+The Solid-OIDC specification documents are available in the [solid/solid-oidc](https://github.com/solid/solid-oidc/) repository.
 
-### Http Signature 
+* [Specification](https://solid.github.io/solid-oidc/)
+* [Primer](https://solid.github.io/solid-oidc/primer/)
+* [Issues](https://github.com/solid/solid-oidc/issues/)
+
+### Http Signature
 
 * Proposal Overview - [Text](proposals/HttpSignature.md)
 
