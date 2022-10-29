@@ -173,16 +173,18 @@ The server could also return an equivalent [Turtle 1.1](https://www.w3.org/TR/tu
 
 ```Turtle
 @prefix security: <https://w3id.org/security#> .
-</keys/alice#>
-     security:controller </people/alice#i> ;
-     security:publicKeyJwk """{
-       "alg": "PS512",
-       "warning": "Don't use this key for real world examples, as the private key is publicly known. This is the key from <https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures-13#page-82>.",
-        "use": "sig",
-        "kty":"RSA",
-        "e":"AQAB",
-        "n":"r4tmm3r20Wd_PbqvP1s2-QEtvpuRaV8Yq40gjUR8y2Rjxa6dpG2GXHbPfvMs8ct-Lh1GH45x28Rw3Ry53mm-oAXjyQ86OnDkZ5N8lYbggD4O3w6M6pAvLkhk95AndTrifbIFPNU8PPMO7OyrFAHqgDsznjPFmTOtCEcN2Z1FpWgchwuYLPL-Wokqltd11nqqzi-bJ9cvSKADYdUAAN5WUtzdpiy6LbTgSxP7ociU4Tn0g5I6aDZJ7A8Lzo0KSyZYoA485mqcO0GVAdVw9lq4aOT9v6d-nb4bnNkQVklLQ3fVAvJm-xdDOp9LCNCN48V2pnDOkFV6-U9nV5oyc6XI2w"
-      }"""^^rdfs:JSON .
+@prefix rdf: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<#> a security:JsonWebKey2020 ;
+   security:controller </people/alice#i> ;
+   security:publicKeyJwk """{
+     "alg": "PS512",
+     "warning": "Don't use this key for real world examples, as the private key is publicly known. This is the key from <https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures-13#page-82>.",
+      "use": "sig",
+      "kty":"RSA",
+      "e":"AQAB",
+      "n":"r4tmm3r20Wd_PbqvP1s2-QEtvpuRaV8Yq40gjUR8y2Rjxa6dpG2GXHbPfvMs8ct-Lh1GH45x28Rw3Ry53mm-oAXjyQ86OnDkZ5N8lYbggD4O3w6M6pAvLkhk95AndTrifbIFPNU8PPMO7OyrFAHqgDsznjPFmTOtCEcN2Z1FpWgchwuYLPL-Wokqltd11nqqzi-bJ9cvSKADYdUAAN5WUtzdpiy6LbTgSxP7ociU4Tn0g5I6aDZJ7A8Lzo0KSyZYoA485mqcO0GVAdVw9lq4aOT9v6d-nb4bnNkQVklLQ3fVAvJm-xdDOp9LCNCN48V2pnDOkFV6-U9nV5oyc6XI2w"
+   }"""^^rdf:JSON .
 ```
 
 (See [issue 156: Ontology for `keyid` document](https://github.com/solid/authentication-panel/issues/156))
