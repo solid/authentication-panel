@@ -151,17 +151,20 @@ In our example, the Resource Guard on the POD `alice.name` retrieves the resourc
 
 ```JSON
 {
-"@context": [
-    "https://w3id.org/security/v1",
-    { "ex": "http://example.org/vocab#" }
+  "@context": [
+      "https://www.w3.org/ns/did/v1",
+      "https://w3id.org/security/suites/jws-2020/v1"
   ],
   "id": "#",
   "controller": "/people/alice#i",
-  "publicKeyJwk": { "kty":"RSA",
-  "e":"AQAB",
-  "n":"hAKYdtoeoy8zcAcR874L8cnZxKzAGwd7v36APp7Pv6Q2jdsPBRrwWEBnez6d0UDKDwGbc6nxfEXAy5mbhgajzrw3MOEt8uA5txSKobBpKDeBLOsdJKFqMGmXCQvEG7YemcxDTRPxAleIAgYYRjTSd_QBwVW9OwNFhekro3RtlinV0a75jfZgkne_YiktSvLG34lw2zqXBDTC5NHROUqGTlML4PlNZS5Ri2U4aCNx2rUPRcKIlE0PuKxI4T-HIaFpv8-rdV6eUgOrB2xeI1dSFFn_nnv5OoZJEIB-VmuKn3DCUcCZSFlQPSXSfBDiUGhwOw76WuSSsf1D4b_vLoJ10w",
-     "alg":"PS512",
-    "kid":"2021-04-01-laptop"
+  "type": "JsonWebKey2020",
+  "publicKeyJwk": {
+    "alg": "PS512",
+    "use": "sig",
+    "warning": "this is the key from https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures-13#page-82. Don't use for real world examples, as the private key is public knowledge",
+    "kty": "RSA",
+    "e": "AQAB",
+    "n": "hAKYdtoeoy8zcAcR874L8cnZxKzAGwd7v36APp7Pv6Q2jdsPBRrwWEBnez6d0UDKDwGbc6nxfEXAy5mbhgajzrw3MOEt8uA5txSKobBpKDeBLOsdJKFqMGmXCQvEG7YemcxDTRPxAleIAgYYRjTSd_QBwVW9OwNFhekro3RtlinV0a75jfZgkne_YiktSvLG34lw2zqXBDTC5NHROUqGTlML4PlNZS5Ri2U4aCNx2rUPRcKIlE0PuKxI4T-HIaFpv8-rdV6eUgOrB2xeI1dSFFn_nnv5OoZJEIB-VmuKn3DCUcCZSFlQPSXSfBDiUGhwOw76WuSSsf1D4b_vLoJ10w"
   }
 }
 ```
@@ -170,15 +173,15 @@ The server could also return an equivalent [Turtle 1.1](https://www.w3.org/TR/tu
 
 ```Turtle
 @prefix security: <https://w3id.org/security#> .
-
 </keys/alice#>
      security:controller </people/alice#i> ;
      security:publicKeyJwk """{
-            "alg":"PS512",
-            "e":"AQAB",
-            "kid":"2021-04-01-laptop",
-            "kty":"RSA",
-            "n":hAKYdtoeoy8zcAcR874L8cnZxKzAGwd7v36APp7Pv6Q2jdsPBRrwWEBnez6d0UDKDwGbc6nxfEXAy5mbhgajzrw3MOEt8uA5txSKobBpKDeBLOsdJKFqMGmXCQvEG7YemcxDTRPxAleIAgYYRjTSd_QBwVW9OwNFhekro3RtlinV0a75jfZgkne_YiktSvLG34lw2zqXBDTC5NHROUqGTlML4PlNZS5Ri2U4aCNx2rUPRcKIlE0PuKxI4T-HIaFpv8-rdV6eUgOrB2xeI1dSFFn_nnv5OoZJEIB-VmuKn3DCUcCZSFlQPSXSfBDiUGhwOw76WuSSsf1D4b_vLoJ10w"
+       "alg": "PS512",
+       "warning": "Don't use this key for real world examples, as the private key is publicly known. This is the key from <https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures-13#page-82>.",
+        "use": "sig",
+        "kty":"RSA",
+        "e":"AQAB",
+        "n":"r4tmm3r20Wd_PbqvP1s2-QEtvpuRaV8Yq40gjUR8y2Rjxa6dpG2GXHbPfvMs8ct-Lh1GH45x28Rw3Ry53mm-oAXjyQ86OnDkZ5N8lYbggD4O3w6M6pAvLkhk95AndTrifbIFPNU8PPMO7OyrFAHqgDsznjPFmTOtCEcN2Z1FpWgchwuYLPL-Wokqltd11nqqzi-bJ9cvSKADYdUAAN5WUtzdpiy6LbTgSxP7ociU4Tn0g5I6aDZJ7A8Lzo0KSyZYoA485mqcO0GVAdVw9lq4aOT9v6d-nb4bnNkQVklLQ3fVAvJm-xdDOp9LCNCN48V2pnDOkFV6-U9nV5oyc6XI2w"
       }"""^^rdfs:JSON .
 ```
 
