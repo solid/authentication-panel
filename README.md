@@ -35,6 +35,6 @@ The Solid-OIDC specification documents are available in the [solid/solid-oidc](h
 
 ## Meetings
 
-Meetings of the Authentication panel take place at 10AM eastern on Mondays. 
+Meetings of the Authentication panel take place at 1400 UTC on Mondays.
 
 Meeting link: https://meet.jit.si/solid-authentication
