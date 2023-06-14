@@ -2,17 +2,17 @@
 
 ## Summary
 
-HttpSig is a simple but very efficient authentication protocol extending [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) RFC by defining &mdash;
+HttpSig is a simple but very efficient authentication protocol extending [Signing HTTP Messages](https://datatracker.ietf.org/doc/draft-ietf-httpbis-message-signatures/) RFC by defining &mdash;
 
 * a `WWW-Authenticate: HttpSig` header for servers to return to the client with a 401 or 402,
 * an `Authorization: HttpSig` method the client can use in response with two optional attributes `webid` and `cert` (todo) the first one taking `https` URLs and the second taking `https` or `DID` URLs,
-* a requirement to interpret the `keyid` attribute of the `Signature-Input` header defined in [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) as a URI when used with the `WWW-Authenticate: HttpSig` header,
+* a requirement to interpret the `keyid` attribute of the `Signature-Input` header defined in [Signing HTTP Messages](https://datatracker.ietf.org/doc/draft-ietf-httpbis-message-signatures/) as a URI when used with the `WWW-Authenticate: HttpSig` header,
 * the ability to use absolute or relative URLs in both paces mentioned above,
 * allow relative URLs passed by the client to the server to refer to resources on the client using a [P2P Extension to HTTP](https://tools.ietf.org/html/draft-benfield-http2-p2p-02) which would allow authentication over a single HTTP connection.
 
 ## Signing HTTP Messages
 
-[Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) is an IETF RFC Draft worked on by the HTTP WG, whose purpose is to allow the signing of HTTP messages, be they requests or responses.
+[Signing HTTP Messages](https://datatracker.ietf.org/doc/draft-ietf-httpbis-message-signatures/) is an IETF RFC Draft worked on by the HTTP WG, whose purpose is to allow the signing of HTTP messages, be they requests or responses.
 *Signing Messages* is based on [draft-cavage-http-signature-12](https://tools.ietf.org/html/draft-cavage-http-signatures-12), which evolved and gained adoption since 2013, and had a [large number of implementations](https://github.com/w3c-dvcg/http-signatures/issues/1). The IETF spec does depart in important ways from the previous work, building on [RFC 8941: Structured Header Fields](https://tools.ietf.org/html/rfc8941#section-4.1.1.2) and dropping the authentication feature which we are adding back here.
 
 *Signing Messages* is a lightweight extension to the HTTP protocol.
@@ -21,9 +21,9 @@ As such, it has full access to the HTTP layer. In comparison, TLS client authent
 Since `HttpSig` is an extension to *Signing Messages* it can directly access HTTP error codes, `Link` relation headers, and other metadata on a message. As a result, the client can use published access control policies to select among its credentials and use different identities on different requests. For example, a client can start by presenting an adult credential and later one for payment. If the client does not wish the server to link those properties, it would, of course, need to open a new connection.
 (Note: all communication here is assumed to run over TLS.)
 
-The [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) protocol allows a client to authenticate by signing any of several HTTP headers with any one of its private keys.
+The [Signing HTTP Messages](https://datatracker.ietf.org/doc/draft-ietf-httpbis-message-signatures/) protocol allows a client to authenticate by signing any of several HTTP headers with any one of its private keys.
 To verify the signature, the server will needs to know the corresponding public key.
-This information is passed in the form of an opaque string known as a `keyid` (see [§2.4.2 Signature Parameters](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04#section-2.4.2)), which enable the server to look up the public key; how this look-up is done is not specified by that protocol.
+This information is passed in the form of an opaque string known as a `keyid` (see [§2.3 Signature Parameters](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures-17#signature-params)), which enable the server to look up the public key; how this look-up is done is not specified by that protocol.
 
 The `HttpSig` protocol extension described here requires the `keyid` string to be interpreted as a URL.
 This allows the server to discover the public key by [resolving](https://tools.ietf.org/html/rfc3986#section-5) the `keyid` URL using standards defined for each URI scheme.
@@ -36,7 +36,7 @@ We then show how this ties into the Access-Control Protocol used by Solid.
 
 ### The Sequence Diagram
 
-The minimal extension to [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) can be illustrated by the following Sequence Diagram:
+The minimal extension to [Signing HTTP Messages](https://datatracker.ietf.org/doc/draft-ietf-httpbis-message-signatures/) can be illustrated by the following Sequence Diagram:
 
 ```text
 Client                          keyid                            Resource
@@ -145,7 +145,7 @@ Notes:
 * in the example above, the `keyid` is a relative URL pointing to a resource on Alice's POD.
 
 
-The main protocol extension from [Signing HTTP Messages](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04) RFC is that of requiring the `keyid` to be a URL, allowing the resource server to retrieve the `keyid` document in (4).
+The main protocol extension from [Signing HTTP Messages](https://datatracker.ietf.org/doc/draft-ietf-httpbis-message-signatures/) RFC is that of requiring the `keyid` to be a URL, allowing the resource server to retrieve the `keyid` document in (4).
 
 In our example, the Resource Guard on the POD `alice.name` retrieves the resource `</keys/alice>` receiving the following [JSON-LD 1.1](https://json-ld.org/) document:
 
@@ -221,20 +221,29 @@ Starting from one resource, such as TimBL's WebID, a client should be able to fo
 ### The `keyid` URL
 
 When used with `HttpSig` all  `keyid`  parameters are to be interpreted as URLs.
-To take an example from [§A.3.2.1](https://tools.ietf.org/html/draft-ietf-httpbis-message-signatures-04#appendix-A.3.2) of the *Message Signing* RFC, this would allow the following use of relative URLs referring to a resource on the requested server
+By extending the first complete example from of the *Message Signing* RFC, in [§2.4](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures-17#section-2.4) with an `Authorization:L HttpSig` header allows the server to determine that the location of the key is at the URL `/test-key-rsa-pss` on the server.
 
 ```HTTP
 Authorization: HttpSig proof=sig2
-Signature-Input: sig2=(); keyid="/keys/test-key-a"; created=1402170695
-Signature: sig2=:cxieW5ZKV9R9A70+Ua1A/1FCvVayuE6Z77wDGNVFSiluSzR9TYFV
-       vwUjeU6CTYUdbOByGMCee5q1eWWUOM8BIH04Si6VndEHjQVdHqshAtNJk2Quzs6WC
-       2DkV0vysOhBSvFZuLZvtCmXRQfYGTGhZqGwq/AAmFbt5WNLQtDrEe0ErveEKBfaz+
-       IJ35zhaj+dun71YZ82b/CRfO6fSSt8VXeJuvdqUuVPWqjgJD4n9mgZpZFGBaDdPiw
-       pfbVZHzcHrumFJeFHWXH64a+c5GN+TWlP8NPg2zFdEc/joMymBiRelq236WGm5VvV
-       9a22RW2/yLmaU/uwf9v40yGR/I1NRA==:
+POST /foo?param=Value&Pet=dog HTTP/1.1
+Host: example.com
+Date: Tue, 20 Apr 2021 02:07:55 GMT
+Content-Type: application/json
+Content-Digest: sha-512=:WZDPaVn/7XgHaAy8pmojAkGWoRx2UFChF41A2svX+T\
+  aPm+AbwAgBWnrIiYllu7BNNyealdVLvRwEmTHWXvJwew==:
+Content-Length: 18
+Signature-Input: sig1=("@method" "@authority" "@path" "@query" \
+  "content-digest" "content-type" "content-length")\
+  ;created=1618884475;keyid="test-key-rsa-pss"
+Signature: sig1=:mZuBiiKDzg+s8eJiMYc0GwSkyurjSbPX7xSKpYe7EcfolW3DUF\
+  RjlpneJoDkt5zNZo3N5tjn1e0sZZlBbrhHPhD9aQtE/qJPHrjwLUOY9eYtUWw261F\
+  Xxpp2Dsqa9jeE1r0or4TGalZnEiNl5cNFv7ze8ox5G6TNNyam/3GeB2N8t8P56XOG\
+  03g50CsN/4QZGWs4AjJcD5gMzcQhq/9JoKDUJDbcEyIetxEYvQCjWKbSb4yBevGmY\
+  PWJ2ezfIFiwmUuvrs/Ab9tYzIjEw1hHP70RF67HSazjT+YsI2y5jpzjx8SerihGSN\
+  Qwr57yQaTt4vK1eRDL2758LnsEYtO8lg==:
 ```
 
-But it would also allow for absolute URLs referring to `keyid` documents
+It also allows for absolute URLs referring to `keyid` documents
 located elsewhere on the web, such as the requestor's [Freedom Box](https://freedombox.org):
 
 ```HTTP
