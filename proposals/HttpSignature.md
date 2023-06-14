@@ -224,8 +224,8 @@ When used with `HttpSig` all  `keyid`  parameters are to be interpreted as URLs.
 By extending the first complete example from of the *Message Signing* RFC, in [§2.4](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures-17#section-2.4) with an `Authorization:L HttpSig` header allows the server to determine that the location of the key is at the URL `/test-key-rsa-pss` on the server.
 
 ```HTTP
-Authorization: HttpSig proof=sig2
 POST /foo?param=Value&Pet=dog HTTP/1.1
+Authorization: HttpSig proof=sig2
 Host: example.com
 Date: Tue, 20 Apr 2021 02:07:55 GMT
 Content-Type: application/json
@@ -278,6 +278,10 @@ which can be dereferenced. In the above example, the `keyid` document is
 For the [Solid](https://solid-project.org/) use cases, the `keyid` document must contain a description of the public key in an RDF format.
 Following discussion in [issue 156: Ontology for `keyid` document](https://w3id.org/security/v1) and in order to maximise interoperability with the Web Credentials community, the document has to use the [security-vocab](https://w3c-ccg.github.io/security-vocab/#challenge).
 The server must present both [Turtle](https://www.w3.org/TR/turtle/) and  [JSON-LD](https://json-ld.org) formats. This format embeds a JSON Literal for the key as specified by [RFC 7517: JSON Web Key (JWK)](https://tools.ietf.org/html/rfc7517) into the RDF. An example `keyid` document was given with Alice's `keyid` document above.
+
+### Which headers should be signed?
+
+This is a topic which would be best informed from experience in the field. See [discussion 236: What HttpSig headers should be signed?](https://github.com/solid/authentication-panel/discussions/236).
 
 
 ### The Access Control Rules
