@@ -29,7 +29,7 @@ The `HttpSig` protocol extension described here requires the `keyid` string to b
 This allows the server to discover the public key by [resolving](https://tools.ietf.org/html/rfc3986#section-5) the `keyid` URL using standards defined for each URI scheme.
  `https` URLs present the advantage of being widely used, but `HttpSig` is open to other schemes such as [DID](https://www.w3.org/TR/did-core/)s.
 
-## Extending `Signing HTTP Messages` with URLs
+## Extending `Signing HTTP Messages` with `keyid` URLs
 
 We first consider the minimal extension of *Signing Messages* with `keyid`'s limited to HTTP urls.
 We then show how this ties into the Access-Control Protocol used by Solid.
