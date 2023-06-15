@@ -38,7 +38,7 @@ We then show how this ties into the Access-Control Protocol used by Solid.
 
 The minimal extension to [Signing HTTP Messages](https://datatracker.ietf.org/doc/draft-ietf-httpbis-message-signatures/) can be illustrated by the following Sequence Diagram:
 
-![HttpSig Sequence Diagram](img/HttpSigDiagrams/Sequence.gif)
+![HttpSig Sequence Diagram](img/HttpSigDiagrams/Sequence.svg)
 
 Note that the core extension to "Signing HTTP Messages" occurs in exchange 2 and 3. 
 1 and 2 are just preparatory moves that set up the context. 
