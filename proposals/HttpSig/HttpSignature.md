@@ -43,9 +43,9 @@ The minimal extension to [Signing HTTP Messages](https://datatracker.ietf.org/do
 Note that the core extension to "Signing HTTP Messages" occurs in exchange 2 and 3. 
 1 and 2 are just preparatory moves that set up the context. 
 
-#### 1. Setting up the context
+#### 1. The initial Request
 
-In (1a) the Resource server answers a request (1), by sending a 401 or 402 response with the `WWW-Authenticate: HttpSig` header. The `WWW-Authenticate` header is specified in §[4.1 of HTTP/1.1](https://www.rfc-editor.org/rfc/rfc7235#section-4.1).  The `HttpSig` challenge method needs to be defined here (todo) and registered as specified in the [Authentication Scheme Registry](https://www.rfc-editor.org/rfc/rfc7235#section-5.1).
+In (1) the Resource server answers a request ⓐ, by returning in ⓑ a 401 or 402 response with the `WWW-Authenticate: HttpSig` header. The `WWW-Authenticate` header is specified in §[4.1 of HTTP/1.1](https://www.rfc-editor.org/rfc/rfc7235#section-4.1).  The `HttpSig` challenge method needs to be defined here (todo) and registered as specified in the [Authentication Scheme Registry](https://www.rfc-editor.org/rfc/rfc7235#section-5.1).
 
 We illustrate this with the following example. Alice makes a request to a resource `</comments/>` on her Personal Online Data Store (POD) at `<https://alice.name>`:
 
@@ -54,11 +54,12 @@ GET /comments/ HTTP/1.1
 Accept: text/turtle, application/ld+json;q=0.9, */*;q=0.8
 ```
 
-The response from the server in (2) is the following:
+The response from the server in 1ⓑ will be similar to the following
 
 ```HTTP
 HTTP/1.1 401 Unauthorized
 WWW-Authenticate: HttpSig realm="/comments/"
+Accept-Signature: sig1=("@method" "@target-uri");created;nonce
 Host: alice.name
 Date: Thu, 01 Apr 2021 00:01:03 GMT
 Link: <http://www.w3.org/ns/ldp#BasicContainer>; rel=type
@@ -66,22 +67,34 @@ Link: <http://www.w3.org/ns/ldp#Resource>; rel=type
 Link: </comments/.acl>; rel=acl
 ```
 
-The `Link` header with a `rel` value of `acl` works as described in the [Web Access Control Spec](https://github.com/solid/web-access-control-spec/). 
+* The `Link` header w1 a `rel` value of `acl` works as described in the [Web Access Control Spec](https://github.com/solid/web-access-control-spec/). 
 It is what allows clients making a request on a resource to find out what credentials they need to gain the access they were denied.
 Without such a `Link` the client would only be able to guess what key to send,
 leading to the following dilemma: either the client loses privacy by randomly having to present its credentials, allowing the server to correlate those identities, or the client has to resign itself to not accessing resources it is actually entitled to. Presenting the access rules avoids clients having to choose between such unappealing extremes.
-We illustrate a client discovering this information in request 2 and answer 2a.  
+* `Accept-Signature` header specifies the minimal set of headers that need to be signed. It is defined in [§5.1 The Accept-Signature Field](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures-17#section-5.1). (Please provide feedback on which fields should be required in [Discussion 236](https://github.com/solid/authentication-panel/discussions/236))
+
+#### 2. Finding the Access Control Rules
+
+After parsing the headers and resolving relative URLs in the Link headers the client finds the effective acl (see [issue 531: defaultAccessContainer Link header](https://github.com/solid/specification/issues/531)).
 
 Note: With [HTTP/2 server Push](https://tools.ietf.org/html/rfc7540#section-8.2), the server could immediately push the content of the linked-to Access Control document to the client, assuming reasonably that the client would have connected with the key had it known the rules.
-It may also be possible to send the relevant ACL rules directly in the body of the response (see discussion on [issue 167](https://github.com/solid/authentication-panel/issues/167)).
+It may also be possible to send the relevant ACL rules directly in the body of the response (see discussion on [issue 167](https://github.com/solid/authentication-panel/issues/167)) though one would like especially for default rules to be cachable, to reduce the bytes sent in each response.
 
 The Access Control rule could be as simple as stating that access will be granted only to requests authenticate using one of a set of keys. More complicated use cases are possible, as described in the [Use Cases and Requirements Document](https://solid.github.io/authorization-panel/authorization-ucr/).
 
-#### 2. Authentication extension
+#### 3. Client selects fitting Key
 
 If the client can find a key that satisfies the Access Control Rules, then it can use the corresponding private key to sign the headers in (3) as specified by [Signing HTTP Messages](https://w3c-ccg.github.io/did-method-key/) and pass a link to the key in the `keyid` field as a URL.
 
+There may be more than one key that fits and the client may also ask the user which key to use or follow a laid out policy to decide on this.
+
+#### 4. The Client Signs the Header
+
+In 4 the Client signs the header, and if the Guard can verify the proof the server will allow the action to take place. We will look at the Logic the Guard follows in 5, 6, and 7.
+
 Assume that Alice's client, after parsing the Access Control Rules found that `https://alice.name/keys/alice#` satisfies the stated requirements. If Alice allows the client to use that key, the app can create a signing string for the `@request-target` pseudo-header and `authorization` header. The `authorization` header is mandatory to avoid a man in the middle attack (is it really?) that could change the `Authorization` header to point to a different signature.
+
+**todo:** below this point all signatures need to be regenerated.
 
 First Alice's client builds a pre-signed request, containing an `Authorization` header as shown here:
 
@@ -90,6 +103,7 @@ GET /comments/ HTTP/1.1
 Authorization: HttpSig proof=sig1
 Accept: text/turtle, application/ld+json;q=0.9, */*;q=0.8
 ```
+
 
 This request is used to generate a signing string on the `@request-target` and `authorization` headers:
 
@@ -122,10 +136,16 @@ Notes:
 * the HttpSig Authorization message interprets any `keyid` to be a relative or absolute URI,
 * in the example above, the `keyid` is a relative URL pointing to a resource on Alice's POD.
 
+#### 5. The Guard Authorizes
 
-The main protocol extension from [Signing HTTP Messages](https://datatracker.ietf.org/doc/draft-ietf-httpbis-message-signatures/) RFC is that of requiring the `keyid` to be a URL, allowing the resource server to retrieve the `keyid` document in (4).
+The Guard on the server protecting the resource Authorizes the request in 4 steps: the first two (a) and (b) for Authentication, the second pair (c) and (d) for authorization.
 
-In our example, the Resource Guard on the POD `alice.name` retrieves the resource `</keys/alice>` receiving the following [JSON-LD 1.1](https://json-ld.org/) document:
+##### (a) The Guard Fetches the `keyid`
+
+The main protocol extension from [Signing HTTP Messages](https://datatracker.ietf.org/doc/draft-ietf-httpbis-message-signatures/) RFC is that of requiring the `keyid` to be a URL, allowing the resource server to retrieve the `keyid` document in (4). The keyid url should be understood to be relative to the response url.
+
+
+In 5a of our example, the Resource Guard on the POD `alice.name` retrieves the resource `</keys/alice>` receiving the following [JSON-LD 1.1](https://json-ld.org/) document:
 
 ```JSON
 {
@@ -175,9 +195,20 @@ Indeed, here is a list of contexts in which a connection to the internet will no
 * The `keyid` URL refers to an external resource, but the resource server has a fresh cached copy of it, or the URL refers to a `did:...` document stored on some form of blockchain, which the server has access to offline.
 * The `keyid` is a relative URL on the client, which the server can GET using the P2P extension to HTTP (more on that below).
 
-One advantage of using `https` URLs to refer to keys, is that they allow the client to use HTTP Methods such as `POST` or `PUT` to create keys, as well as `PUT`, `PATCH` and `DELETE` to edit them, helping address the problem of key revocation.
+One advantage of using HTTP URLs to refer to keys, is that they allow the client to use HTTP Methods such as `POST` or `PUT` to create keys, as well as `PUT`, `PATCH` and `DELETE` to edit them, helping address the problem of key revocation.
 
-Whichever `keyid` scheme is used, the Resource's Guard will be able to check the linked-to Web Access Control Rules, and so discover if access can be granted to a user identified with that key (see [The Access Control Rules](#the-access-control-rules) below).
+##### (b) verifying the signature
+
+Having received the keyId content the Guard can verify that the signature was signed correctly as specified in [HTTP Message Signatures](https://datatracker.ietf.org/doc/draft-ietf-httpbis-message-signatures/).
+
+##### (c) the Guard fetches the rules for the resource
+
+Next the Guard must fetch the same Access control Resource the client used by following the HTTP headers of the resource.
+
+##### (d) the Guard Authorizes the request
+
+
+Having the Verified ID (or credential) and the rules, the Guard can find out if the Principal has access in the required mode. (see [The Access Control Rules](#the-access-control-rules) below).
 
 
 ## Solid Use Case
