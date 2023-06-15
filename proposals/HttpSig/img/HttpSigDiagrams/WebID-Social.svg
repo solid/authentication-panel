@@ -39,16 +39,6 @@
         <path d="M -4.8 0 L 0 1.8 L 0 -1.8 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
       </g>
     </marker>
-    <filter id="Shadow_3" filterUnits="userSpaceOnUse" x="-115.2" y="-146.8">
-      <feGaussianBlur in="SourceAlpha" result="blur" stdDeviation="1.308"/>
-      <feOffset in="blur" result="offset" dx="0" dy="2"/>
-      <feFlood flood-color="black" flood-opacity=".5" result="flood"/>
-      <feComposite in="flood" in2="offset" operator="in" result="color"/>
-      <feMerge>
-        <feMergeNode in="color"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
   </defs>
   <g id="WebID-Social" fill="none" stroke="none" stroke-dasharray="none" stroke-opacity="1" fill-opacity="1">
     <title>WebID-Social</title>
@@ -310,11 +300,11 @@
         <path d="M 93.63726 544.8057 L 140.53726 544.8057 C 146.08486 544.8057 150.58726 572.46334 150.58726 606.5415 C 150.58726 640.6197 146.08486 668.27735 140.53726 668.27735 L 93.63726 668.27735 C 88.08966 668.27735 83.58726 640.6197 83.58726 606.5415 C 83.58726 572.46334 88.08966 544.8057 93.63726 544.8057 Z" fill="#ffc75a" fill-opacity=".42"/>
       </g>
       <g id="Line_502">
-        <path d="M 117.94959 603.8057 C 280.8737 608.3687 506.7574 618.5101 606.7708 617.4961 C 690.0438 616.65184 686.0986 608.0737 703.8611 601.4213" marker-end="url(#FilledArrow_Marker_3)" stroke="#09981f" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
+        <path d="M 117.94959 603.8057 C 229.2886 606.20355 378.5046 605.51894 452 611 C 525.4954 616.48106 518.4205 638.39304 558.96615 636.6953 C 595.34634 635.172 639.6174 617.12226 681.1541 604.7903" marker-end="url(#FilledArrow_Marker_3)" stroke="#09981f" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
       </g>
       <g id="Graphic_503">
-        <rect x="540.30784" y="596.9991" width="109" height="38" fill="white"/>
-        <text transform="translate(545.5903 601.9991)" fill="black">
+        <rect x="535.09175" y="611.1735" width="109" height="38" fill="white"/>
+        <text transform="translate(540.3742 616.1735)" fill="black">
           <tspan font-family="Helvetica" font-size="23" fill="black" x="0" y="23">describes</tspan>
         </text>
       </g>
@@ -874,22 +864,21 @@
       <g id="Line_877">
         <path d="M 1010.7569 1358.4347 C 1011.7534 1335.9998 1014.288 1310.048 1011.4583 1296.3542 C 1008.1596 1280.3905 1007.8108 1277.6037 990.625 1273.4375 C 973.4392 1269.2713 935.7611 1272.0485 908.3333 1271.3542" marker-start="url(#FilledArrow_Marker_5)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
       </g>
-      <g id="Graphic_886" filter="url(#Shadow_3)">
-        <rect x="718.5827" y="419.52756" width="399.68504" height="336.77166" fill="white" id="path"/>
+      <g id="Graphic_888">
+        <rect x="695.2981" y="406.77166" width="385.2003" height="324.56693" id="path"/>
         <clipPath id="clip_path">
           <use xl:href="#path"/>
         </clipPath>
         <g clip-path="url(#clip_path)">
-          <image xl:href="image5.jpg" width="108" height="91" transform="translate(718.5827 419.52756) scale(3.7007874)"/>
+          <image xl:href="image6.jpg" width="108" height="91" transform="translate(695.2981 406.77166) scale(3.5666696)"/>
         </g>
-        <rect x="718.5827" y="419.52756" width="399.68504" height="336.77166" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_290">
-        <path d="M 830.3576 250.1085 C 869.6308 252.07213 916.7517 239.51973 948.189 256 C 979.6262 272.48027 1011.738 300.15397 1019 349 C 1025.7436 394.35907 1004.3055 470.5188 993.9416 534.56833" marker-end="url(#FilledArrow_Marker_4)" stroke="#ff523b" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
+        <path d="M 830.3576 250.1085 C 869.6308 252.07213 909.6691 236.0362 948.189 256 C 986.7089 275.9638 1056.0737 325.23323 1061.5 369.90324 C 1066.4801 410.9002 1016.9725 463.20726 987.9913 511.2483" marker-end="url(#FilledArrow_Marker_4)" stroke="#ff523b" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
       </g>
       <g id="Graphic_291">
-        <rect x="952.736" y="257.40735" width="110" height="66" fill="white"/>
-        <text transform="translate(957.8952 262.40735)" fill="black">
+        <rect x="965.4791" y="257.8133" width="110" height="66" fill="white"/>
+        <text transform="translate(970.6383 262.8133)" fill="black">
           <tspan font-family="Helvetica" font-size="23" fill="black" x="8.916992" y="23">denotes</tspan>
           <tspan font-family="Helvetica" font-size="23" fill="black" x="0" y="51">(refers to)</tspan>
         </text>
