@@ -223,7 +223,7 @@ Furthermore, many Solid App users will be keen to create cross-site identities a
 We can illustrate this by the following diagram showing the topology of the data a solid client may need to read.
 Starting from Tim Berners-Lee's [WebID](https://www.w3.org/2005/Incubator/webid/spec/identity/), a client may need to follow the links spanning web servers (represented as boxes).
 
-![TimBLs foaf profile](img/HttpSigDiagrams/WebID-Social.gif)
+![TimBLs foaf profile](img/HttpSigDiagrams/WebID-Social.svg)
 
 Starting from one resource, such as TimBL's WebID, a client should be able to follow links to other resources, some of which will be protected in various ways, requiring different forms of proof.
 
