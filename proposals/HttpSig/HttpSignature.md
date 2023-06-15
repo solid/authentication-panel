@@ -38,29 +38,7 @@ We then show how this ties into the Access-Control Protocol used by Solid.
 
 The minimal extension to [Signing HTTP Messages](https://datatracker.ietf.org/doc/draft-ietf-httpbis-message-signatures/) can be illustrated by the following Sequence Diagram:
 
-```text
-Client                          keyid                            Resource
-App                          Document                            Server
-|                                |                                   |
-|-(1) request URL -------------------------------------------------->|
-|<-----------(1a) 40x + WWW-Authenticate: HttpSig + (Link) to ACR  --|
-|                                |                                   |
-|                                |                                   |
-|-(2) request Access Control Resource (ACR)------------------------->|
-|<-------------------------------------(2a) 200 with ACR content ----|
-| (choose key)                   |                                   |
-|                                |                                   |
-|-(3)- sign headers+keyid------------------------------------------->|
-|                                |                       initial auth|
-|                                |                       verification|
-|                                |                                   |
-|                                |<-----------------(4) GET keyid----|
-|                                |-(4a) return keyid doc------------>|
-|                                                       - verify sig |
-|                                                       - verify ACL |
-|                                                                    |
-|<--------------------------------------------(3a) answer resource---|
-```
+![HttpSig Sequence Diagram](img/HttpSigDiagrams/Sequence.gif)
 
 Note that the core extension to "Signing HTTP Messages" occurs in exchange 2 and 3. 
 1 and 2 are just preparatory moves that set up the context. 
@@ -214,7 +192,7 @@ Furthermore, many Solid App users will be keen to create cross-site identities a
 We can illustrate this by the following diagram showing the topology of the data a solid client may need to read.
 Starting from Tim Berners-Lee's [WebID](https://www.w3.org/2005/Incubator/webid/spec/identity/), a client may need to follow the links spanning web servers (represented as boxes).
 
-![TimBLs foaf profile](https://raw.githubusercontent.com/wiki/banana-rdf/banana-rdf/img/WebID-foafKnows.jpg)
+![TimBLs foaf profile](img/HttpSigDiagrams/WebID-Social.gif)
 
 Starting from one resource, such as TimBL's WebID, a client should be able to follow links to other resources, some of which will be protected in various ways, requiring different forms of proof.
 
