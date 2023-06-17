@@ -224,6 +224,7 @@ We can illustrate this by the following diagram showing the topology of the data
 Starting from Tim Berners-Lee's [WebID](https://www.w3.org/2005/Incubator/webid/spec/identity/), a client may need to follow the links spanning web servers (represented as boxes).
 
 ![TimBLs foaf profile](img/HttpSigDiagrams/WebID-Social.svg)
+(note: that TimBL's picture is missing in the diagram because of a bug in OmniGraffle conversion to SVG. I have reported the bug to OmniGroup.)
 
 Starting from one resource, such as TimBL's WebID, a client should be able to follow links to other resources, some of which will be protected in various ways, requiring different forms of proof.
 
