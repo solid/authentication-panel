@@ -11,7 +11,7 @@ Areas of interest:
 For contributing members see the
 [Panels List](https://github.com/solid/process/blob/master/panels.md#authentication-panel).
 
-The Solid Authentication Panel meetings and associated communication channels are open to all
+The Solid Authentication Panel communication channels are open to all
 to participate. It is expected that everyone will abide by the
 [Solid Code of Conduct](https://github.com/solid/process/blob/main/code-of-conduct.md)
 in all of these interactions.
@@ -35,8 +35,11 @@ The Solid-OIDC specification documents are available in the [solid/solid-oidc](h
 
 ## Meetings
 
-Meetings of the Authentication panel take place sporadically at 14:00 UTC on Mondays.
+The work items of the Authentication Panel are discussed during the following [Solid Community Group](https://github.com/solid/specification) meetings.
 
-Please see [the chat](https://gitter.im/solid/authentication-panel) if an upcoming meeting was announced!
+- **General meetings**: every _Wednesday_ from _14:00_ to _15:00_ UTC
+- **Special topic meetings**: tentative on _Tuesdays_ from _14:00_ to _16:00_ UTC
 
-Meeting link: https://meet.jit.si/solid-authentication
+Both meetings take place in the [solid-cg](https://meet.jit.si/solid-cg) Jitsi room. 
+
+Please refer to the Solid Community Group [calendar](https://www.w3.org/groups/cg/solid/calendar) and the Special Topic Meetings [schedule]([url](https://github.com/solid/specification/discussions/555)) for more information. Every meeting is also announced on [Gitter/Matrix](https://gitter.im/solid/specification), with a link to its agenda. 
