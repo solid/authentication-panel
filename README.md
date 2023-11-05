@@ -29,9 +29,12 @@ The Solid-OIDC specification documents are available in the [solid/solid-oidc](h
 * [Primer](https://solid.github.io/solid-oidc/primer/)
 * [Issues](https://github.com/solid/solid-oidc/issues/)
 
-### Http Signature
+### HttpSig
 
-* Proposal Overview - [Text](proposals/HttpSignature.md)
+The HttpSig specification documents are available in the [solid/httpsig](https://github.com/solid/httpsig/) repository.
+
+* [Specification](https://solid.github.io/httpsig/)
+* [Issues](https://github.com/solid/httpsig/issues/)
 
 ## Meetings
 
